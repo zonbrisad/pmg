@@ -49,8 +49,10 @@ git_setup() { ## Setup git correctly
 	git config --global user.email $USEREMAIL
 	git config --global core.editor $EDITOR
   git config --global diff.external ~/bin/git_diff_meld.py
-	
+	git config --global push.default simple	
+	#git config --global push.default master
 	git config --list
+	
 }
 
 
