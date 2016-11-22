@@ -1,20 +1,16 @@
-
-export SVN_EDITOR=jed
-
 # =============================================================== #
 #
 # PERSONAL $HOME/.bashrc FILE for bash-3.0 (or later)
-# By Emmanuel Rouat [no-email]
+# By Peter Malmberg
 #
-# Last modified: Tue Nov 20 22:04:47 CET 2012
+# Based on Emmanuel Rouat's .bashrc
+
 
 #  This file is normally read by interactive shells only.
 #+ Here is the place to define your aliases, functions and
 #+ other interactive features like your prompt.
 #
-#  The majority of the code here assumes you are on a GNU
-#+ system (most likely a Linux box) and is often based on code
-#+ found on Usenet or Internet.
+
 #
 #  See for instance:
 #  http://tldp.org/LDP/abs/html/index.html
@@ -22,16 +18,10 @@ export SVN_EDITOR=jed
 #  http://www.shelldorado.com/scripts/categories.html
 #  http://www.dotfiles.org
 #
-#  The choice of colors was done for a shell with a dark background
-#+ (white on black), and this is usually also suited for pure text-mode
-#+ consoles (no X server available). If you use a white background,
-#+ you'll have to do some other choices for readability.
-#
-#  This bashrc file is a bit overcrowded.
-#  Remember, it is just just an example.
-#  Tailor it to your needs.
-#
 # =============================================================== #
+
+
+export SVN_EDITOR=jed
 
 # --> Comments added by HOWTO author.
 

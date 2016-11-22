@@ -55,29 +55,32 @@ basicPkgs=(         \
   "apt-file"        \
 )
 
-develPkgs=(         \
-  "build-essential" \
-  "cmake"           \
-  "ccache"          \
-  "colorgcc"        \
+
+develToolsPkgs=(    \
   "bison"           \
   "flex"            \
-  "gettext"         \
   "texinfo"         \
-  "autoconf"        \
-  "libtool"         \
-  "libexpat-dev"    \
-  "python-serial"   \
-  "gperf"           \
   "git"             \
   "subversion"      \
-  "libncurses5"     \
-  "libncurses5-dev" \
-  "gdb"             \
-  "gdbserver"       \
   "meld"            \
+)
+
+develCPkgs=(        \
+  "build-essential" \
+	"gdb"             \
+  "gdbserver"       \
+	"autoconf"        \
+	"cmake"           \
+  "ccache"          \
+  "colorgcc"        \
+  "gettext"         \
+  "libtool"         \
+  "libexpat-dev"    \
   "splint"          \
   "pkg-config"      \
+  "gperf"           \
+  "libncurses5"     \
+  "libncurses5-dev" \
   "lua5.1"          \
   "liblua5.1"       \
   "libglib2.0-0"    \
@@ -91,6 +94,9 @@ develPkgs=(         \
 )
 
 armDevPkgs=(                \
+  "build-essential"         \
+	"gdb"                     \
+  "gdbserver"               \
   "binutils-arm-none-eabi"  \ 
   "gcc-arm-none-eabi"       \
   "gdb-arm-none-eabi"       \
@@ -99,11 +105,34 @@ armDevPkgs=(                \
 )
 
 avrDevPkgs=(                \
+  "build-essential"         \
+	"gdb"                     \
+  "gdbserver"               \
   "avrdude"                 \
   "avr-libc"                \
   "gcc-avr"                 \
   "gdb-avr"                 \
   "avrdude"                 \
+)
+
+pythonDevPkgs=(                \
+  "python"                     \
+	"python-pip"                 \
+	"python-qt4"                 \
+	"python-qwt5-qt4"            \
+	"python-numpy"               \
+	"python-scipy"               \
+	"python-serial"              \
+	"python3"                    \
+	"python3-pip"                \
+  "python3-pyqt5"              \
+	"python3-pyqt5.qtserialport" \
+	"python3-pyqt5.qtopengl"     \
+	"python3-guiqwt"             \
+	"python3-guidata"            \
+	"python3-numpy"              \
+	"python3-scipy"              \
+
 )
 
 #---------------------------------------------------------------------
@@ -167,30 +196,32 @@ installG() {
   done
 }
 
+tools() {                  ## Install development toolls like git svn
+  assertRoot
+  installG ${develToolsPkgs[@]} 
+}
 
-installBasic() {            ## Install basic packages
+basic() {                   ## Install basic tools like editors
   assertRoot
   installG ${basicPkgs[@]}
 }
 
-
-installServer() {           ## Intstall server packages
+server() {                  ## Intstall server packages
   assertRoot
   installG ${serverPkgs[@]}
 }
 
-
-installDevelop() {          ## Install development packages
+cDevelop() {                ## Install packages for native C development 
   assertRoot
-  installG ${develPkgs[@]}
+  installG ${develCPkgs[@]}
 }
 				
-installARMDevelop() {       ## Install ARM development packages
+ARMDevelop() {              ## Install ARM C development packages
   assertRoot
   installG ${armDevPkgs[@]}
 }
 
-installJava() {             ## Install Java development packages
+java() {                    ## Install Java development packages
   assertRoot
   apt-get -y install python-software-properties
   add-apt-repository ppa:webupd8team/java
@@ -198,11 +229,29 @@ installJava() {             ## Install Java development packages
   apt-get -y install oracle-java8-installer
 }
 
+python() {                  ## Install python development packages
+  assertRoot
+  installG ${pythonDevPkgs[@]}
+	
+	# Upgrade pip program
+	pip  install --upgrade pip
+	pip3 install --upgrade pip
+}
 
 users() {                   ## Create users and groups
   assertRoot
   adduser lpmg -uid 1000
+}
 
+
+newDev() {                  ## Installs basic/tools/C development/python
+  assertRoot
+	
+	basic
+	tools
+	cDevelop
+	python
+	
 }
 
 #--------------------------------------------------------------------- 
@@ -210,7 +259,7 @@ users() {                   ## Create users and groups
 #---------------------------------------------------------------------
 
 # Script version info
-VERSION="1.00"
+VERSION="1.01"
 
 ##V Bashplate version
 templateVersion="1.08"   
