@@ -335,6 +335,8 @@ define insert_other_window()
 %
 autoload ("make_mode", "make");
 
+add_mode_for_extension("make", "mk");
+
 % set modes based on filename or more complicated patterns
 private variable old_Mode_Hook_Pointer = Mode_Hook_Pointer;
 static define set_modes_hook(ext)

@@ -1,10 +1,10 @@
-# =============================================================== #
+#
+# ---------------------------------------------------------------------------
 #
 # PERSONAL $HOME/.bashrc FILE for bash-3.0 (or later)
 # By Peter Malmberg
 #
 # Based on Emmanuel Rouat's .bashrc
-
 
 #  This file is normally read by interactive shells only.
 #+ Here is the place to define your aliases, functions and
@@ -18,21 +18,57 @@
 #  http://www.shelldorado.com/scripts/categories.html
 #  http://www.dotfiles.org
 #
-# =============================================================== #
+# ---------------------------------------------------------------------------
 
 
+# Paths ---------------------------------------------------------------------
+
+export PATH=${PATH}:/home/pmg/Projekt/RaspberryPi/tools/arm-bcm2708/gcc-linaro-arm-linux-gnueabihf-raspbian-x64/bin
+export LD_LIBRARY_PATH=/usr/local/lib
+
+
+# Application settings ------------------------------------------------------
 export SVN_EDITOR=jed
 
-# --> Comments added by HOWTO author.
+# Host specific setting -----------------------------------------------------
+
+HOSTNAME=$(hostname)
+
+echo "You are logged in to: ${HOSTNAME}"
+
+
+# Host: fileserver ----------------------------------------------------------
+if [ "${HOSTNAME}" == "fileserver" ]; then
+  alias netbeans='~/bin/netbeans-8.1/bin/netbeans'
+	alias dht='cd ~/make/dht'
+	alias lef='cd ~/Projekt/LEF'
+	alias mp='cd ~/Projekt/makeplates'
+	alias bp='cd ~/Projekt/bashplates'
+	alias b='cd /storage/backup/fileserver'
+	alias b0='cd /storage/backup/fileserver/daily_0/storage/home/pmg'
+	alias b1='cd /storage/backup/fileserver/daily_1/storage/home/pmg'
+	alias b2='cd /storage/backup/fileserver/daily_2/storage/home/pmg'
+	alias b3='cd /storage/backup/fileserver/daily_3/storage/home/pmg'
+	alias b4='cd /storage/backup/fileserver/daily_4/storage/home/pmg'
+	alias b5='cd /storage/backup/fileserver/daily_5/storage/home/pmg'
+fi
+
+# Host: builderver (Abelko) -------------------------------------------------
+if [ "${HOSTNAME}" == "fileserver" ]; then
+  alias eclipse='/opt/eclipse_luna_sr2/eclipse'
+  alias netbeans='/home/peterm/bin/netbeans/bin/netbeans'
+fi
+
+# SSH agent
+#eval `ssh-agent -s`
+#ssh-add ~/.ssh/id_dsa
+
 
 # If not running interactively, don't do anything
 [ -z "$PS1" ] && return
 
 
-#-------------------------------------------------------------
-# Source global definitions (if any)
-#-------------------------------------------------------------
-
+# Source global definitions (if any) ----------------------------------------
 
 if [ -f /etc/bashrc ]; then
   . /etc/bashrc   # --> Read /etc/bashrc, if present.
@@ -78,9 +114,8 @@ fi
 		
 export DISPLAY
 		
-#-------------------------------------------------------------
-# Some settings
-#-------------------------------------------------------------
+
+# Some settings -------------------------------------------------------------
 		
 #set -o nounset     # These  two options are useful for debugging.
 #set -o xtrace
@@ -108,9 +143,7 @@ shopt -u mailwarn
 unset MAILCHECK        # Don't want my shell to warn me of incoming mail.
 
 
-#-------------------------------------------------------------
-# Greeting, motd etc. ...
-#-------------------------------------------------------------
+# Greeting, motd etc. -------------------------------------------------------
 
 # Color definitions (taken from Color Bash Prompt HowTo).
 # Some colors might look different of some terminals.
@@ -153,7 +186,7 @@ NC="\e[m"               # Color Reset
 
 ALERT=${BWhite}${On_Red} # Bold White on red background
 
-echo -e `uname -p` " " `uname -m` "\n"
+#echo -e `uname -p` " " `uname -m` "\n"
 
 echo -e "${BCyan}This is BASH ${BRed}${BASH_VERSION%.*}${BCyan}\
 - DISPLAY on ${BRed}$DISPLAY${NC}\n"
@@ -342,16 +375,9 @@ case ${TERM} in
 #
 #============================================================
 
-#-------------------
-# Personnal Aliases
-#-------------------
 
+# Personal Aliases ----------------------------------------------------------
 
-
-# ABELKO specific
-alias eclipse='/opt/eclipse_luna_sr2/eclipse'
-alias netbeans='/home/peterm/bin/netbeans/bin/netbeans'
-alias eb='jed ~/.bashrc'
 alias rm='rm -i'
 alias cp='cp -i'
 alias mv='mv -i'
@@ -371,9 +397,10 @@ alias libpath='echo -e ${LD_LIBRARY_PATH//:/\\n}'
 alias du='du -kh'    # Makes a more readable output.
 alias df='df -kTh'
 
-#-------------------------------------------------------------
-# The 'ls' family (this assumes you use a recent GNU ls).
-#-------------------------------------------------------------
+alias eb='jed ~/.bashrc'
+
+# The 'ls' family -----------------------------------------------------------
+
 # Add colors for filetype and  human-readable sizes by default on 'ls':
 alias ls='ls -h --color'
 alias lx='ls -lXB'         #  Sort by extension.
@@ -390,9 +417,7 @@ alias la='ll -A'           #  Show hidden files.
 alias tree='tree -Csuh'    #  Nice alternative to 'recursive ls' ...
 
 
-#-------------------------------------------------------------
-# Tailoring 'less'
-#-------------------------------------------------------------
+# Tailoring 'less' ----------------------------------------------------------
 
 alias more='less'
 export PAGER=less
@@ -471,10 +496,7 @@ function firefox() { command firefox "$@" & }
 function xpdf() { command xpdf "$@" & }
 
 
-#-------------------------------------------------------------
-# File & strings related functions:
-#-------------------------------------------------------------
-
+# File & strings related functions: -----------------------------------------
 
 # Find a file with a pattern in name:
 function ff() { find . -type f -iname '*'"$*"'*' -ls ; }
@@ -605,10 +627,14 @@ function mydf()         # Pretty-print of 'df' output.
 }
 						
 						
-function my_ip() # Get IP adress on ethernet.
-{
-  MY_IP=$(/sbin/ifconfig eth0 | awk '/inet/ { print $2 } ' |
-	  sed -e s/addr://)
+function my_ip() { # Get IP adress on ethernet.
+
+  if [ "${HOSTNAME}" == "fileserver" ]; then
+    MY_IP=$(/sbin/ifconfig br0 | awk '/inet/ { print $2 } ' | sed -e s/addr://)
+	else 
+	  MY_IP=$(/sbin/ifconfig eth0 | awk '/inet/ { print $2 } ' | sed -e s/addr://)
+	fi
+	
 	echo ${MY_IP:-"Not connected"}
 }
 					
