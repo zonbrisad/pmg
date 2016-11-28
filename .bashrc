@@ -34,9 +34,6 @@ export SVN_EDITOR=jed
 
 HOSTNAME=$(hostname)
 
-echo "You are logged in to: ${HOSTNAME}"
-
-
 # Host: fileserver ----------------------------------------------------------
 if [ "${HOSTNAME}" == "fileserver" ]; then
   alias netbeans='~/bin/netbeans-8.1/bin/netbeans'
@@ -120,6 +117,7 @@ export DISPLAY
 #set -o nounset     # These  two options are useful for debugging.
 #set -o xtrace
 alias debug="set -o nounset; set -o xtrace"
+alias debugoff="set +o nounset; set +o xtrace"
 		
 ulimit -S -c 0      # Don't want coredumps.
 set -o notify
@@ -186,17 +184,92 @@ NC="\e[m"               # Color Reset
 
 ALERT=${BWhite}${On_Red} # Bold White on red background
 
-#echo -e `uname -p` " " `uname -m` "\n"
+#--------------------------------------------------------------------- 
+# System functions and settings
+#---------------------------------------------------------------------
 
-echo -e "${BCyan}This is BASH ${BRed}${BASH_VERSION%.*}${BCyan}\
-- DISPLAY on ${BRed}$DISPLAY${NC}\n"
+# ANSI foreground colors codes
+#
+E_BLACK='\e[0;30m'        # Black
+E_RED='\e[0;31m'          # Red
+E_GREEN='\e[0;32m'        # Green
+E_YELLOW='\e[0;33m'       # Yellow
+E_BLUE='\e[0;34m'         # Blue
+E_MAGENTA='\e[0;35m'      # Magenta
+E_CYAN='\e[0;36m'         # Cyan
+E_GRAY='\e[0;37m'         # Gray
+E_DARKGRAY='\e[1;30m'     # Dark Gray
+E_BR_RED='\e[1;31m'       # Bright Red
+E_BR_GREEN='\e[1;32m'     # Bright Green
+E_BR_YELLOW='\e[1;33m'    # Bright Yellow
+E_BR_BLUE='\e[1;34m'      # Bright Blue
+E_BR_MAGENTA='\e[1;35m'   # Bright Magenta
+E_BR_CYAN='\e[1;36m'      # Bright Cyan
+E_WHITE='\e[1;37m'        # White
 
-date
+# ANSI background color codes
+#
+E_ON_BLACK='\e[40m'       # Black
+E_ON_RED='\e[41m'         # Red
+E_ON_GREEN='\e[42m'       # Green
+E_ON_YELLOW='\e[43m'      # Yellow
+E_ON_BLUE='\e[44m'        # Blue
+E_ON_MAGENTA='\e[45m'     # Magenta
+E_ON_CYAN='\e[46m'        # Cyan
+E_ON_WHITE='\e[47m'       # White
 
-#if [ -x /usr/games/fortune ]; then
-#  /usr/games/fortune -s     # Makes our day a bit more fun.... :-)
-#fi
-		
+# ANSI cursor operations
+#
+E_RETURN="\e[F"           # Move cursor to begining of line
+E_UP="\e[A"               # Move cursor one line up
+E_DOWN="\e[B"             # Move cursor one line down
+E_FORWARD="\e[C"          # Move cursor forward
+E_BACK="\e[D"             # Move cursor backward
+E_HIDE="\e[?25l"          # Hide cursor 
+E_SHOW="\e[?25h"          # Show cursor 
+
+E_END="\e[m"              # Clear Attributes
+
+# Message colors
+E_INFO=$E_BR_CYAN
+E_WARNING=$E_BR_YELLOW
+E_ERROR=$E_BR_RED
+E_CRITICAL=$E_ON_RED$E_WHITE
+
+
+# Exit codes 
+#
+EX_OK=0            # successful termination 
+
+##-
+
+# Print a divider row
+printLine() { ##D Print a line  
+  echo -e "${E_BOLD_WHITE}------------------------------------------------------------------------------${E_END}"
+}
+	
+# Print text into two columns
+#
+# arg1 text for column 1
+# arg2 text for column 2
+printInfo() {
+  printf "${E_BR_CYAN}%-20s${E_END} ${E_BR_GREEN}%s${E_END}\n" "$1" "$2"
+}
+		  
+# Print a variable + text into two columns
+#
+# arg1 variable for column 1
+# arg2 text for column 2
+printVar() {
+  var=$1
+	if [ ${!var} ]; then
+	  printInfo "$2" "${!var}"
+	else
+	  printf "${E_BR_CYAN}%-20s${E_END} ${E_BR_RED}N/A${E_END}\n" "$2"
+	fi
+}
+
+
 function _exit()              # Function to run upon exit of shell.
 {
   echo -e "${BRed}Hasta la vista, baby${NC}"
@@ -249,13 +322,13 @@ else
 fi
 		
 # Test user type:
-if [[ ${USER} == "root" ]]; then
-  SU=${Red}           # User is root.
-elif [[ ${USER} != $(logname) ]]; then
-  SU=${BRed}          # User is not login user.
-else
-  SU=${BCyan}         # User is normal (well ... most of us are).
-fi
+#if [[ ${USER} == "root" ]]; then
+#  SU=${Red}           # User is root.
+#elif [[ ${USER} != $(logname) ]]; then
+#  SU=${BRed}          # User is not login user.
+#else
+#  SU=${BCyan}         # User is normal (well ... most of us are).
+#fi
 
 
 
@@ -462,8 +535,7 @@ function xtitle()
 	*)  ;;
 	esac
 }
-												
-												
+																								
 # Aliases that use xtitle
 alias top='xtitle Processes on $HOST && top'
 alias make='xtitle Making $(basename $PWD) ; make'
@@ -628,33 +700,50 @@ function mydf()         # Pretty-print of 'df' output.
 						
 						
 function my_ip() { # Get IP adress on ethernet.
+  
+	case ${HOSTNAME} in
+	  "fileserver") MY_IP=$(/sbin/ifconfig br0 | awk '/inet/ { print $2 } ' | sed -e s/addr://) ;;
+		"vbPmg")      MY_IP=$(/sbin/ifconfig enp0s3 | awk '/inet/ { print $2 } ' | sed -e s/addr://) ;;     
+		*)            MY_IP=$(/sbin/ifconfig eth0 | awk '/inet/ { print $2 } ' | sed -e s/addr://) ;;
+	esac
 
-  if [ "${HOSTNAME}" == "fileserver" ]; then
-    MY_IP=$(/sbin/ifconfig br0 | awk '/inet/ { print $2 } ' | sed -e s/addr://)
-	else 
-	  MY_IP=$(/sbin/ifconfig eth0 | awk '/inet/ { print $2 } ' | sed -e s/addr://)
-	fi
-	
-	echo ${MY_IP:-"Not connected"}
+  echo ${MY_IP:-"Not connected"}
 }
 					
-function ii()   # Get current host related info.
-{
+function ii() {  # Get current host related info.
+
+  echo -e  "\n${Green}Hostname:   ${BGreen}$HOSTNAME $NC " 
+	printLine
+	echo -e ""
+	printInfo "Username:"          "$USER"
+	printInfo "Current date:"      "$(date)"
+	printInfo "Local IP Address:"  "$(my_ip)"
+	printInfo "Machine Uptime:"    "$(uptime -p)"
+	printInfo "Machine Type:"      "$(uname -m)"
+	printInfo "Disk space:" ""; mydf / $HOME
+	echo -e ""
+  printLine
+
 #  echo -e "\nYou are logged on ${BRed}$HOST"
 #	echo -e "\n${BRed}Additionnal information:$NC " ;
 #	uname -a
-	echo -e "\n${BRed}Users logged on:$NC " ; w -hs |
-	cut -d " " -f1 | sort | uniq
-	echo -e "\n${BRed}Current date :$NC " ; date
-#	echo -e "\n${BRed}Machine stats :$NC " ; uptime
-#	echo -e "\n${BRed}Memory stats :$NC " ; free
-	echo -e "\n${BRed}Diskspace :$NC " ;
-	mydf / $HOME
-	echo -e "\n${BRed}Local IP Address :$NC" ; my_ip
+#	echo -e "\n${BRed}Users logged on:$NC " ; w -hs |
+#	cut -d " " -f1 | sort | uniq
 #	echo -e "\n${BRed}Open connections :$NC "; netstat -pan --inet;
-	echo
+
 }
-						
+
+function loginInfo() {
+ 
+#  echo -e "${BCyan}This is BASH ${BRed}${BASH_VERSION%.*}${BCyan} - DISPLAY on ${BRed}$DISPLAY${NC}\n"
+  ii
+	
+  if [ -x /usr/games/fortune ]; then
+    /usr/games/fortune -s     # Makes our day a bit more fun.... :-)
+  fi
+	
+}
+
 #-------------------------------------------------------------
 # Misc utilities:
 #-------------------------------------------------------------
@@ -937,8 +1026,6 @@ _make()
 complete -F _make -X '+($*|*.[cho])' make gmake pmake
 
 
-
-
 _killall()
 {
   local cur prev
@@ -957,9 +1044,9 @@ _killall()
 }
 												
 complete -F _killall killall killps
-												
-ii												
-												
+
+loginInfo
+
 # Local Variables:
 # mode:shell-script
 # sh-shell:bash
