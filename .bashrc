@@ -718,7 +718,8 @@ function ii() {  # Get current host related info.
 	printInfo "Username:"          "$USER"
 	printInfo "Current date:"      "$(date)"
 	printInfo "Local IP Address:"  "$(my_ip)"
-	printInfo "Machine Uptime:"    "$(uptime -p)"
+#	printInfo "Machine Uptime:"    "$(uptime -p)"
+	printInfo "Machine Uptime:"    "$(uptime)"
 	printInfo "Machine Type:"      "$(uname -m)"
 	printInfo "Disk space:" ""; mydf / $HOME
 	echo -e ""
@@ -740,8 +741,9 @@ function loginInfo() {
 	
   if [ -x /usr/games/fortune ]; then
     /usr/games/fortune -s     # Makes our day a bit more fun.... :-)
+		printLine
   fi
-	
+
 }
 
 #-------------------------------------------------------------
