@@ -55,6 +55,10 @@ git_setup() { ## Setup git correctly
 	
 }
 
+jed_setup() { ## Setup jed editor
+  assertRoot
+	cp scriptPath/setupFiles/make.sl /usr/share/jed/lib/.
+}
 
 #--------------------------------------------------------------------- 
 # Bashplate settings
