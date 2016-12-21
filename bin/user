@@ -60,6 +60,41 @@ jed_setup() { ## Setup jed editor
 	cp ${scriptPath}/setupfiles/make.sl /usr/share/jed/lib/.
 }
 
+configFiles=(        \
+  "~/.bashrc"        \
+	"~/.bash_profile"  \
+  "~/.jedrc"         \
+	"~/bin"            \
+)
+
+#
+# $1 file to be replaced
+#
+cf() {
+  eval F=${1}
+  if [ ! -h $F ]; then  # if not symbolic link do
+
+    if [ -e $F ]; then  # if file already exist make a copy
+		  mv -f $F ${F}_backup
+			echo "Backing up $F to ${F}_backup"  
+		fi
+
+    eval X=${scriptPath}/../$(basename $F)
+    ln -s  ${scriptPath}/../$(basename $F) $F
+  fi
+}
+
+config() { ##
+  rm -f ~/kalle_backup
+	rm -f ~/kalle
+  touch ~/kalle
+  # install all packages in list
+	for pkg in ${configFiles[@]}; do
+		cf ${pkg}
+  done
+}
+
+
 #--------------------------------------------------------------------- 
 # Bashplate settings
 #---------------------------------------------------------------------

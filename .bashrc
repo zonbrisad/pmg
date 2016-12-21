@@ -37,6 +37,7 @@ HOSTNAME=$(hostname)
 # Host: fileserver ----------------------------------------------------------
 if [ "${HOSTNAME}" == "fileserver" ]; then
   alias netbeans='~/bin/netbeans-8.1/bin/netbeans'
+	alias eclipse='~/bin/eclipse/eclipse'
 	alias dht='cd ~/make/dht'
 	alias lef='cd ~/Projekt/LEF'
 	alias mp='cd ~/Projekt/makeplates'
@@ -51,7 +52,7 @@ if [ "${HOSTNAME}" == "fileserver" ]; then
 fi
 
 # Host: builderver (Abelko) -------------------------------------------------
-if [ "${HOSTNAME}" == "fileserver" ]; then
+if [ "${HOSTNAME}" == "buildroot" ]; then
   alias eclipse='/opt/eclipse_luna_sr2/eclipse'
   alias netbeans='/home/peterm/bin/netbeans/bin/netbeans'
 fi
