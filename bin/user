@@ -84,11 +84,8 @@ cf() {
   fi
 }
 
-config() { ##
-  rm -f ~/kalle_backup
-	rm -f ~/kalle
-  touch ~/kalle
-  # install all packages in list
+config() { ## Create symbolic links 
+  
 	for pkg in ${configFiles[@]}; do
 		cf ${pkg}
   done
