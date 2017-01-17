@@ -1,4 +1,5 @@
 #!/bin/bash
+# shellcheck disable=2034
 #---------------------------------------------------------------------
 #
 #  [Description]
@@ -29,7 +30,7 @@
 scriptPath=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
 
 # Name of script
-scriptName=$(basename $0)
+scriptName=$(basename "$0")
 
 #---------------------------------------------------------------------
 # User defined Settings
@@ -589,9 +590,9 @@ help() { ## Print this help information
   IFS=$'\n'
   SC=$1
   help_lines=$(grep -h '##' "$0" | grep -v grep | grep -v '##D' | grep -v '##V' | grep -v '\*##C' |  grep -v '\"##' | grep -v help_line | grep -v printLine)
-#  for help_line in ${help_lines[@]} ; do
+  for help_line in ${help_lines[@]} ; do
 #	for help_line in "${help_lines}" ; do
-  for help_line in "${help_lines[@]}" ; do
+#  for help_line in "${help_lines[@]}" ; do
     case "$help_line" in
       *"##-"*) printLine ;;
       *"##C"*) printCondCommand "$help_line" ;;
