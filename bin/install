@@ -272,7 +272,7 @@ shellcheck() {  ## download compile and install latest version shellcheck
 	dpkg-query -l cabal-install > /dev/null
 	
 	if [ "$?" -eq 1 ]; then
-	  sudo apt-get install cabal-install  
+	  sudo apt-get -y install cabal-install  
 	fi
 	
 	cabal update
