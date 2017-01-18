@@ -24,6 +24,8 @@
 # Paths ---------------------------------------------------------------------
 
 export PATH=${PATH}:/home/pmg/Projekt/RaspberryPi/tools/arm-bcm2708/gcc-linaro-arm-linux-gnueabihf-raspbian-x64/bin
+export PATH=${PATH}:"$HOME"/.cabal/bin
+
 export LD_LIBRARY_PATH=/usr/local/lib
 
 
@@ -56,6 +58,12 @@ if [ "${HOSTNAME}" == "buildroot" ]; then
   alias eclipse='/opt/eclipse_luna_sr2/eclipse'
   alias netbeans='/home/peterm/bin/netbeans/bin/netbeans'
 fi
+
+# Host: Virtual machine (Abelko) -------------------------------------------------
+if [ "${HOSTNAME}" == "vbPmg" ]; then
+  alias eclipse='~/bin/eclipse/eclipse'
+fi
+
 
 # SSH agent
 #eval `ssh-agent -s`
@@ -399,7 +407,7 @@ function job_color()
 # Now we construct the prompt.
 PROMPT_COMMAND="history -a"
 case ${TERM} in
-  *term | rxvt | linux)
+  *term | rxvt | linux | xterm-256color)
 		# Time of day (with load info):
 		#PS1="\[\$(load_color)\][\A\[${NC}\] "
 #		PS1="\${load_color}["
