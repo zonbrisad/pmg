@@ -92,6 +92,7 @@ develCPkgs=(        \
   "libqt5serialport5"       \
   "libqt5serialport5-dev"   \
   "libsqlite3-dev"          \
+	"astudio"                 \
 )
 
 armDevPkgs=(                \

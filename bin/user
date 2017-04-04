@@ -91,6 +91,9 @@ config() { ## Create symbolic links
   done
 }
 
+nisse() { ## Kommando nisse
+exit
+}
 
 #--------------------------------------------------------------------- 
 # Bashplate settings
