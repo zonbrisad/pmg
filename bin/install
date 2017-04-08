@@ -39,7 +39,9 @@ scriptName=$(basename "$0")
 serverPkgs=(               \
   "rdiff-backup"           \
   "nfs-common"             \
+  "qemu-kvm"               \
   "virt-manager"           \
+  "virt-top"               \
   "ssmtp"                  \
   "puppetmaster-passenger" \
   "mailutils"              \
@@ -64,14 +66,15 @@ develToolsPkgs=(    \
   "git"             \
   "subversion"      \
   "meld"            \
+	"doxygen"         \
 )
 
 develCPkgs=(        \
   "build-essential" \
-	"gdb"             \
+  "gdb"             \
   "gdbserver"       \
-	"autoconf"        \
-	"cmake"           \
+  "autoconf"        \
+  "cmake"           \
   "ccache"          \
   "colorgcc"        \
   "gettext"         \
@@ -92,12 +95,12 @@ develCPkgs=(        \
   "libqt5serialport5"       \
   "libqt5serialport5-dev"   \
   "libsqlite3-dev"          \
-	"astudio"                 \
+  "astudio"                 \
 )
 
 armDevPkgs=(                \
   "build-essential"         \
-	"gdb"                     \
+  "gdb"                     \
   "gdbserver"               \
   "binutils-arm-none-eabi"  \ 
   "gcc-arm-none-eabi"       \
@@ -108,7 +111,6 @@ armDevPkgs=(                \
 
 avrDevPkgs=(                \
   "build-essential"         \
-	"gdb"                     \
   "gdbserver"               \
   "avrdude"                 \
   "avr-libc"                \
@@ -119,22 +121,21 @@ avrDevPkgs=(                \
 
 pythonDevPkgs=(                \
   "python"                     \
-	"python-pip"                 \
-	"python-qt4"                 \
-	"python-qwt5-qt4"            \
-	"python-numpy"               \
-	"python-scipy"               \
-	"python-serial"              \
-	"python3"                    \
-	"python3-pip"                \
+  "python-pip"                 \
+  "python-qt4"                 \
+  "python-qwt5-qt4"            \
+  "python-numpy"               \
+  "python-scipy"               \
+  "python-serial"              \
+  "python3"                    \
+  "python3-pip"                \
   "python3-pyqt5"              \
-	"python3-pyqt5.qtserialport" \
-	"python3-pyqt5.qtopengl"     \
-	"python3-guiqwt"             \
-	"python3-guidata"            \
-	"python3-numpy"              \
-	"python3-scipy"              \
-
+  "python3-pyqt5.qtserialport" \
+  "python3-pyqt5.qtopengl"     \
+  "python3-guiqwt"             \
+  "python3-guidata"            \
+  "python3-numpy"              \
+  "python3-scipy"              \
 )
 
 #---------------------------------------------------------------------
@@ -221,6 +222,11 @@ cDevelop() {                ## Install packages for native C development
 ARMDevelop() {              ## Install ARM C development packages
   assertRoot
   installG ${armDevPkgs[@]}
+}
+
+avrDevelop() {              ## Install AVR C development packages
+  assertRoot
+  installG ${avrDevPkgs[@]}
 }
 
 java() {                    ## Install Java development packages
