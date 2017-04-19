@@ -36,11 +36,15 @@ scriptName=$(basename $0)
 #---------------------------------------------------------------------
 
 userList=(                      \
-  "5000 pmg Peter Malmberg peter.malmberg@gmail.com" \
-	"5001 Xpmg XPeter Malmberg peter.malmberg@gmail.com" \
+  "5000 apmg APeter Malmberg peter.malmberg@gmail.com" \
+  "5001 bpmg BPeter Malmberg peter.malmberg@gmail.com" \
 )
 
 
+groupList=(
+  "10002 groupname1" \
+  "10003 groupname2" \
+)
 
 #---------------------------------------------------------------------
 # User defined functions
@@ -91,34 +95,115 @@ addSambaUser() {
 
 
 #
+# Add a new user if not existing
 #
-addUser() { ## Add a user
+# $1 = username
+# $2 = uid
+# $3 = name
+# $4 = email
+#
+addUser() { 
   assertRoot
   getent passwd $2 > /dev/null
   if [ $? -ne 0 ]; then
-    bpInfo "Adding user: "$2"  ""$3"
-		
-		
-#		 useradd xxx1 --create-home --uid 6001
+    bpInfo "Adding user:  $1 $2 $3 $4"
+    useradd $1 --create-home --uid $2
   else
     bpError "User "$2" already exists"
   fi
-
 }
 
+#
+# Add group
+# 
+# $1 = user
+# $2 = id
+#
 addGroup() {
   assertRoot
-  getent group $2 > /dev/null
+  getent group $1 > /dev/null
   if [ $? -ne 0 ]; then
-    bpInfo "Adding group: "$2
+    bpInfo "Adding group: "$1
+    groupadd $1 --gid $2
   else
-    bpError "Group already exists"
+    bpError "Group $1 already exists"
   fi
 
 }
 
-cusers() { ## Create users and groups
+
+#
+# Remove user
+#
+# $1 = user
+#
+rmUser() {
+  getent passwd $1 > /dev/null
+  if [ $? -ne 0 ]; then
+    bpError "User "$1" does not exist"
+  else
+    bpInfo "Removing user:  $1"
+    deluser $1 --remove-home
+  fi
+}
+
+#
+# Remove group
+#
+# $1 = user
+#
+rmGroup() {
+  getent group $1 > /dev/null
+  if [ $? -ne 0 ]; then
+    bpError "Group "$1" does not exist"
+  else
+    bpInfo "Removing group:  $1"
+    delgroup $1 
+    
+  fi
+}
+
+
+rmu() { ## Remove  users and groups
+  assertRoot
   IFS='\n'
+  for u in ${userList[@]}; do
+
+    UI=$(echo ${u} | awk '{print $1}' )
+    UN=$(echo ${u} | awk '{print $2}' )
+    FN=$(echo ${u} | awk '{print $3}' )
+    SN=$(echo ${u} | awk '{print $4}' )
+    UM=$(echo ${u} | awk '{print $5}' )		
+    echo $UN 
+    rmUser $UN 
+  done
+
+  for u in ${groupList[@]}; do
+    GID=$(echo ${u} | awk '{print $1}' )
+    GNAME=$(echo ${u} | awk '{print $2}' )
+    rmGroup $GNAME
+  done
+
+}
+
+cgroups() { ## Create groups
+  assertRoot
+  IFS=$'\n'
+  for u in ${groupList[@]}; do
+    GID=$(echo ${u} | awk '{print $1}' )
+    GNAME=$(echo ${u} | awk '{print $2}' )
+		
+    echo ${GID} ${GNAME}
+    	
+    addGroup $GNAME $GID   
+  done
+
+}
+
+cusers() { ## Create users
+ assertRoot
+  
+  IFS=$'\n'
 	for u in ${userList[@]}; do
 
 		UI=$(echo ${u} | awk '{print $1}' )
@@ -130,6 +215,9 @@ cusers() { ## Create users and groups
 		echo $UI $UN $FN $SN $UM
 		addUser $UN $UI $FN $SN $UM
   done
+
+  # Add user to group dialout (good for usb2serial adapters)
+  usermod  -a -G dialout pmg
 
 	exit
   assertRoot
@@ -148,7 +236,7 @@ cusers() { ## Create users and groups
 VERSION="1.00"
 
 ##V Bashplate version
-templateVersion="1.08"   
+BPVERSION="1.08"   
 
 ##V Usage info
 USAGE="Usage: ${scriptName} command [option]" 
@@ -196,7 +284,7 @@ bpCleanUp() { ##D Cleanup function
   rm -f $LOCK_FILE    # remove Lock file
 }
 
-safeExit() { ##D Function for safely exiting script
+bpExit() { ##D Function for safely exiting script
   bpCleanUp
 	exit
 }
@@ -344,13 +432,13 @@ bpError() { ##D Error message
 bpCritical() { ##D Critical error message
   bpLog "[Crit] $1"
   echo -e "[${E_CRITICAL}Crit${E_END}] $1"
-	safeExit
+	bpExit
 }
 
 assertRoot() { ##D Assert that user is root
   if [ $(whoami) != root ]; then
 	  bpError "Must be root to use this command."
-    safeExit
+    bpExit
   fi
 }
 
@@ -359,7 +447,7 @@ assertLockFile() { ##D Assert that lockfile is not present
 	if [ -n "$LOCK_FILE" ]; then 
 	  if [ -f "$LOCK_FILE" ]; then
 	    echo -e "${E_ERROR}Script is already running. (${LOCK_FILE})${E_END} "
-		  exit  # do not use safeExit because lock belongs to other process
+		  exit  # do not use bpExit because lock belongs to other process
 		fi
 		touch $LOCK_FILE							
 	fi
@@ -370,7 +458,7 @@ info() { ##D Show information about script
 	printVar scriptName      "Script name" 
 	printVar scriptPath      "Script path" 
 	printVar VERSION         "Script version" 
-	printVar templateVersion "Template version" 
+	printVar BPVERSION       "Template version" 
 	printVar LOGFILE         "Log file" 
 	printVar LOCK_FILE       "Lock file" 
 	printVar DEFAULT         "Default function" 
@@ -491,7 +579,7 @@ runCommand() {
 		
 	  echo -e ${E_ERROR}"No command given"${E_END}
 		help
-		safeExit
+		bpExit
 	fi
 	
 	# check for required programs 
@@ -502,12 +590,12 @@ runCommand() {
 	  command=`echo $line | sed -s 's/(.*//'`
 		if [ "$command" == "$1" ]; then
       $command "$1" "$2" "$3" "$4" "$5" "$6" "$7" "$8" "$9" "$10"
-			safeExit
+			bpExit
 		fi
 	done
 	echo -e ${E_ERROR}"Command not found"${E_END}
 	help
-	safeExit 
+	bpExit 
 }
 
 # Init 
@@ -526,7 +614,7 @@ bpArguments=$#
 runCommand "$1" "$2" "$3" "$4" "$5" "$6" "$7" "$8" "$9" "$10"
 
 # Exit cleanly
-safeExit
+bpExit
 
 
 ##-

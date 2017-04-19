@@ -32,6 +32,9 @@ export LD_LIBRARY_PATH=/usr/local/lib
 # Application settings ------------------------------------------------------
 export SVN_EDITOR=jed
 
+# Force GTK2 for SWT applications (eclipse)
+export SWT_GTK3=0
+
 # Host specific setting -----------------------------------------------------
 
 HOSTNAME=$(hostname)
