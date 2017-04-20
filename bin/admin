@@ -216,6 +216,9 @@ cusers() { ## Create users
 		addUser $UN $UI $FN $SN $UM
   done
 
+  # Add user to group dialout (good for usb2serial adapters)
+  usermod  -a -G dialout pmg
+
 	exit
   assertRoot
   addGroup 10000 nisse
