@@ -62,9 +62,14 @@ if [ "${HOSTNAME}" == "buildroot" ]; then
   alias netbeans='/home/peterm/bin/netbeans/bin/netbeans'
 fi
 
-# Host: Virtual machine (Abelko) -------------------------------------------------
+# Host: Virtual machine (Abelko) --------------------------------------------
 if [ "${HOSTNAME}" == "vbPmg" ]; then
   alias eclipse='~/bin/eclipse/eclipse'
+fi
+
+# Host: ustation ------------------------------------------------------------
+if [ "${HOSTNAME}" == "ustation" ]; then
+  alias eclipse='~/Downloads/eclipse/eclipse'
 fi
 
 
@@ -714,9 +719,10 @@ function mydf()         # Pretty-print of 'df' output.
 function my_ip() { # Get IP adress on ethernet.
   
 	case ${HOSTNAME} in
-	  "fileserver") MY_IP=$(/sbin/ifconfig br0 | awk '/inet/ { print $2 } ' | sed -e s/addr://) ;;
-		"vbPmg")      MY_IP=$(/sbin/ifconfig enp0s3 | awk '/inet/ { print $2 } ' | sed -e s/addr://) ;;     
-		*)            MY_IP=$(/sbin/ifconfig eth0 | awk '/inet/ { print $2 } ' | sed -e s/addr://) ;;
+	  "fileserver") MY_IP=$(/sbin/ifconfig br0    | awk '/inet/ { print $2 } ' | sed -e s/addr://) ;;
+		"vbPmg")      MY_IP=$(/sbin/ifconfig enp0s3 | awk '/inet/ { print $2 } ' | sed -e s/addr://) ;;
+		"ustation")   MY_IP=$(/sbin/ifconfig enp2s0 | awk '/inet/ { print $2 } ' | sed -e s/addr://) ;;		
+		*)            MY_IP=$(/sbin/ifconfig eth0   | awk '/inet/ { print $2 } ' | sed -e s/addr://) ;;
 	esac
 
   echo ${MY_IP:-"Not connected"}
