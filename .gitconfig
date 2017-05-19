@@ -1,0 +1,19 @@
+[user]
+	name = Peter
+	email = peter.malmberg@gmail.com
+	name = Peter
+	name = Peter
+[core]
+	editor = jed
+[diff]
+	external = /home/pmg/bin/git_diff_meld.py
+[push]
+	default = simple
+[alias]
+  co = checkout
+	ci = commit
+	st = status
+	br = branch
+	hist = log --pretty=format:\"%h %ad | %s%d [%an]\" --graph --date=short 
+	type = cat-file -t 
+	dump = cat-file -p

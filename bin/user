@@ -65,6 +65,7 @@ configFiles=(        \
 	"~/.bash_profile"  \
   "~/.jedrc"         \
 	"~/bin"            \
+	"~/.gitconfig"     \
 )
 
 #
@@ -84,15 +85,14 @@ cf() {
   fi
 }
 
-config() { ## Create symbolic links 
-  
+config() { ## Create symbolic links   
 	for pkg in ${configFiles[@]}; do
 		cf ${pkg}
   done
 }
 
 nisse() { ## Kommando nisse
-exit
+  exit
 }
 
 #--------------------------------------------------------------------- 
