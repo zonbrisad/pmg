@@ -143,6 +143,8 @@ pythonDevPkgs=(                \
   "python3-guidata"            \
   "python3-numpy"              \
   "python3-scipy"              \
+	"pyqt5-dev-tools"            \
+	"pyqt5-examples"             \
 )
 
 #---------------------------------------------------------------------
