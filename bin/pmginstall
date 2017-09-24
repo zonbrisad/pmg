@@ -64,6 +64,7 @@ develToolsPkgs=(    \
   "flex"            \
   "texinfo"         \
   "git"             \
+	"gitk"            \
   "subversion"      \
   "meld"            \
 	"doxygen"         \
