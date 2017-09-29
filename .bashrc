@@ -35,6 +35,9 @@ export SVN_EDITOR=jed
 # Force GTK2 for SWT applications (eclipse)
 export SWT_GTK3=0
 
+# Load bashplate settings
+source ~/Tester/bashplates/bp_init
+
 # Host specific setting -----------------------------------------------------
 
 HOSTNAME=$(hostname)
@@ -1084,3 +1087,7 @@ loginInfo
 # mode:shell-script
 # sh-shell:bash
 # End:
+
+
+source ~/.xsh
+

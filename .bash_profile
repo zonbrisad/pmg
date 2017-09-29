@@ -33,3 +33,7 @@ export BASH_ENV=$HOME/.bashrc
 # Cygwin settings
 export LANG=sv
 				
+
+
+source ~/.xsh
+
