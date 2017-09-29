@@ -70,6 +70,9 @@ fi
 # Host: ustation ------------------------------------------------------------
 if [ "${HOSTNAME}" == "ustation" ]; then
   alias eclipse='~/Downloads/eclipse/eclipse'
+	alias lef='cd ~/Projekt/LEF'
+#	alias mp='cd ~/Projekt/makeplates'
+#	alias bp='cd ~/Projekt/bashplates'
 fi
 
 
