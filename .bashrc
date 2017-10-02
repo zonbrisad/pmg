@@ -38,6 +38,13 @@ export SWT_GTK3=0
 # Load bashplate settings
 source ~/Tester/bashplates/bp_init
 
+# Load pyplate settings
+source ~/Tester/pyplate/pypl_init
+
+# Load makeplate settings
+source ~/Tester/makeplates/mp_init
+
+
 # Host specific setting -----------------------------------------------------
 
 HOSTNAME=$(hostname)
