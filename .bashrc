@@ -36,7 +36,10 @@ export SVN_EDITOR=jed
 export SWT_GTK3=0
 
 # Load bashplate settings
-source ~/Tester/bashplates/bp_init
+source ~/Project/bashplates/bp_init
+
+source ~/Project/makeplates/mp_init
+
 
 # Host specific setting -----------------------------------------------------
 
