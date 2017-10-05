@@ -41,6 +41,13 @@ source ~/Project/bashplates/bp_init
 source ~/Project/makeplates/mp_init
 
 
+# Load pyplate settings
+source ~/Tester/pyplate/pypl_init
+
+# Load makeplate settings
+source ~/Tester/makeplates/mp_init
+
+
 # Host specific setting -----------------------------------------------------
 
 HOSTNAME=$(hostname)
