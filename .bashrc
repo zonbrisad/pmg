@@ -21,6 +21,11 @@
 # ---------------------------------------------------------------------------
 
 
+# Host specific vars --------------------------------------------------------
+
+HOSTNAME=$(hostname)
+OS=$(uname -s)
+
 # Paths ---------------------------------------------------------------------
 
 export PATH=${PATH}:/home/pmg/Projekt/RaspberryPi/tools/arm-bcm2708/gcc-linaro-arm-linux-gnueabihf-raspbian-x64/bin
@@ -43,11 +48,6 @@ source ~/Tester/pyplate/pypl_init
 
 # Load makeplate settings
 source ~/Tester/makeplates/mp_init
-
-
-# Host specific setting -----------------------------------------------------
-
-HOSTNAME=$(hostname)
 
 # Host: fileserver ----------------------------------------------------------
 if [ "${HOSTNAME}" == "fileserver" ]; then
@@ -98,7 +98,20 @@ if [ -f /etc/bashrc ]; then
   . /etc/bashrc   # --> Read /etc/bashrc, if present.
 fi
 			
-			
+
+FLAG_BLUE="\x1b[48;5;20m"
+FLAG_YELLOW="\x1b[48;5;226m"
+
+flag() {
+  echo -e "${FLAG_BLUE}        ${FLAG_YELLOW}  ${FLAG_BLUE}               ${E_END}"
+	echo -e "${FLAG_BLUE}        ${FLAG_YELLOW}  ${FLAG_BLUE}               ${E_END}"
+	echo -e "${FLAG_BLUE}        ${FLAG_YELLOW}  ${FLAG_BLUE}               ${E_END}"
+	echo -e "${FLAG_YELLOW}                         ${E_END}"
+	echo -e "${FLAG_BLUE}        ${FLAG_YELLOW}  ${FLAG_BLUE}               ${E_END}"
+	echo -e "${FLAG_BLUE}        ${FLAG_YELLOW}  ${FLAG_BLUE}               ${E_END}"
+	echo -e "${FLAG_BLUE}        ${FLAG_YELLOW}  ${FLAG_BLUE}               ${E_END}"
+}
+							
 #--------------------------------------------------------------
 #  Automatic setting of $DISPLAY (if not set already).
 #  This works for me - your mileage may vary. . . .
@@ -499,6 +512,9 @@ alias df='df -kTh'
 
 alias eb='jed ~/.bashrc'
 
+
+alias grep='grep --color=auto'
+
 # The 'ls' family -----------------------------------------------------------
 
 # Add colors for filetype and  human-readable sizes by default on 'ls':
@@ -752,6 +768,9 @@ function my_ip() { # Get IP adress on ethernet.
 }
 					
 function ii() {  # Get current host related info.
+  echo
+	flag
+	echo
 
   echo -e  "\n${Green}Hostname:   ${BGreen}$HOSTNAME $NC " 
 	printLine
@@ -759,8 +778,8 @@ function ii() {  # Get current host related info.
 	printInfo "Username:"          "$USER"
 	printInfo "Current date:"      "$(date)"
 	printInfo "Local IP Address:"  "$(my_ip)"
-#	printInfo "Machine Uptime:"    "$(uptime -p)"
-	printInfo "Machine Uptime:"    "$(uptime)"
+	printInfo "Machine Uptime:"    "$(uptime -p)"
+#	printInfo "Machine Uptime:"    "$(uptime)"
 	printInfo "Machine Type:"      "$(uname -m)"
 	printInfo "Disk space:" ""; mydf / $HOME
 	echo -e ""
