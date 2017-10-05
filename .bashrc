@@ -33,6 +33,19 @@ export LD_LIBRARY_PATH=/usr/local/lib
 # Application settings ------------------------------------------------------
 export SVN_EDITOR=jed
 
+# Force GTK2 for SWT applications (eclipse)
+export SWT_GTK3=0
+
+# Load bashplate settings
+source ~/Tester/bashplates/bp_init
+
+# Load pyplate settings
+source ~/Tester/pyplate/pypl_init
+
+# Load makeplate settings
+source ~/Tester/makeplates/mp_init
+
+
 # Host specific setting -----------------------------------------------------
 
 HOSTNAME=$(hostname)
@@ -67,6 +80,11 @@ fi
 # Host: Virtual machine (Abelko) --------------------------------------------
 if [ "${HOSTNAME}" == "vbPmg" ]; then
   alias eclipse='~/bin/eclipse/eclipse'
+fi
+
+# Host: ustation ------------------------------------------------------------
+if [ "${HOSTNAME}" == "ustation" ]; then
+  alias eclipse='~/Downloads/eclipse/eclipse'
 fi
 
 
@@ -504,6 +522,19 @@ alias la='ll -A'           #  Show hidden files.
 alias tree='tree -Csuh'    #  Nice alternative to 'recursive ls' ...
 
 
+# Git aliases ---------------------------------------------------------------
+alias gs='git status '
+alias ga='git add '
+alias gb='git branch '
+alias gc='git commit'
+alias gd='git diff'
+alias go='git checkout '
+alias gk='gitk --all&'
+alias gx='gitx --all'
+
+alias got='git '
+alias get='git '
+
 # Tailoring 'less' ----------------------------------------------------------
 
 alias more='less'
@@ -716,9 +747,10 @@ function mydf()         # Pretty-print of 'df' output.
 function my_ip() { # Get IP adress on ethernet.
   
 	case ${HOSTNAME} in
-	  "fileserver") MY_IP=$(/sbin/ifconfig br0 | awk '/inet/ { print $2 } ' | sed -e s/addr://) ;;
-		"vbPmg")      MY_IP=$(/sbin/ifconfig enp0s3 | awk '/inet/ { print $2 } ' | sed -e s/addr://) ;;     
-		*)            MY_IP=$(/sbin/ifconfig eth0 | awk '/inet/ { print $2 } ' | sed -e s/addr://) ;;
+	  "fileserver") MY_IP=$(/sbin/ifconfig br0    | awk '/inet/ { print $2 } ' | sed -e s/addr://) ;;
+		"vbPmg")      MY_IP=$(/sbin/ifconfig enp0s3 | awk '/inet/ { print $2 } ' | sed -e s/addr://) ;;
+		"ustation")   MY_IP=$(/sbin/ifconfig enp2s0 | awk '/inet/ { print $2 } ' | sed -e s/addr://) ;;		
+		*)            MY_IP=$(/sbin/ifconfig eth0   | awk '/inet/ { print $2 } ' | sed -e s/addr://) ;;
 	esac
 
   echo ${MY_IP:-"Not connected"}
@@ -1067,3 +1099,7 @@ loginInfo
 # mode:shell-script
 # sh-shell:bash
 # End:
+
+
+source ~/.xsh
+
