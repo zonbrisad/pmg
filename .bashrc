@@ -23,8 +23,9 @@
 
 # Paths ---------------------------------------------------------------------
 
-export PATH=${PATH}:/home/pmg/Projekt/RaspberryPi/tools/arm-bcm2708/gcc-linaro-arm-linux-gnueabihf-raspbian-x64/bin
+#export PATH=${PATH}:/home/pmg/Projekt/RaspberryPi/tools/arm-bcm2708/gcc-linaro-arm-linux-gnueabihf-raspbian-x64/bin
 export PATH=${PATH}:"$HOME"/.cabal/bin
+export PATH=${PATH}:"$HOME"/bin
 
 export LD_LIBRARY_PATH=/usr/local/lib
 
@@ -53,13 +54,17 @@ if [ "${HOSTNAME}" == "fileserver" ]; then
 	alias b5='cd /storage/backup/fileserver/daily_5/storage/home/pmg'
 fi
 
-# Host: builderver (Abelko) -------------------------------------------------
+# Host: buildserver (Abelko) -------------------------------------------------
 if [ "${HOSTNAME}" == "buildroot" ]; then
+  # Load GCC environment for Poky
+#  source  /opt/poky/fgw/environment-setup-cortexa7hf-neon-poky-linux-gnueabi
+	alias poky='/opt/poky/fgw/environment-setup-cortexa7hf-neon-poky-linux-gnueabi'
   alias eclipse='/opt/eclipse_luna_sr2/eclipse'
+  alias eclipsen='~/bin/eclipse/eclipse'
   alias netbeans='/home/peterm/bin/netbeans/bin/netbeans'
 fi
 
-# Host: Virtual machine (Abelko) -------------------------------------------------
+# Host: Virtual machine (Abelko) --------------------------------------------
 if [ "${HOSTNAME}" == "vbPmg" ]; then
   alias eclipse='~/bin/eclipse/eclipse'
 fi
