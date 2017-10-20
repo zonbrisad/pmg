@@ -41,8 +41,6 @@ source ~/Project/bashplates/bp_init
 source ~/Project/makeplates/mp_init
 
 
-# Load pyplate settings
-source ~/Tester/pyplate/pypl_init
 
 # Load makeplate settings
 source ~/Tester/makeplates/mp_init
@@ -86,6 +84,9 @@ if [ "${HOSTNAME}" == "ustation" ]; then
 	alias lef='cd ~/Projekt/LEF'
 #	alias mp='cd ~/Projekt/makeplates'
 #	alias bp='cd ~/Projekt/bashplates'
+  # Load pyplate settings
+  source ~/Project/pyplate/pyplate_init
+
 fi
 
 
@@ -1102,5 +1103,5 @@ loginInfo
 # End:
 
 
-source ~/.xsh
+#source ~/.xsh
 
