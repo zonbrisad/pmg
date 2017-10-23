@@ -23,8 +23,9 @@
 
 # Paths ---------------------------------------------------------------------
 
-export PATH=${PATH}:/home/pmg/Projekt/RaspberryPi/tools/arm-bcm2708/gcc-linaro-arm-linux-gnueabihf-raspbian-x64/bin
+#export PATH=${PATH}:/home/pmg/Projekt/RaspberryPi/tools/arm-bcm2708/gcc-linaro-arm-linux-gnueabihf-raspbian-x64/bin
 export PATH=${PATH}:"$HOME"/.cabal/bin
+export PATH=${PATH}:"$HOME"/bin
 
 export LD_LIBRARY_PATH=/usr/local/lib
 
@@ -34,17 +35,6 @@ export SVN_EDITOR=jed
 
 # Force GTK2 for SWT applications (eclipse)
 export SWT_GTK3=0
-
-# Load bashplate settings
-source ~/Project/bashplates/bp_init
-
-source ~/Project/makeplates/mp_init
-
-
-
-# Load makeplate settings
-source ~/Tester/makeplates/mp_init
-
 
 # Host specific setting -----------------------------------------------------
 
@@ -65,28 +55,56 @@ if [ "${HOSTNAME}" == "fileserver" ]; then
 	alias b3='cd /storage/backup/fileserver/daily_3/storage/home/pmg'
 	alias b4='cd /storage/backup/fileserver/daily_4/storage/home/pmg'
 	alias b5='cd /storage/backup/fileserver/daily_5/storage/home/pmg'
+	
+	# Load bashplate settings
+  source ~/Tester/bashplates/bp_init
+
 fi
 
-# Host: builderver (Abelko) -------------------------------------------------
+# Host: buildserver (Abelko) -------------------------------------------------
 if [ "${HOSTNAME}" == "buildroot" ]; then
+  # Load GCC environment for Poky
+#  source  /opt/poky/fgw/environment-setup-cortexa7hf-neon-poky-linux-gnueabi
+	alias poky='/opt/poky/fgw/environment-setup-cortexa7hf-neon-poky-linux-gnueabi'
   alias eclipse='/opt/eclipse_luna_sr2/eclipse'
+  alias eclipsen='~/bin/eclipse/eclipse'
   alias netbeans='/home/peterm/bin/netbeans/bin/netbeans'
+	
+	# Load bashplate settings
+  source ~/tester/bashplates/bp_init
+	
+	# Load makeplate settings
+  source ~/tester/makeplates/mp_init
+
 fi
 
 # Host: Virtual machine (Abelko) --------------------------------------------
 if [ "${HOSTNAME}" == "vbPmg" ]; then
   alias eclipse='~/bin/eclipse/eclipse'
+	# Load bashplate settings
+  source ~/Tester/bashplates/bp_init
+	
+	# Load makeplate settings
+  source ~/Tester/makeplates/mp_init
+
 fi
 
 # Host: ustation ------------------------------------------------------------
 if [ "${HOSTNAME}" == "ustation" ]; then
   alias eclipse='~/Downloads/eclipse/eclipse'
 	alias lef='cd ~/Projekt/LEF'
+	
 #	alias mp='cd ~/Projekt/makeplates'
 #	alias bp='cd ~/Projekt/bashplates'
+
   # Load pyplate settings
   source ~/Project/pyplate/pyplate_init
 
+	# Load bashplate settings
+  source ~/Project/bashplates/bp_init
+
+  # Load makeplate settings
+  source ~/Project/makeplates/mp_init
 fi
 
 
