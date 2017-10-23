@@ -47,10 +47,10 @@ HOSTNAME=$(hostname)
 if [ "${HOSTNAME}" == "fileserver" ]; then
   alias netbeans='~/bin/netbeans-8.1/bin/netbeans'
 	alias eclipse='~/bin/eclipse/eclipse'
-	alias dht='cd ~/make/dht'
+#	alias dht='cd ~/make/dht'
 	alias lef='cd ~/Projekt/LEF'
-	alias mp='cd ~/Projekt/makeplates'
-	alias bp='cd ~/Projekt/bashplates'
+#	alias mp='cd ~/Projekt/makeplates'
+#	alias bp='cd ~/Projekt/bashplates'
 	alias b='cd /storage/backup/fileserver'
 	alias b0='cd /storage/backup/fileserver/daily_0/storage/home/pmg'
 	alias b1='cd /storage/backup/fileserver/daily_1/storage/home/pmg'
