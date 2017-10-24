@@ -283,10 +283,41 @@ EX_OK=0            # successful termination
 
 ##-
 
-# Print a divider row
-printLine() { ##D Print a line  
-  echo -e "${E_BOLD_WHITE}------------------------------------------------------------------------------${E_END}"
+# Print text with row
+#
+# arg1 text to be printed
+# arg2 text color
+# arg3 line color
+# arg4 middle character
+# arg5 line character
+bpPrintLineC() { ##D Print text with adjusted line after with selectable colors
+  len1=${#1}
+	len4=${#4}
+		
+	echo -en ${2}${1}${4}${3}
+	l=$((${COLUMNS} - ${len1} - ${len4} - 3 ))
+	seq -s${5} ${l}|tr -d '[:digit:]'
+	echo -en ${E_END}
 }
+						
+# Print text with row
+#
+# arg1 text to be printed
+# arg2 text color
+# arg3 line color
+bpTextLineC() { ##D Print text with adjusted line after with selectable colors
+  bpPrintLineC "$1" "$2" "$3" " " "-"
+}
+
+bpTextLine() { ##D Print text with line after
+  bpTextLineC "$1" "${BP_C_LINE_TEXT}" "${BP_C_LINE}"
+}
+
+# Print a divider row
+bpLine() { ##D Print a line  
+  bpPrintLineC "" "${BP_C_LINE}" "${BP_C_LINE}" "" "-"
+}
+									
 	
 # Print text into two columns
 #
@@ -773,25 +804,16 @@ function ii() {  # Get current host related info.
 	echo
 
   echo -e  "\n${Green}Hostname:   ${BGreen}$HOSTNAME $NC " 
-	printLine
+	bpLine
 	echo -e ""
 	printInfo "Username:"          "$USER"
 	printInfo "Current date:"      "$(date)"
 	printInfo "Local IP Address:"  "$(my_ip)"
 	printInfo "Machine Uptime:"    "$(uptime -p)"
-#	printInfo "Machine Uptime:"    "$(uptime)"
 	printInfo "Machine Type:"      "$(uname -m)"
 	printInfo "Disk space:" ""; mydf / $HOME
 	echo -e ""
-  printLine
-
-#  echo -e "\nYou are logged on ${BRed}$HOST"
-#	echo -e "\n${BRed}Additionnal information:$NC " ;
-#	uname -a
-#	echo -e "\n${BRed}Users logged on:$NC " ; w -hs |
-#	cut -d " " -f1 | sort | uniq
-#	echo -e "\n${BRed}Open connections :$NC "; netstat -pan --inet;
-
+  bpLine
 }
 
 function loginInfo() {
@@ -801,7 +823,7 @@ function loginInfo() {
 	
   if [ -x /usr/games/fortune ]; then
     /usr/games/fortune -s     # Makes our day a bit more fun.... :-)
-		printLine
+		bpLine
   fi
 
 }
