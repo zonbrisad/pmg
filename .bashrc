@@ -28,8 +28,9 @@ OS=$(uname -s)
 
 # Paths ---------------------------------------------------------------------
 
-export PATH=${PATH}:/home/pmg/Projekt/RaspberryPi/tools/arm-bcm2708/gcc-linaro-arm-linux-gnueabihf-raspbian-x64/bin
+#export PATH=${PATH}:/home/pmg/Projekt/RaspberryPi/tools/arm-bcm2708/gcc-linaro-arm-linux-gnueabihf-raspbian-x64/bin
 export PATH=${PATH}:"$HOME"/.cabal/bin
+export PATH=${PATH}:"$HOME"/bin
 
 export LD_LIBRARY_PATH=/usr/local/lib
 
@@ -40,23 +41,20 @@ export SVN_EDITOR=jed
 # Force GTK2 for SWT applications (eclipse)
 export SWT_GTK3=0
 
-# Load bashplate settings
-source ~/Tester/bashplates/bp_init
+#source ~/Tester/pyplate/pypl_init
 
-# Load pyplate settings
-source ~/Tester/pyplate/pypl_init
+# Host specific setting -----------------------------------------------------
 
-# Load makeplate settings
-source ~/Tester/makeplates/mp_init
+HOSTNAME=$(hostname)
 
 # Host: fileserver ----------------------------------------------------------
 if [ "${HOSTNAME}" == "fileserver" ]; then
   alias netbeans='~/bin/netbeans-8.1/bin/netbeans'
 	alias eclipse='~/bin/eclipse/eclipse'
-	alias dht='cd ~/make/dht'
+#	alias dht='cd ~/make/dht'
 	alias lef='cd ~/Projekt/LEF'
-	alias mp='cd ~/Projekt/makeplates'
-	alias bp='cd ~/Projekt/bashplates'
+#	alias mp='cd ~/Projekt/makeplates'
+#	alias bp='cd ~/Projekt/bashplates'
 	alias b='cd /storage/backup/fileserver'
 	alias b0='cd /storage/backup/fileserver/daily_0/storage/home/pmg'
 	alias b1='cd /storage/backup/fileserver/daily_1/storage/home/pmg'
@@ -64,22 +62,45 @@ if [ "${HOSTNAME}" == "fileserver" ]; then
 	alias b3='cd /storage/backup/fileserver/daily_3/storage/home/pmg'
 	alias b4='cd /storage/backup/fileserver/daily_4/storage/home/pmg'
 	alias b5='cd /storage/backup/fileserver/daily_5/storage/home/pmg'
+	
+	# Load bashplate settings
+  source ~/Tester/bashplates/bp_init
+
 fi
 
-# Host: builderver (Abelko) -------------------------------------------------
+# Host: buildserver (Abelko) -------------------------------------------------
 if [ "${HOSTNAME}" == "buildroot" ]; then
+  # Load GCC environment for Poky
+#  source  /opt/poky/fgw/environment-setup-cortexa7hf-neon-poky-linux-gnueabi
+	alias poky='/opt/poky/fgw/environment-setup-cortexa7hf-neon-poky-linux-gnueabi'
   alias eclipse='/opt/eclipse_luna_sr2/eclipse'
+  alias eclipsen='~/bin/eclipse/eclipse'
   alias netbeans='/home/peterm/bin/netbeans/bin/netbeans'
+	
+	# Load bashplate settings
+  source ~/tester/bashplates/bp_init
+	
+	# Load makeplate settings
+  source ~/tester/makeplates/mp_init
+
 fi
 
 # Host: Virtual machine (Abelko) --------------------------------------------
 if [ "${HOSTNAME}" == "vbPmg" ]; then
   alias eclipse='~/bin/eclipse/eclipse'
+	# Load bashplate settings
+  source ~/Tester/bashplates/bp_init
+	
+	# Load makeplate settings
+  source ~/Tester/makeplates/mp_init
+
 fi
 
 # Host: ustation ------------------------------------------------------------
 if [ "${HOSTNAME}" == "ustation" ]; then
   alias eclipse='~/Downloads/eclipse/eclipse'
+	# Load bashplate settings
+  source ~/Tester/bashplates/bp_init
 fi
 
 
@@ -1137,5 +1158,5 @@ loginInfo
 # End:
 
 
-source ~/.xsh
+#source ~/.xsh
 
