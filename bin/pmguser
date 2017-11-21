@@ -57,10 +57,12 @@ EDITOR=jed
 # User defined functions
 #---------------------------------------------------------------------
 
+##N- Setup
+
 git_setup() { ## Setup git correctly
-  git config --global user.name $USERNAME
-	git config --global user.email $USEREMAIL
-	git config --global core.editor $EDITOR
+  git config --global user.name $BP_NAME
+	git config --global user.email $BP_EMAIL
+	git config --global core.editor $BP_EDITOR
   git config --global diff.external ~/bin/git_diff_meld.py
 #	git config --global push.default simple	
 #	git config --global push.default master
@@ -104,9 +106,6 @@ config() { ## Create symbolic links
   done
 }
 
-nisse() { ## Kommando nisse
-  exit
-}
 
 #--------------------------------------------------------------------- 
 # Bashplate settings
@@ -125,7 +124,7 @@ USAGE="Usage: ${scriptName} command [option]"
 DESC="Script for various user setup functions"
 
 ##V logfile (uncomment to use logfile)
-LOGFILE=${scriptPath}/${scriptName}.log
+#LOGFILE=${scriptPath}/${scriptName}.log
 
 ##V Logging options (uncomment to activate logging parameters)
 LOG_OK=1
