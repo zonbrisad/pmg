@@ -58,13 +58,11 @@ basicPkgs=(         \
   "jed"             \
   "htop"            \
   "nmap"            \
-  "puppet"          \
-  "puppetmaster"    \
-  "puppet-el"       \
   "lm-sensors"      \
   "apt-file"        \
+	"net-tools"       \
+	"bridge-utils"    \
 )
-
 
 develToolsPkgs=(    \
   "bison"           \
@@ -75,6 +73,7 @@ develToolsPkgs=(    \
   "subversion"      \
   "meld"            \
 	"doxygen"         \
+	"shellcheck"      \
 )
 
 develCPkgs=(        \
@@ -162,27 +161,51 @@ pythonDevPkgs=(                \
 # User defined functions
 #---------------------------------------------------------------------
 
-
-#
-# Remove line in file containing a given string
-# $1 file
-# $2 string
-#
-removeLineContaining() {
-  grep -v $2 $1 > $2 
-}
-
 #
 # IP nr
 #
 #IP=`ip add show dev eth0 | grep "inet " | cut -c10-24 | cut -f1 -d'/'`
 #DATE=`date`
 
+##N- Utils
 
 mountServer() {  ## Add mount rule to fileserver in fstab
   bpAssertRoot
   bpMkDir /storage
   bpAppendIfNoSuchLine /etc/fstab  "fileserver:/storage  /storage nfs    auto   0 0"
+}
+
+printList() { # Print all packages
+	# list all packages
+#  bpTextLine $
+#	bpLine
+	for pkg in ${@}; do
+    echo ${pkg}
+  done
+	
+	
+}
+
+list() { ## List packages
+ # printList ${develToolsPkgs[@]}
+
+  bpTextLine   basic
+  printList ${basicPkgs[@]}
+	
+	bpTextLine   server
+  printList ${serverPkgs[@]}
+
+  bpTextLine cDevelop
+	printList ${develCPkgs[@]}
+	
+	bpTextLine  ARMDevelop
+  printList ${armDevPkgs[@]}
+
+  bpTextLine avrDevelop
+	printList ${avrDevPkgs[@]}
+	
+  bpTextLine Develop
+ 	printList ${develToolsPkgs[@]}
 }
 
 ##N- Install
@@ -205,9 +228,9 @@ installG() {
   done
 }
 
-tools() {                  ## Install development toolls like git svn
+tools() {                  ## Install development tools like git svn
   bpAssertRoot
-  installG ${develToolsPkgs[@]} 
+  installG ${develToolsPkgs[@]}
 }
 
 basic() {                   ## Install basic tools like editors
