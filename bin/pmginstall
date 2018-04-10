@@ -6,12 +6,15 @@
 #  [Description]
 #  Linux admin help script
 #
-#  [Author] 
+#  [Author]
 #    Peter Malmberg <peter.malmberg@gmail.com>
 #
-#  [Licence] 
+#  [Date]
+#    2016-xx-xx
+#
+#  [License]
 #     MIT
-#    
+#
 #---------------------------------------------------------------------
 # [Bashplates]
 # This script is generated from bashplates template generator.
@@ -174,6 +177,7 @@ removeLineContaining() {
 #
 #IP=`ip add show dev eth0 | grep "inet " | cut -c10-24 | cut -f1 -d'/'`
 #DATE=`date`
+
 
 mountServer() {  ## Add mount rule to fileserver in fstab
   bpAssertRoot
