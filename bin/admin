@@ -1,4 +1,6 @@
-#!/bin/bash
+#!/usr/bin/env bash
+# shellcheck disable=2034
+# shellcheck disable=1090
 #---------------------------------------------------------------------
 #
 #  [Description]

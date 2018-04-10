@@ -34,12 +34,16 @@ export PATH=${PATH}:"$HOME"/bin
 
 export LD_LIBRARY_PATH=/usr/local/lib
 
-
 # Application settings ------------------------------------------------------
 export SVN_EDITOR=jed
 
 # Force GTK2 for SWT applications (eclipse)
 export SWT_GTK3=0
+
+# Needed for gdb
+export SHELL=/bin/bash
+#Needed for eclipse
+#export TERM=gnome-terminal
 
 #source ~/Tester/pyplate/pypl_init
 
@@ -48,7 +52,7 @@ export SWT_GTK3=0
 HOSTNAME=$(hostname)
 
 # Host: fileserver ----------------------------------------------------------
-if [ "${HOSTNAME}" == "fileserver" ]; then
+host_fileserver() {
   alias netbeans='~/bin/netbeans-8.1/bin/netbeans'
 	alias eclipse='~/bin/eclipse/eclipse'
 #	alias dht='cd ~/make/dht'
@@ -65,13 +69,12 @@ if [ "${HOSTNAME}" == "fileserver" ]; then
 	
 	# Load bashplate settings
   source ~/Tester/bashplates/bp_init
-
-fi
+}
 
 # Host: buildserver (Abelko) -------------------------------------------------
-if [ "${HOSTNAME}" == "buildroot" ]; then
+host_buildroot() {
   # Load GCC environment for Poky
-#  source  /opt/poky/fgw/environment-setup-cortexa7hf-neon-poky-linux-gnueabi
+	#  source  /opt/poky/fgw/environment-setup-cortexa7hf-neon-poky-linux-gnueabi
 	alias poky='/opt/poky/fgw/environment-setup-cortexa7hf-neon-poky-linux-gnueabi'
   alias eclipse='/opt/eclipse_luna_sr2/eclipse'
   alias eclipsen='~/bin/eclipse/eclipse'
@@ -82,27 +85,28 @@ if [ "${HOSTNAME}" == "buildroot" ]; then
 	
 	# Load makeplate settings
   source ~/tester/makeplates/mp_init
-
-fi
+}
 
 # Host: Virtual machine (Abelko) --------------------------------------------
-if [ "${HOSTNAME}" == "vbPmg" ]; then
+host_vbPmg() {
   alias eclipse='~/bin/eclipse/eclipse'
 	# Load bashplate settings
   source ~/Tester/bashplates/bp_init
 	
 	# Load makeplate settings
   source ~/Tester/makeplates/mp_init
-
-fi
+}
 
 # Host: ustation ------------------------------------------------------------
-if [ "${HOSTNAME}" == "ustation" ]; then
+host_ustation() {
   alias eclipse='~/Downloads/eclipse/eclipse'
 	alias lef='cd ~/Projekt/LEF'
 	
 #	alias mp='cd ~/Projekt/makeplates'
 #	alias bp='cd ~/Projekt/bashplates'
+
+  # PyQt5 example and demos
+  alias pqe='cd /usr/share/doc/pyqt5-examples/examples'
 
   # Load pyplate settings
   source ~/Project/pyplate/pyplate_init
@@ -112,24 +116,42 @@ if [ "${HOSTNAME}" == "ustation" ]; then
 
   # Load makeplate settings
   source ~/Project/makeplates/mp_init
-fi
+}
+
+#---------------------------------------------------------------------
+# bashrc personal functions
+#---------------------------------------------------------------------
+
+bpInstall() { ## Install a package
+  bpAssertRoot
+  dpkg -i $1
+	apt-get install -f
+}
+
+#---------------------------------------------------------------------
+# bashrc settings
+#---------------------------------------------------------------------
+bpInitSettings() {
+
+  echo
+}
+
+#---------------------------------------------------------------------
+# Signal traps
+#---------------------------------------------------------------------
+
+function bpExit() {             # Function to run 
+	return 1
+}
 
 
 # SSH agent
 #eval `ssh-agent -s`
 #ssh-add ~/.ssh/id_dsa
 
-
 # If not running interactively, don't do anything
 [ -z "$PS1" ] && return
 
-
-# Source global definitions (if any) ----------------------------------------
-
-if [ -f /etc/bashrc ]; then
-  . /etc/bashrc   # --> Read /etc/bashrc, if present.
-fi
-			
 
 FLAG_BLUE="\x1b[48;5;20m"
 FLAG_YELLOW="\x1b[48;5;226m"
@@ -153,8 +175,7 @@ flag() {
 #+ of cases.
 #--------------------------------------------------------------
 			
-function get_xserver ()
-{
+function get_xserver () {
   case $TERM in
 	  xterm )
 		XSERVER=$(who am i | awk '{print $NF}' |
@@ -171,18 +192,20 @@ function get_xserver ()
 		;;
 	esac
 }
-																			 
-if [ -z ${DISPLAY:=""} ]; then
-  get_xserver
-	if [[ -z ${XSERVER}  || ${XSERVER} == $(hostname) || ${XSERVER} == "unix" ]]; then
-		DISPLAY=":0.0"          # Display on local host.
-	else
-	  DISPLAY=${XSERVER}:0.0     # Display on remote host.
+
+bpInitDisplay() { ##D Init DISPLAY variable
+
+  if [ -z ${DISPLAY:=""} ]; then
+    get_xserver
+	  if [[ -z ${XSERVER}  || ${XSERVER} == $(hostname) || ${XSERVER} == "unix" ]]; then
+		  DISPLAY=":0.0"          # Display on local host.
+	  else
+	    DISPLAY=${XSERVER}:0.0     # Display on remote host.
+    fi
   fi
-fi
 		
-export DISPLAY
-		
+  export DISPLAY	
+}
 
 # Some settings -------------------------------------------------------------
 		
@@ -212,106 +235,164 @@ shopt -s extglob       # Necessary for programmable completion.
 shopt -u mailwarn
 unset MAILCHECK        # Don't want my shell to warn me of incoming mail.
 
-
-# Greeting, motd etc. -------------------------------------------------------
-
-# Color definitions (taken from Color Bash Prompt HowTo).
-# Some colors might look different of some terminals.
-# For example, I see 'Bold Red' as 'orange' on my screen,
-# hence the 'Green' 'BRed' 'Red' sequence I often use in my prompt.
-
-
-# Normal Colors
-Black='\e[0;30m'        # Black
-Red='\e[0;31m'          # Red
-Green='\e[0;32m'        # Green
-Yellow='\e[0;33m'       # Yellow
-Blue='\e[0;34m'         # Blue
-Purple='\e[0;35m'       # Purple
-Cyan='\e[0;36m'         # Cyan
-White='\e[0;37m'        # White
-
-# Bold
-BBlack='\e[1;30m'       # Black
-BRed='\e[1;31m'         # Red
-BGreen='\e[1;32m'       # Green
-BYellow='\e[1;33m'      # Yellow
-BBlue='\e[1;34m'        # Blue
-BPurple='\e[1;35m'      # Purple
-BCyan='\e[1;36m'        # Cyan
-BWhite='\e[1;37m'       # White
-
-# Background
-On_Black='\e[40m'       # Black
-On_Red='\e[41m'         # Red
-On_Green='\e[42m'       # Green
-On_Yellow='\e[43m'      # Yellow
-On_Blue='\e[44m'        # Blue
-On_Purple='\e[45m'      # Purple
-On_Cyan='\e[46m'        # Cyan
-On_White='\e[47m'       # White
-
-NC="\e[m"               # Color Reset
-
-
-ALERT=${BWhite}${On_Red} # Bold White on red background
-
 #--------------------------------------------------------------------- 
 # System functions and settings
 #---------------------------------------------------------------------
 
+#---------------------------------------------------------------------
+# Terminal codes
+#---------------------------------------------------------------------
+
 # ANSI foreground colors codes
 #
-E_BLACK='\e[0;30m'        # Black
-E_RED='\e[0;31m'          # Red
-E_GREEN='\e[0;32m'        # Green
-E_YELLOW='\e[0;33m'       # Yellow
-E_BLUE='\e[0;34m'         # Blue
-E_MAGENTA='\e[0;35m'      # Magenta
-E_CYAN='\e[0;36m'         # Cyan
-E_GRAY='\e[0;37m'         # Gray
-E_DARKGRAY='\e[1;30m'     # Dark Gray
-E_BR_RED='\e[1;31m'       # Bright Red
-E_BR_GREEN='\e[1;32m'     # Bright Green
-E_BR_YELLOW='\e[1;33m'    # Bright Yellow
-E_BR_BLUE='\e[1;34m'      # Bright Blue
-E_BR_MAGENTA='\e[1;35m'   # Bright Magenta
-E_BR_CYAN='\e[1;36m'      # Bright Cyan
-E_WHITE='\e[1;37m'        # White
+E_BLACK=$'\e[0;30m'        # Black
+E_RED=$'\e[0;31m'          # Red
+E_GREEN=$'\e[0;32m'        # Green
+E_YELLOW=$'\e[0;33m'       # Yellow
+E_BLUE=$'\e[0;34m'         # Blue
+E_MAGENTA=$'\e[0;35m'      # Magenta
+E_CYAN=$'\e[0;36m'         # Cyan
+E_GRAY=$'\e[0;37m'         # Gray
+E_DARKGRAY=$'\e[1;30m'     # Dark Gray
+E_BR_RED=$'\e[1;31m'       # Bright Red
+E_BR_GREEN=$'\e[1;32m'     # Bright Green
+E_BR_YELLOW=$'\e[1;33m'    # Bright Yellow
+E_BR_BLUE=$'\e[1;34m'      # Bright Blue
+E_BR_MAGENTA=$'\e[1;35m'   # Bright Magenta
+E_BR_CYAN=$'\e[1;36m'      # Bright Cyan
+E_WHITE=$'\e[1;37m'        # White
 
 # ANSI background color codes
 #
-E_ON_BLACK='\e[40m'       # Black
-E_ON_RED='\e[41m'         # Red
-E_ON_GREEN='\e[42m'       # Green
-E_ON_YELLOW='\e[43m'      # Yellow
-E_ON_BLUE='\e[44m'        # Blue
-E_ON_MAGENTA='\e[45m'     # Magenta
-E_ON_CYAN='\e[46m'        # Cyan
-E_ON_WHITE='\e[47m'       # White
+E_ON_BLACK=$'\e[40m'       # Black
+E_ON_RED=$'\e[41m'         # Red
+E_ON_GREEN=$'\e[42m'       # Green
+E_ON_YELLOW=$'\e[43m'      # Yellow
+E_ON_BLUE=$'\e[44m'        # Blue
+E_ON_MAGENTA=$'\e[45m'     # Magenta
+E_ON_CYAN=$'\e[46m'        # Cyan
+E_ON_WHITE=$'\e[47m'       # White
+
+# ANSI Text attributes
+E_ATTR_BOLD=$'\e[1m'
+E_ATTR_LOWI=$'\e[2m'
+E_ATTR_UNDERLINE=$'\e[4m'
+E_ATTR_BLINK=$'\e[5m'
+E_ATTR_REVERSE=$'\e[7m'
 
 # ANSI cursor operations
 #
-E_RETURN="\e[F"           # Move cursor to begining of line
-E_UP="\e[A"               # Move cursor one line up
-E_DOWN="\e[B"             # Move cursor one line down
-E_FORWARD="\e[C"          # Move cursor forward
-E_BACK="\e[D"             # Move cursor backward
-E_HIDE="\e[?25l"          # Hide cursor 
-E_SHOW="\e[?25h"          # Show cursor 
+E_RETURN=$'\e[F'           # Move cursor to begining of line
+E_UP=$'\e[A'               # Move cursor one line up
+E_DOWN=$'\e[B'             # Move cursor one line down
+E_FORWARD=$'\e[C'          # Move cursor forward
+E_BACK=$'\e[D'             # Move cursor backward
+E_HIDE=$'\e[?25l'          # Hide cursor
+E_SHOW=$'\e[?25h'          # Show cursor
 
-E_END="\e[m"              # Clear Attributes
+E_END=$'\e[m'              # Clear Attributes
 
-# Message colors
-E_INFO=$E_BR_CYAN
-E_WARNING=$E_BR_YELLOW
-E_ERROR=$E_BR_RED
-E_CRITICAL=$E_ON_RED$E_WHITE
+# Default Bashplate colortheme
+BP_C_OK=$E_BR_GREEN
+BP_C_INFO=$E_BR_CYAN
+BP_C_WARNING=$E_BR_YELLOW
+BP_C_ERROR=$E_BR_RED
+BP_C_CRITICAL=$E_ON_RED$E_WHITE
+BP_C_LINE=$E_DARKGRAY
+BP_C_LINE_TEXT=$E_YELLOW
+BP_C_DESCRIPTION=$E_GREEN
+BP_C_ID=$E_CYAN
+BP_C_FILENAME=$E_BR_GREEN
+BP_C_PATH=$E_GREEN
 
+# Shellscript colorize colors
+BP_C_RESERVED=$E_RED
+BP_C_COMMENT=$E_CYAN
+BP_C_STRING=$E_GREEN
+BP_C_VAR=$E_BR_YELLOW
 
-# Exit codes 
+# Exit codes
 #
-EX_OK=0            # successful termination 
+BP_E_OK=0            # successful termination
+
+
+ALERT=${BWhite}${On_Red} # Bold White on red background
+
+
+# Logging ---------------------------------------------------------
+
+##CN- IHELP Log functions
+
+#
+# Function logging to file
+#
+# Arg1 String to log to file
+#
+bpLog() { ##D Log to file command
+  # check for LOGFILE variable
+	if [ -n "$LOGFILE" ]; then
+  	ts=$(date +"%Y-%m-%d %H:%M:%S")
+		bpFilterEscape "$ts $1"  >> "${LOGFILE}"
+	fi
+}
+							
+bpLogOk() { ##D Log Ok message to file
+  bpLog "[ Ok ] $1"
+}
+								
+bpLogInfo() {  ##D Log Info message to file
+  bpLog "[Info] $1"
+}
+									
+bpLogWarning() {  ##D Log Warning message to file
+  bpLog "[Warn] $1"
+}
+										
+bpLogError() {  ##D Log Error message to file
+  bpLog "[Erro] $1"
+}
+											
+bpLogCritical() {  ##D Log Critical message to file
+  bpLog "[Crit] $1"
+}
+												
+##CN- IHELP Message
+
+bpOk() { ##D Success message
+  if [ -n "$LOG_OK" ]; then
+	  bpLogOk "$1"
+  fi
+	echo -e "[${BP_C_OK}Ok${E_END}] $1"
+}
+					
+bpInfo() { ##D Info message
+  if [ -n "$LOG_INFO" ]; then
+	  bpLogInfo "$1"
+	fi
+	echo -e "[${BP_C_INFO}Info${E_END}] $1"
+}
+										
+bpWarning() { ##D Warning message
+  if [ -n "$LOG_WARNING" ]; then
+	  bpLogWarning "$1"
+	fi
+	echo -e "[${BP_C_WARNING}Warning${E_END}] $1"
+}
+															
+bpError() { ##D Error message
+  if [ -n "$LOG_ERROR" ]; then
+	  bpLogError "$1"
+	fi
+	echo -e "[${BP_C_ERROR}Error${E_END}] $1"
+}
+																				
+bpCritical() { ##D Critical error message
+  if [ -n "$LOG_CRITICAL" ]; then
+	bpLogCritical "$1"
+	fi
+	echo -e "[${BP_C_CRITICAL}Critical${E_END}] $1"
+	bpExit
+}
 
 ##-
 
@@ -322,21 +403,23 @@ EX_OK=0            # successful termination
 # arg3 line color
 # arg4 middle character
 # arg5 line character
+#
 bpPrintLineC() { ##D Print text with adjusted line after with selectable colors
-  len1=${#1}
-	len4=${#4}
-		
-	echo -en ${2}${1}${4}${3}
-	l=$((${COLUMNS} - ${len1} - ${len4} - 3 ))
-	seq -s${5} ${l}|tr -d '[:digit:]'
-	echo -en ${E_END}
+  len1="${#1}"
+  len4="${#4}"
+
+  echo -en "${2}${1}${4}${3}"
+  l=$((BPCOLUMNS - len1 - len4 - 3 ))
+  seq -s"${5}" "${l}"|tr -d '[:digit:]'
+  echo -en ${E_END} 
 }
-						
+
 # Print text with row
 #
 # arg1 text to be printed
 # arg2 text color
 # arg3 line color
+#
 bpTextLineC() { ##D Print text with adjusted line after with selectable colors
   bpPrintLineC "$1" "$2" "$3" " " "-"
 }
@@ -346,38 +429,84 @@ bpTextLine() { ##D Print text with line after
 }
 
 # Print a divider row
-bpLine() { ##D Print a line  
+#
+bpLine() { ##D Print a line
   bpPrintLineC "" "${BP_C_LINE}" "${BP_C_LINE}" "" "-"
 }
-									
-	
+
+
+# Generic command/description printout function
+# 
+# $1 command color
+# $2 description color
+# $3 command text
+# $4 desccription text
+#
+bpPrintInfoGeneric() {
+  printf "${1}  %-24.24s${E_END} ${2}%s${E_END}\n" "$3" "$4"
+}
+
+
 # Print text into two columns
 #
 # arg1 text for column 1
 # arg2 text for column 2
-printInfo() {
-  printf "${E_BR_CYAN}%-20s${E_END} ${E_BR_GREEN}%s${E_END}\n" "$1" "$2"
+#
+bpPrintInfo() {
+  bpPrintInfoGeneric "${BP_C_ID}" "${BP_C_DESCRIPTION}" "$1" "$2"
 }
-		  
+
+bpPrintInfoAlt() {
+  bpPrintInfoGeneric "${E_DARKGRAY}" "${BP_C_DESCRIPTION}" "$1" "$2"
+}
+
 # Print a variable + text into two columns
 #
-# arg1 variable for column 1
-# arg2 text for column 2
-printVar() {
-  var=$1
-	if [ ${!var} ]; then
-	  printInfo "$2" "${!var}"
-	else
-	  printf "${E_BR_CYAN}%-20s${E_END} ${E_BR_RED}N/A${E_END}\n" "$2"
+# $1 variable for column 1
+# $2 text for column 2
+# $3 optional text form column 1
+#
+bpPrintVar() {
+  var="$1"      
+  if [ "${!var}" ]; then
+    if [ ! -z "$3" ]; then
+      X=${3}
+    else 
+      X="${!var}"
+    fi
+    bpPrintInfo "$2" "${X}"
+  else
+    printf "${BP_C_ID}  %-24s${E_END} ${E_RED}N/A${E_END}\n" "$2"
+  fi
+}
+
+# Colorize string with filename
+#
+# $1 string with filename to colorize
+# ret colorized string
+#
+bpColorizeFile() { ##D Colorize string with filename
+  if [ ! -z "$1" ]; then
+    echo "${BP_C_PATH}$(dirname "$1")/${BP_C_FILENAME}$(basename "$1")${E_END}"
+  fi
+}
+
+
+# Various  ---------------------------------------------------------
+
+##CN- IHELP Assert
+  
+bpAssertRoot() { ##D Assert that user is root
+  if [ "$(whoami)" != root ]; then
+	  bpError "Must be root to use this command."
+		bpExit "1"
 	fi
 }
+							
 
-
-function _exit()              # Function to run upon exit of shell.
-{
-  echo -e "${BRed}Hasta la vista, baby${NC}"
+bpReload() { ## Reload .bashrc 
+  source ~/.bashrc
 }
-trap _exit EXIT
 				
 #-------------------------------------------------------------
 # Shell Prompt - for many examples, see:
@@ -434,20 +563,6 @@ fi
 #fi
 
 
-
-NCPU=$(grep -c 'processor' /proc/cpuinfo)    # Number of CPUs
-SLOAD=$(( 100*${NCPU} ))        # Small load
-MLOAD=$(( 200*${NCPU} ))        # Medium load
-XLOAD=$(( 400*${NCPU} ))        # Xlarge load
-
-# Returns system load as percentage, i.e., '40' rather than '0.40)'.
-function load()
-{
-  local SYSLOAD=$(cut -d " " -f1 /proc/loadavg | tr -d '.')
-	# System load of the current host.
-	echo $((10#$SYSLOAD))       # Convert to decimal.
-}
-	
 # Returns a color indicating system load.
 function load_color()
 {
@@ -668,24 +783,6 @@ function man()
 	done
 }
 						
-						
-#-------------------------------------------------------------
-# Make the following commands run in background automatically:
-#-------------------------------------------------------------
-						
-function te()  # wrapper around xemacs/gnuserv
-{
-  if [ "$(gnuclient -batch -eval t 2>&-)" == "t" ]; then
-	  gnuclient -q "$@";
-	else
-	  ( xemacs "$@" &);
-	fi
-}
-																			
-function soffice() { command soffice "$@" & }
-function firefox() { command firefox "$@" & }
-function xpdf() { command xpdf "$@" & }
-
 
 # File & strings related functions: -----------------------------------------
 
@@ -838,12 +935,13 @@ function ii() {  # Get current host related info.
   echo -e  "\n${Green}Hostname:   ${BGreen}$HOSTNAME $NC " 
 	bpLine
 	echo -e ""
-	printInfo "Username:"          "$USER"
-	printInfo "Current date:"      "$(date)"
-	printInfo "Local IP Address:"  "$(my_ip)"
-	printInfo "Machine Uptime:"    "$(uptime -p)"
-	printInfo "Machine Type:"      "$(uname -m)"
-	printInfo "Disk space:" ""; mydf / $HOME
+	bpPrintInfo "Username:"          "$USER"
+	bpPrintInfo "Current date:"      "$(date)"
+	bpPrintInfo "Local IP Address:"  "$(my_ip)"
+	bpPrintInfo "Machine Uptime:"    "$(uptime -p)"
+	bpPrintInfo "Machine Type:"      "$(uname -m)"
+	bpLine
+	bpPrintInfo "Disk space:" ""; mydf / $HOME
 	echo -e ""
   bpLine
 }
@@ -860,19 +958,6 @@ function loginInfo() {
 
 }
 
-#-------------------------------------------------------------
-# Misc utilities:
-#-------------------------------------------------------------
-						
-function repeat()       # Repeat n times command.
-{
-  local i max
-	max=$1; shift;
-	for ((i=1; i <= max ; i++)); do  # --> C-like syntax
-	  eval "$@";
-	done
-}
-																		
 																		
 function ask()          # See 'killps' for example of use.
 {
@@ -1170,4 +1255,151 @@ loginInfo
 
 
 #source ~/.xsh
+##-
+##-
+
+printCommand() {
+  help_line=$1
+	help_command=$(echo "$help_line" | sed -s 's/(.*//')
+	help_info=$(echo "$help_line" | sed -s 's/^.*'"$2"'//')
+	bpPrintInfo "$help_command" "$help_info"
+}
+				
+printCondCommand() {
+  help_line="$1"
+	C=$(echo "$1" | sed -s 's/^.*##C//' | awk '{print $1}')
+	eval "D=\$$C"
+	if [ -n "$D" ]; then
+	  help_command=$(echo "$help_line" | sed -s 's/(.*//')
+	  help_info=$(echo "$help_line" | sed -s 's/^.*'"$C"'//')
+		bpPrintInfo "$help_command" "$help_info"
+	fi
+}
+
+printCondCommandV() {
+  help_line="$1"
+	C=$(echo "$1" | sed -s 's/^.*##CV//' | awk '{print $1}')
+	
+	eval "D=\$$C"
+	
+	help_command=$(echo "$help_line" | sed -s 's/(.*//')
+	help_info=$(echo "$help_line" | sed -s 's/^.*'"$C"'//')
+	
+	if [ -n "$D" ]; then
+	  bpPrintInfo "$help_command" "$help_info"
+	else
+	  bpPrintInfoAlt "$help_command" "$help_info"
+	fi
+}
+																											
+printCondLine() {
+  help_line="$1"
+	C=$(echo "$1" | sed -s 's/^.*##C-//' | awk '{print $1}')
+	eval "D=\$$C"
+	if [ -n "$D" ]; then
+	  bpLine
+	fi
+}
+
+printNamedLine() { 
+  name=$(echo "$1" | sed -e 's/^.*##N-//' -e 's/^[ \t]*//' )
+	bpTextLine "$name"
+}
+
+help() { ## Print this help information
+  echo "$USAGE"
+	echo -e "$DESC"
+	echo 
+	IFS=$'\n'
+	SC="$1"
+	F=~/.bashrc
+	help_lines=$(grep -h '##' "${F}" | grep -v -e 'grep' -e '##D' -e '##V' -e '\*##C' -e '\*##C-' -e '\"##' -e '##N-//' -e 'help_line' -e 'printLine')
+	for help_line in ${help_lines} ; do
+	  case "$help_line" in
+	  *"##-"*)   bpLine ;;
+#		*"##C-"*)  printCondLine       "$help_line" ;;
+#		*"##N-"*)  printNamedLine      "$help_line" ;;
+#		*"##CN-"*) printCondNamedLine  "$help_line" ;;
+#		*"##CV"*)  printCondCommandV    "$help_line" ;;
+#		*"##C"*)   printCondCommand    "$help_line" ;;
+		*"##"*)    printCommand        "$help_line" '##' ;;
+		*)
+	;;
+	esac
+	done
+ }
+																																							
+
+#---------------------------------------------------------------------
+# Initiate internal variables
+#---------------------------------------------------------------------
+
+##V Directory where script is located
+BPSCRIPTPATH=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
+
+##V Name of script
+BPSCRIPTNAME=$(basename "$0")
+
+##V Number of arguments given to script
+BPARGUMENTS=$#
+
+##V Current date
+BPDATE=$(date +"%Y-%m-%d")
+
+##V Current time
+BPTIME=$(date +"%H:%M:%S")
+
+##V Number of columns in terminal
+BPCOLUMNS=$(tput cols)
+
+##V Number of lines in terminal
+BPLINES=$(tput lines)
+
+BP_CONF_DIR="~/.config/bashplates"
+BP_PATH_DIR="${BP_CONF_DIR}/paths"
+BP_MODULE_DIR="${BP_CONF_DIR}/modules"
+
+BP_CONF="${BP_CONF_DIR}/bashplates.conf"
+
+
+#---------------------------------------------------------------------
+# Setup signal traps
+#---------------------------------------------------------------------
+
+trap bpExit EXIT
+
+
+#---------------------------------------------------------------------
+# Start
+#---------------------------------------------------------------------
+
+# Source global definitions (if any) ----------------------------------------
+
+if [ -f /etc/bashrc ]; then
+  . /etc/bashrc   # --> Read /etc/bashrc, if present.
+fi
+
+# Initiate bashplate settings
+bpInitSettings
+
+
+# Load bashplate settings
+if [ -f "$BP_CONF" ]; then
+  source ${BP_CONF}
+  source ${BP_PATH}/bp_init
+fi
+
+bpMkdir() {
+  echo "X"
+}
+
+
+
+#for a in ${BP_CONF_DIR}
+
+
+bpInitDisplay
+
+# Call host specific function
+host_${HOSTNAME}
 
