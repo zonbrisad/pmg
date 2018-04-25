@@ -50,7 +50,6 @@ serverPkgs=(               \
   "virt-manager"           \
   "virt-top"               \
   "ssmtp"                  \
-  "puppetmaster-passenger" \
   "mailutils"              \
 )
 
@@ -62,7 +61,13 @@ basicPkgs=(         \
   "apt-file"        \
 	"net-tools"       \
 	"bridge-utils"    \
+	"openssh-server"  \
 )
+
+desktopUtilPkgs=(              \
+  "brasero"                    \
+)
+
 
 develToolsPkgs=(    \
   "bison"           \
@@ -156,6 +161,8 @@ pythonDevPkgs=(                \
 	"pyqt5-dev-tools"            \
 	"pyqt5-examples"             \
 )
+
+
 
 #---------------------------------------------------------------------
 # User defined functions
