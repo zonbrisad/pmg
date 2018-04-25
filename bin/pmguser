@@ -1,15 +1,17 @@
 #!/usr/bin/env bash
 # shellcheck disable=2034
-# shellcheck disable=1090
 #---------------------------------------------------------------------
 #
 #  [Description]
-#  Linux admin help script
+#    Varous user related setup functions
 #
-#  [Author] 
+#  [Author]
 #    Peter Malmberg <peter.malmberg@gmail.com>
 #
-#  [Licence] 
+#  [Date]
+#    2016-xx-xx
+#
+#  [License]
 #     MIT
 #
 #---------------------------------------------------------------------
@@ -34,227 +36,92 @@
 # Exit script when undeclared variable is used
 #set -o nounset
 # Exit script when pipe fails
-set -o pipefail
+#set -o pipefail
 
 # Directory where script is located
 scriptPath=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
 
 # Name of script
-scriptName=$(basename $0)
+scriptName=$(basename "$0")
 
 #---------------------------------------------------------------------
 # User defined Settings
 #---------------------------------------------------------------------
 
-userList=(                      \
-  "5000 apmg APeter Malmberg peter.malmberg@gmail.com" \
-  "5001 bpmg BPeter Malmberg peter.malmberg@gmail.com" \
-)
+USERNAME="Peter Malmberg"
+USEREMAIL="peter.malmberg@gmail.com"
 
-
-groupList=(
-  "10002 groupname1" \
-  "10003 groupname2" \
-)
+EDITOR=jed
 
 #---------------------------------------------------------------------
 # User defined functions
 #---------------------------------------------------------------------
 
+##N- Setup
 
-# Appends a line to a file if it is not present in that file.
-# $1 file
-# $2 line to append
-appendIfNoSuchLine() {
-  grep -q -F "$2" $1 || echo "$2" >> $1
+git_setup() { ## Setup git correctly
+  git config --global user.name $BP_NAME
+	git config --global user.email $BP_EMAIL
+	git config --global core.editor $BP_EDITOR
+  git config --global diff.external ~/bin/git_diff_meld.py
+#	git config --global push.default simple	
+#	git config --global push.default master
+	git config --list
+	
 }
 
-#
-# Remove line in file containing a given string
-# $1 file
-# $2 string
-#
-removeLineContaining() {
-  grep -v $2 $1 > $2 
-}
-
-#
-# IP nr
-#
-#IP=`ip add show dev eth0 | grep "inet " | cut -c10-24 | cut -f1 -d'/'`
-#DATE=`date`
-
-#
-# Create dir if it does not exist
-# $1 directory to be created
-#
-cDir() {
-  if [ ! -d "$1" ]; then
-    mkdir -p $1
-  fi
-}
-
-mountServer() {  ## Add mount rule to fileserver in fstab
+jed_setup() { ## Setup jed editor
   assertRoot
-  cDir /storage
-  appendIfNoSuchLine /etc/fstab  "fileserver:/storage  /storage nfs    auto   0 0"
+	cp ${scriptPath}/setupfiles/make.sl /usr/share/jed/lib/.
 }
 
-addSambaUser() {
-  smbpasswd -a pmg
-}
+configFiles=(        \
+  "~/.bashrc"        \
+	"~/.bash_profile"  \
+  "~/.jedrc"         \
+	"~/bin"            \
+	"~/.gitconfig"     \
+)
 
+#
+# $1 file to be replaced
+#
+cf() {
+  eval F=${1}
+  if [ ! -h $F ]; then  # if not symbolic link do
 
-#
-# Add a new user if not existing
-#
-# $1 = username
-# $2 = uid
-# $3 = name
-# $4 = email
-#
-addUser() { 
-  assertRoot
-  getent passwd $2 > /dev/null
-  if [ $? -ne 0 ]; then
-    bpInfo "Adding user:  $1 $2 $3 $4"
-    useradd $1 --create-home --uid $2
-  else
-    bpError "User "$2" already exists"
+    if [ -e $F ]; then  # if file already exist make a copy
+		  mv -f $F ${F}_backup
+			echo "Backing up $F to ${F}_backup"  
+		fi
+
+    eval X=${scriptPath}/../$(basename $F)
+    ln -s  ${scriptPath}/../$(basename $F) $F
   fi
 }
 
-#
-# Add group
-# 
-# $1 = user
-# $2 = id
-#
-addGroup() {
-  assertRoot
-  getent group $1 > /dev/null
-  if [ $? -ne 0 ]; then
-    bpInfo "Adding group: "$1
-    groupadd $1 --gid $2
-  else
-    bpError "Group $1 already exists"
-  fi
-
-}
-
-
-#
-# Remove user
-#
-# $1 = user
-#
-rmUser() {
-  getent passwd $1 > /dev/null
-  if [ $? -ne 0 ]; then
-    bpError "User "$1" does not exist"
-  else
-    bpInfo "Removing user:  $1"
-    deluser $1 --remove-home
-  fi
-}
-
-#
-# Remove group
-#
-# $1 = user
-#
-rmGroup() {
-  getent group $1 > /dev/null
-  if [ $? -ne 0 ]; then
-    bpError "Group "$1" does not exist"
-  else
-    bpInfo "Removing group:  $1"
-    delgroup $1 
-    
-  fi
-}
-
-
-rmu() { ## Remove  users and groups
-  assertRoot
-  IFS='\n'
-  for u in ${userList[@]}; do
-
-    UI=$(echo ${u} | awk '{print $1}' )
-    UN=$(echo ${u} | awk '{print $2}' )
-    FN=$(echo ${u} | awk '{print $3}' )
-    SN=$(echo ${u} | awk '{print $4}' )
-    UM=$(echo ${u} | awk '{print $5}' )		
-    echo $UN 
-    rmUser $UN 
+config() { ## Create symbolic links   
+	for pkg in ${configFiles[@]}; do
+		cf ${pkg}
   done
-
-  for u in ${groupList[@]}; do
-    GID=$(echo ${u} | awk '{print $1}' )
-    GNAME=$(echo ${u} | awk '{print $2}' )
-    rmGroup $GNAME
-  done
-
 }
 
-cgroups() { ## Create groups
-  assertRoot
-  IFS=$'\n'
-  for u in ${groupList[@]}; do
-    GID=$(echo ${u} | awk '{print $1}' )
-    GNAME=$(echo ${u} | awk '{print $2}' )
-		
-    echo ${GID} ${GNAME}
-    	
-    addGroup $GNAME $GID   
-  done
-
-}
-
-cusers() { ## Create users
- assertRoot
-  
-  IFS=$'\n'
-	for u in ${userList[@]}; do
-
-		UI=$(echo ${u} | awk '{print $1}' )
-		UN=$(echo ${u} | awk '{print $2}' )
-		FN=$(echo ${u} | awk '{print $3}' )
-		SN=$(echo ${u} | awk '{print $4}' )
-		UM=$(echo ${u} | awk '{print $5}' )
-		
-		echo $UI $UN $FN $SN $UM
-		addUser $UN $UI $FN $SN $UM
-  done
-
-  # Add user to group dialout (good for usb2serial adapters)
-  usermod  -a -G dialout pmg
-
-	exit
-  assertRoot
-  addGroup 10000 nisse
-  addGroup 10000 nisse
-  addUser 5000 pmg "Peter Malmberg"
-  addUser 5001 lpmg 
-  #adduser lpmg -uid 1000
-}
 
 #--------------------------------------------------------------------- 
 # Bashplate settings
 #---------------------------------------------------------------------
 
 # Script version info
-VERSION="1.00"
+VERSION="1.12beta"
 
 ##V Bashplate version
-BPVERSION="1.11"
+templateVersion="1.09"   
 
 ##V Usage info
-USAGE="Usage: ${scriptName} command [option]"
+USAGE="Usage: ${scriptName} command [option]" 
 
 # Description text
-DESC="Linux admin tools"
-
+DESC="Script for various user setup functions"
 
 ##V logfile (uncomment to use logfile)
 #LOGFILE=${scriptPath}/${scriptName}.log
@@ -291,7 +158,7 @@ DEFAULTCMD=help
 #LOCK_FILE=/tmp/${scriptName}.lock
 
 # Activate settings function (will create settings file when run)
-BPSETTINGS=1
+#BPSETTINGS=1
 
 bpSettingsDir=~/.config/bashplates
 bpSettingsFile=${bpSettingsDir}/bashplates.conf
@@ -553,7 +420,7 @@ bpReplace() {  ##D Replace text in file
 # $3 new text
 #
 bpReplaceLine() {  ##D Replace entire line in file
-	sed -i -e "0,/${2}/s/${2}.*/${3}/" "${1}"
+  sed -i -e "0,/${2}/s/${2}.*/${3}/" "${1}"
 }
 
 # Appends a line to a file if it is not present in that file.
@@ -681,7 +548,7 @@ bpAddSettings() {
 chSetting() {  
   SETTING="$2"
   VAL="$3"
-	
+  
   S=$(bpStrExist "${1}" "${2}" )
   if [ "${S}" == "0" ]; then
     bpAddSettings
@@ -690,10 +557,9 @@ chSetting() {
 }
 
 bpCreateSettings() {
-			
   echo "Creating new bashplates settings file. ${bpSettingsFile}"
   bpMkDir ${bpSettingsDir}
-					
+          
   echo "# " >> ${bpSettingsFile}
   echo "# Bashplates common settings" > ${bpSettingsFile}
   echo "# " >> ${bpSettingsFile}
@@ -724,23 +590,23 @@ printSettings() { ##C BPSETTINGS Print plate information
 }
 
 setname() { ##C BPSETTINGS Set name
-  chSetting "${bpSettingsFile}" "BP_NAME" "\"${2}\""	
+  chSetting "${bpSettingsFile}" "BP_NAME" "\"${2}\""  
 }
 
 setemail() { ##C BPSETTINGS Set email address
-  chSetting "${bpSettingsFile}" "BP_EMAIL" "\"${2}\""	
+  chSetting "${bpSettingsFile}" "BP_EMAIL" "\"${2}\""  
 }
 
 seteditor() { ##C BPSETTINGS Set default editor
-  chSetting "${bpSettingsFile}" "BP_EDITOR" "\"${2}\""	
+  chSetting "${bpSettingsFile}" "BP_EDITOR" "\"${2}\""  
 }
 
 setlic() { ##C BPSETTINGS Set default license
-  chSetting "${bpSettingsFile}" "BP_LICENSE" "\"${2}\""	
+  chSetting "${bpSettingsFile}" "BP_LICENSE" "\"${2}\""  
 }
 
 setorg() { ##C BPSETTINGS Set default organisation
-  chSetting "${bpSettingsFile}" "BP_ORG" "\"${2}\""	
+  chSetting "${bpSettingsFile}" "BP_ORG" "\"${2}\""  
 }
 
 
@@ -813,7 +679,7 @@ mlog() {   ##C LOGFILE Monitor logfile
             -e "s/[:0-9]+/\\${E_BR_GREEN}&\\${E_END}/6"            \
             -e "s|\[Crit\]|\[\\${E_ON_RED}\\${E_WHITE}Crit\\${E_END}\]|"
 
-		fi
+    fi
   else
     bpInfo "Logging is not activated"
     exit
@@ -825,7 +691,7 @@ mlog() {   ##C LOGFILE Monitor logfile
 bpOk() { ##D Success message
   if [ -n "$LOG_OK" ]; then
     bpLogOk "$1"
-  fi	
+  fi  
   echo -e "[${BP_C_OK}Ok${E_END}] $1"
 }
 
@@ -910,7 +776,7 @@ info() { ##D Show information about script
     bpTextLine "App. information"
     ${INFOHOOK}
   fi
-	printSettings
+  printSettings
 }
 
 check() { ##D Make a shellcheck
@@ -952,7 +818,7 @@ printNamedLine() {
 printCondNamedLine() {
   help_line="$1"
   C=$(echo "$1" | sed -s 's/^.*##CN-//' | awk '{print $1}')
-	name=$(echo "$help_line" | sed -e 's/^.*'"$C"'//' -e 's/^[ \t]*//' )
+  name=$(echo "$help_line" | sed -e 's/^.*'"$C"'//' -e 's/^[ \t]*//' )
   eval "D=\$$C"
   if [ -n "$D" ]; then
     bpTextLine "$name"
