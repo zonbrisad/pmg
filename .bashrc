@@ -103,6 +103,13 @@ if [ "${HOSTNAME}" == "ustation" ]; then
   source ~/Tester/bashplates/bp_init
 fi
 
+# Host: ustation ------------------------------------------------------------
+if [ "${HOSTNAME}" == "pmg-pav" ]; then
+  #alias eclipse='~/Downloads/eclipse/eclipse'
+	# Load bashplate settings
+  source ~/Projects/bashplates/bp_init
+fi
+
 
 # SSH agent
 #eval `ssh-agent -s`
