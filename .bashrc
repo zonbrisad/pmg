@@ -54,56 +54,56 @@ HOSTNAME=$(hostname)
 # Host: fileserver ----------------------------------------------------------
 host_fileserver() {
   alias netbeans='~/bin/netbeans-8.1/bin/netbeans'
-	alias eclipse='~/bin/eclipse/eclipse'
+  alias eclipse='~/bin/eclipse/eclipse'
 #	alias dht='cd ~/make/dht'
-	alias lef='cd ~/Projekt/LEF'
+  alias lef='cd ~/Projekt/LEF'
 #	alias mp='cd ~/Projekt/makeplates'
 #	alias bp='cd ~/Projekt/bashplates'
-	alias b='cd /storage/backup/fileserver'
-	alias b0='cd /storage/backup/fileserver/daily_0/storage/home/pmg'
-	alias b1='cd /storage/backup/fileserver/daily_1/storage/home/pmg'
-	alias b2='cd /storage/backup/fileserver/daily_2/storage/home/pmg'
-	alias b3='cd /storage/backup/fileserver/daily_3/storage/home/pmg'
-	alias b4='cd /storage/backup/fileserver/daily_4/storage/home/pmg'
-	alias b5='cd /storage/backup/fileserver/daily_5/storage/home/pmg'
+  alias b='cd /storage/backup/fileserver'
+  alias b0='cd /storage/backup/fileserver/daily_0/storage/home/pmg'
+  alias b1='cd /storage/backup/fileserver/daily_1/storage/home/pmg'
+  alias b2='cd /storage/backup/fileserver/daily_2/storage/home/pmg'
+  alias b3='cd /storage/backup/fileserver/daily_3/storage/home/pmg'
+  alias b4='cd /storage/backup/fileserver/daily_4/storage/home/pmg'
+  alias b5='cd /storage/backup/fileserver/daily_5/storage/home/pmg'
 	
-	# Load bashplate settings
+  # Load bashplate settings
   source ~/Tester/bashplates/bp_init
 }
 
 # Host: buildserver (Abelko) -------------------------------------------------
 host_buildroot() {
   # Load GCC environment for Poky
-	#  source  /opt/poky/fgw/environment-setup-cortexa7hf-neon-poky-linux-gnueabi
-	alias poky='/opt/poky/fgw/environment-setup-cortexa7hf-neon-poky-linux-gnueabi'
+  #  source  /opt/poky/fgw/environment-setup-cortexa7hf-neon-poky-linux-gnueabi
+  alias poky='/opt/poky/fgw/environment-setup-cortexa7hf-neon-poky-linux-gnueabi'
   alias eclipse='/opt/eclipse_luna_sr2/eclipse'
   alias eclipsen='~/bin/eclipse/eclipse'
   alias netbeans='/home/peterm/bin/netbeans/bin/netbeans'
 	
-	# Load bashplate settings
-  source ~/tester/bashplates/bp_init
+  # Load bashplate settings
+  #source ~/tester/bashplates/bp_init
 	
-	# Load makeplate settings
-  source ~/tester/makeplates/mp_init
+  # Load makeplate settings
+  #source ~/tester/makeplates/mp_init
 }
 
 # Host: Virtual machine (Abelko) --------------------------------------------
 host_vbPmg() {
   alias eclipse='~/bin/eclipse/eclipse'
-	# Load bashplate settings
-  source ~/Tester/bashplates/bp_init
+  # Load bashplate settings
+  #source ~/Tester/bashplates/bp_init
 	
-	# Load makeplate settings
-  source ~/Tester/makeplates/mp_init
+  # Load makeplate settings
+  #source ~/Tester/makeplates/mp_init
 }
 
 # Host: ustation ------------------------------------------------------------
 host_ustation() {
   alias eclipse='~/Downloads/eclipse/eclipse'
-	alias lef='cd ~/Projekt/LEF'
+  alias lef='cd ~/Projekt/LEF'
 	
-#	alias mp='cd ~/Projekt/makeplates'
-#	alias bp='cd ~/Projekt/bashplates'
+#alias mp='cd ~/Projekt/makeplates'
+#alias bp='cd ~/Projekt/bashplates'
 
   # PyQt5 example and demos
   alias pqe='cd /usr/share/doc/pyqt5-examples/examples'
@@ -111,7 +111,7 @@ host_ustation() {
   # Load pyplate settings
   source ~/Project/pyplate/pyplate_init
 
-	# Load bashplate settings
+  # Load bashplate settings
   source ~/Project/bashplates/bp_init
 
   # Load makeplate settings
@@ -125,7 +125,7 @@ host_ustation() {
 bpInstall() { ## Install a package
   bpAssertRoot
   dpkg -i $1
-	apt-get install -f
+  apt-get install -f
 }
 
 #---------------------------------------------------------------------
@@ -141,7 +141,7 @@ bpInitSettings() {
 #---------------------------------------------------------------------
 
 function bpExit() {             # Function to run 
-	return 1
+  return 1
 }
 
 
@@ -158,12 +158,12 @@ FLAG_YELLOW="\x1b[48;5;226m"
 
 flag() {
   echo -e "${FLAG_BLUE}        ${FLAG_YELLOW}  ${FLAG_BLUE}               ${E_END}"
-	echo -e "${FLAG_BLUE}        ${FLAG_YELLOW}  ${FLAG_BLUE}               ${E_END}"
-	echo -e "${FLAG_BLUE}        ${FLAG_YELLOW}  ${FLAG_BLUE}               ${E_END}"
-	echo -e "${FLAG_YELLOW}                         ${E_END}"
-	echo -e "${FLAG_BLUE}        ${FLAG_YELLOW}  ${FLAG_BLUE}               ${E_END}"
-	echo -e "${FLAG_BLUE}        ${FLAG_YELLOW}  ${FLAG_BLUE}               ${E_END}"
-	echo -e "${FLAG_BLUE}        ${FLAG_YELLOW}  ${FLAG_BLUE}               ${E_END}"
+  echo -e "${FLAG_BLUE}        ${FLAG_YELLOW}  ${FLAG_BLUE}               ${E_END}"
+  echo -e "${FLAG_BLUE}        ${FLAG_YELLOW}  ${FLAG_BLUE}               ${E_END}"
+  echo -e "${FLAG_YELLOW}                         ${E_END}"
+  echo -e "${FLAG_BLUE}        ${FLAG_YELLOW}  ${FLAG_BLUE}               ${E_END}"
+  echo -e "${FLAG_BLUE}        ${FLAG_YELLOW}  ${FLAG_BLUE}               ${E_END}"
+  echo -e "${FLAG_BLUE}        ${FLAG_YELLOW}  ${FLAG_BLUE}               ${E_END}"
 }
 							
 #--------------------------------------------------------------
@@ -330,10 +330,10 @@ ALERT=${BWhite}${On_Red} # Bold White on red background
 #
 bpLog() { ##D Log to file command
   # check for LOGFILE variable
-	if [ -n "$LOGFILE" ]; then
-  	ts=$(date +"%Y-%m-%d %H:%M:%S")
-		bpFilterEscape "$ts $1"  >> "${LOGFILE}"
-	fi
+  if [ -n "$LOGFILE" ]; then
+    ts=$(date +"%Y-%m-%d %H:%M:%S")
+    bpFilterEscape "$ts $1"  >> "${LOGFILE}"
+  fi
 }
 							
 bpLogOk() { ##D Log Ok message to file
@@ -360,38 +360,38 @@ bpLogCritical() {  ##D Log Critical message to file
 
 bpOk() { ##D Success message
   if [ -n "$LOG_OK" ]; then
-	  bpLogOk "$1"
+    bpLogOk "$1"
   fi
-	echo -e "[${BP_C_OK}Ok${E_END}] $1"
+  echo -e "[${BP_C_OK}Ok${E_END}] $1"
 }
 					
 bpInfo() { ##D Info message
   if [ -n "$LOG_INFO" ]; then
-	  bpLogInfo "$1"
-	fi
-	echo -e "[${BP_C_INFO}Info${E_END}] $1"
+    bpLogInfo "$1"
+  fi
+  echo -e "[${BP_C_INFO}Info${E_END}] $1"
 }
 										
 bpWarning() { ##D Warning message
   if [ -n "$LOG_WARNING" ]; then
-	  bpLogWarning "$1"
-	fi
-	echo -e "[${BP_C_WARNING}Warning${E_END}] $1"
+    bpLogWarning "$1"
+  fi
+  echo -e "[${BP_C_WARNING}Warning${E_END}] $1"
 }
 															
 bpError() { ##D Error message
   if [ -n "$LOG_ERROR" ]; then
-	  bpLogError "$1"
-	fi
-	echo -e "[${BP_C_ERROR}Error${E_END}] $1"
+    bpLogError "$1"
+  fi
+  echo -e "[${BP_C_ERROR}Error${E_END}] $1"
 }
 																				
 bpCritical() { ##D Critical error message
   if [ -n "$LOG_CRITICAL" ]; then
-	bpLogCritical "$1"
-	fi
-	echo -e "[${BP_C_CRITICAL}Critical${E_END}] $1"
-	bpExit
+    bpLogCritical "$1"
+  fi
+  echo -e "[${BP_C_CRITICAL}Critical${E_END}] $1"
+  bpExit
 }
 
 ##-
@@ -498,9 +498,9 @@ bpColorizeFile() { ##D Colorize string with filename
   
 bpAssertRoot() { ##D Assert that user is root
   if [ "$(whoami)" != root ]; then
-	  bpError "Must be root to use this command."
-		bpExit "1"
-	fi
+    bpError "Must be root to use this command."
+    bpExit "1"
+  fi
 }
 							
 
@@ -775,12 +775,11 @@ alias top='xtitle Processes on $HOST && top'
 alias make='xtitle Making $(basename $PWD) ; make'
 
 # .. and functions
-function man()
-{
+function man() {
   for i ; do
-	  xtitle The $(basename $1|tr -d .[:digit:]) manual
-		command man -a "$i"
-	done
+    xtitle The $(basename $1|tr -d .[:digit:]) manual
+    command man -a "$i"
+  done
 }
 						
 
@@ -929,20 +928,20 @@ function my_ip() { # Get IP adress on ethernet.
 					
 function ii() {  # Get current host related info.
   echo
-	flag
-	echo
+  flag
+  echo
 
   echo -e  "\n${Green}Hostname:   ${BGreen}$HOSTNAME $NC " 
-	bpLine
-	echo -e ""
-	bpPrintInfo "Username:"          "$USER"
-	bpPrintInfo "Current date:"      "$(date)"
-	bpPrintInfo "Local IP Address:"  "$(my_ip)"
-	bpPrintInfo "Machine Uptime:"    "$(uptime -p)"
-	bpPrintInfo "Machine Type:"      "$(uname -m)"
-	bpLine
-	bpPrintInfo "Disk space:" ""; mydf / $HOME
-	echo -e ""
+  bpLine
+  echo -e ""
+  bpPrintInfo "Username:"          "$USER"
+  bpPrintInfo "Current date:"      "$(date)"
+  bpPrintInfo "Local IP Address:"  "$(my_ip)"
+  bpPrintInfo "Machine Uptime:"    "$(uptime -p)"
+  bpPrintInfo "Machine Type:"      "$(uname -m)"
+  bpLine
+  bpPrintInfo "Disk space:" ""; mydf / $HOME
+  echo -e ""
   bpLine
 }
 
@@ -962,17 +961,17 @@ function loginInfo() {
 function ask()          # See 'killps' for example of use.
 {
   echo -n "$@" '[y/n] ' ; read ans
-	case "$ans" in
-	  y*|Y*) return 0 ;;
-	  *) return 1 ;;
-	esac
+  case "$ans" in
+    y*|Y*) return 0 ;;
+    *) return 1 ;;
+  esac
 }
 														
 function corename()   # Get name of app that created a corefile.
 {
   for file ; do
-	  echo -n $file : ; gdb --core=$file --batch | head -1
-	done
+    echo -n $file : ; gdb --core=$file --batch | head -1
+  done
 }
 								
 								
@@ -1308,25 +1307,24 @@ printNamedLine() {
 
 help() { ## Print this help information
   echo "$USAGE"
-	echo -e "$DESC"
-	echo 
-	IFS=$'\n'
-	SC="$1"
-	F=~/.bashrc
-	help_lines=$(grep -h '##' "${F}" | grep -v -e 'grep' -e '##D' -e '##V' -e '\*##C' -e '\*##C-' -e '\"##' -e '##N-//' -e 'help_line' -e 'printLine')
-	for help_line in ${help_lines} ; do
-	  case "$help_line" in
-	  *"##-"*)   bpLine ;;
-#		*"##C-"*)  printCondLine       "$help_line" ;;
+  echo -e "$DESC"
+  echo 
+  IFS=$'\n'
+  SC="$1"
+  F=~/.bashrc
+  help_lines=$(grep -h '##' "${F}" | grep -v -e 'grep' -e '##D' -e '##V' -e '\*##C' -e '\*##C-' -e '\"##' -e '##N-//' -e 'help_line' -e 'printLine')
+  for help_line in ${help_lines} ; do
+    case "$help_line" in
+      *"##-"*)   bpLine ;;
+#    *"##C-"*)  printCondLine       "$help_line" ;;
 #		*"##N-"*)  printNamedLine      "$help_line" ;;
 #		*"##CN-"*) printCondNamedLine  "$help_line" ;;
 #		*"##CV"*)  printCondCommandV    "$help_line" ;;
 #		*"##C"*)   printCondCommand    "$help_line" ;;
-		*"##"*)    printCommand        "$help_line" '##' ;;
-		*)
-	;;
-	esac
-	done
+      *"##"*)    printCommand        "$help_line" '##' ;;
+      *) ;;
+    esac
+  done
  }
 																																							
 
@@ -1355,12 +1353,17 @@ BPCOLUMNS=$(tput cols)
 ##V Number of lines in terminal
 BPLINES=$(tput lines)
 
-BP_CONF_DIR="~/.config/bashplates"
-BP_PATH_DIR="${BP_CONF_DIR}/paths"
-BP_MODULE_DIR="${BP_CONF_DIR}/modules"
+##V Settings directory
+BP_SETTINGS_DIR=~/.config/bashplates
 
-BP_CONF="${BP_CONF_DIR}/bashplates.conf"
+##V Settings file
+BP_SETTINGS_FILE=${BP_SETTINGS_DIR}/bashplates.conf
 
+##V System Path's
+BP_SETTINGS_PATHS="${BP_SETTINGS_DIR}/path"
+
+##V Links to modules
+BP_SETTINGS_MODULES="${BP_SETTINGS_DIR}/modules"
 
 #---------------------------------------------------------------------
 # Setup signal traps
@@ -1383,23 +1386,41 @@ fi
 bpInitSettings
 
 
-# Load bashplate settings
-if [ -f "$BP_CONF" ]; then
-  source ${BP_CONF}
-  source ${BP_PATH}/bp_init
+# If settings directory exist load settings/paths/modules
+if [ -e "$BP_SETTINGS_DIR" ]; then
+
+  # Load bashplate settings
+  if [ -f "$BP_SETTINGS_FILE" ]; then
+    source ${BP_CONF}
+  #  source ${BP_PATH}/bp_init
+  fi
+
+  # Add PATH's
+  for p in ${BP_SETTINGS_PATHS}/*; do
+#    echo  "PATH: $( readlink ${p} )"
+    PATH="${PATH}: $( readlink ${p} )"
+  done
+  export PATH
+  
+  # Run module scripts
+  for m in ${BP_SETTINGS_MODULES}/*; do
+    l=$( readlink ${m} )
+    if [ -e ${l} ]; then
+#      echo  "Module: $l )"
+      source $l
+    else
+      bpError "Module $( bpColorizeFile $l ) does not exist!"
+    fi
+  done
 fi
 
 bpMkdir() {
   echo "X"
 }
 
-
-
-#for a in ${BP_CONF_DIR}
-
-
 bpInitDisplay
 
-# Call host specific function
-host_${HOSTNAME}
-
+# Call host specific function if existing
+if [ "$(type -t host_${HOSTNAME})" == "function" ]; then
+  host_${HOSTNAME}
+fi

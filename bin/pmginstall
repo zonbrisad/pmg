@@ -59,13 +59,15 @@ basicPkgs=(         \
   "nmap"            \
   "lm-sensors"      \
   "apt-file"        \
-	"net-tools"       \
-	"bridge-utils"    \
-	"openssh-server"  \
+  "net-tools"       \
+  "bridge-utils"    \
+  "openssh-server"  \
 )
 
 desktopUtilPkgs=(              \
   "brasero"                    \
+  "gnome-tweak-tool"           \
+  "vlc"                        \
 )
 
 
@@ -74,11 +76,11 @@ develToolsPkgs=(    \
   "flex"            \
   "texinfo"         \
   "git"             \
-	"gitk"            \
+  "gitk"            \
   "subversion"      \
   "meld"            \
-	"doxygen"         \
-	"shellcheck"      \
+  "doxygen"         \
+  "shellcheck"      \
 )
 
 develCPkgs=(        \
@@ -106,17 +108,17 @@ develCPkgs=(        \
   "libqt5core5a"            \
   "libqt5serialport5"       \
   "libqt5serialport5-dev"   \
-	"qttools5-dev-tools"      \
+  "qttools5-dev-tools"      \
   "libsqlite3-dev"          \
   "astudio"                 \
-	"libgtk-3-dev"            \
-	"libgtk-3-0-dbg"          \
-	"glade"                   \
-	"libc6-dev-amd64"         \
-	"libgtk-3-dev"            \
-	"astyle"                  \
-	"libelf-dev"              \
-	"freeglut3-dev"           \
+  "libgtk-3-dev"            \
+  "libgtk-3-0-dbg"          \
+  "glade"                   \
+  "libc6-dev-amd64"         \
+  "libgtk-3-dev"            \
+  "astyle"                  \
+  "libelf-dev"              \
+  "freeglut3-dev"           \
 )
 
 armDevPkgs=(                \
@@ -149,7 +151,7 @@ pythonDevPkgs=(                \
   "python-scipy"               \
   "python-serial"              \
   "python3"                    \
-	"python3-serial"             \
+  "python3-serial"             \
   "python3-pip"                \
   "python3-pyqt5"              \
   "python3-pyqt5.qtserialport" \
@@ -158,8 +160,8 @@ pythonDevPkgs=(                \
   "python3-guidata"            \
   "python3-numpy"              \
   "python3-scipy"              \
-	"pyqt5-dev-tools"            \
-	"pyqt5-examples"             \
+  "pyqt5-dev-tools"            \
+  "pyqt5-examples"             \
 )
 
 
@@ -186,7 +188,7 @@ printList() { # Print all packages
 	# list all packages
 #  bpTextLine $
 #	bpLine
-	for pkg in ${@}; do
+  for pkg in ${@}; do
     echo ${pkg}
   done
 	
@@ -199,20 +201,20 @@ list() { ## List packages
   bpTextLine   basic
   printList ${basicPkgs[@]}
 	
-	bpTextLine   server
+  bpTextLine   server
   printList ${serverPkgs[@]}
 
   bpTextLine cDevelop
-	printList ${develCPkgs[@]}
+  printList ${develCPkgs[@]}
 	
-	bpTextLine  ARMDevelop
+  bpTextLine  ARMDevelop
   printList ${armDevPkgs[@]}
 
   bpTextLine avrDevelop
-	printList ${avrDevPkgs[@]}
+  printList ${avrDevPkgs[@]}
 	
   bpTextLine Develop
- 	printList ${develToolsPkgs[@]}
+  printList ${develToolsPkgs[@]}
 }
 
 ##N- Install
@@ -277,9 +279,9 @@ python() {                  ## Install python development packages
   bpAssertRoot
   installG ${pythonDevPkgs[@]}
 	
-	# Upgrade pip program
-	pip  install --upgrade pip
-	pip3 install --upgrade pip
+  # Upgrade pip program
+  pip  install --upgrade pip
+  pip3 install --upgrade pip
 }
 
 users() {                   ## Create users and groups
@@ -291,43 +293,42 @@ users() {                   ## Create users and groups
 newDev() {                  ## Installs basic/tools/C development/python
   bpAssertRoot
 	
-	basic
-	tools
-	cDevelop
-	python
-	
+  basic
+  tools
+  cDevelop
+  python	
 }
 
 WORK=~/Downloads
 
 gitClonePull() {
-	if [ ! -d $2 ]; then
-	  git clone $1
-	else
-	  cd $2
-		git pull
-	fi
+  if [ ! -d $2 ]; then
+    git clone $1
+  else
+    cd $2
+    git pull
+  fi
 }
 
 
 shellcheck() {  ## download compile and install latest version shellcheck
 
-	dpkg-query -l cabal-install > /dev/null
+  dpkg-query -l cabal-install > /dev/null
 	
-	if [ "$?" -eq 1 ]; then
-	  sudo apt-get -y install cabal-install  
-	fi
+  if [ "$?" -eq 1 ]; then
+    sudo apt-get -y install cabal-install  
+  fi
 	
-	cabal update
+  cabal update
 
   cd "$WORK"
 
-	if [ ! -d "$WORK"/shellcheck ]; then
+  if [ ! -d "$WORK"/shellcheck ]; then
     git clone https://github.com/koalaman/shellcheck.git
-	else
-	  cd "$WORK"/shellcheck
-		git pull
-	fi
+  else
+    cd "$WORK"/shellcheck
+    git pull
+  fi
 
   cd "$WORK"/shellcheck
 
@@ -336,24 +337,37 @@ shellcheck() {  ## download compile and install latest version shellcheck
   # check if path is setup right
   which shellcheck
 
-	if [ "$?" -eq 1 ]; then
-	  echo
-	  echo "Add the following to global PATH."
-		echo 'export PATH="$HOME/.cabal/bin:$PATH"'
-	fi
-
+  if [ "$?" -eq 1 ]; then
+    echo
+    echo "Add the following to global PATH."
+    echo 'export PATH="$HOME/.cabal/bin:$PATH"'
+  fi
 }
 
 AVRSIMDIR=~/Downloads/simavr
 
 avrsim() { ## Download compile and install avrsim
   #git clone https://github.com/buserror/simavr  ${AVRSIMDIR}
-	cd ${AVRSIMDIR}
-	ls
-	make
-	cd -
+  cd ${AVRSIMDIR}
+  ls
+  make
+  cd -
 }
 
+##N- Projects
+
+projects() { ## Checkout all git projects
+  bpMkDir ~/Projects
+  git clone https://github.com/zonbrisad/makeplates.git
+  git clone https://github.com/zonbrisad/bashplates.git
+  git clone https://github.com/zonbrisad/.git
+  git clone https://github.com/zonbrisad/.git
+  git clone https://github.com/zonbrisad/.git
+  git clone https://github.com/zonbrisad/.git
+  git clone https://github.com/zonbrisad/.git
+  git clone https://github.com/zonbrisad/.git
+
+}
 
 #---------------------------------------------------------------------
 # Bashplate settings
@@ -389,11 +403,17 @@ LOG_CRITICAL=1
 # Activate settings function (will create settings file when run)
 #BPSETTINGS=1
 
+##V Settings directory
 bpSettingsDir=~/.config/bashplates
+
+##V Settings file
 bpSettingsFile=${bpSettingsDir}/bashplates.conf
 
 # Create settings file if non existent
 #CREATEPLSETTINGS=1
+
+##V Edit file command (uncomment to enable)
+BP_EDIT=1
 
 }
 #---------------------------------------------------------------------
@@ -900,12 +920,14 @@ bpAddSetting() {
   fi
 }
 
-bpAddSettings() { 
+bpAddSettings() {
   bpAddSetting $bpSettingsFile "BP_NAME"    "John Doe"        "Name of user"
   bpAddSetting $bpSettingsFile "BP_EMAIL"   "JohnDoe@foo.bar" "Email of user"
   bpAddSetting $bpSettingsFile "BP_EDITOR"  "vi"              "Default editor"
   bpAddSetting $bpSettingsFile "BP_LICENSE" "MIT"             "Default project license"
   bpAddSetting $bpSettingsFile "BP_ORG"     "ACME"            "Default organisation"
+  bpAddSetting $bpSettingsFile "BP_DIFF"    "meld"            "Default diff program"	
+  bpAddSetting $bpSettingsFile "BP_PATH"    "${BPSCRIPTPATH}" "Path to Bashplates directory"
 }
 
 # Change setting in config file (key value pair)
@@ -955,11 +977,12 @@ printSettings() { ##C BPSETTINGS Print plate information
   bpPrintVar BP_LICENSE   "Default license:"
   bpPrintVar BP_EDITOR    "Default editor"
   bpPrintVar BP_ORG       "Default organisation"
+  bpPrintVar BP_DIFF      "Default diff program"
   bpLine
 }
 
 setname() { ##C BPSETTINGS Set name
-  bpChSetting "${bpSettingsFile}" "BP_NAME" "\"${2}\""  
+  bpChSetting "${bpSettingsFile}" "BP_NAME" "\"${2}\""
 }
 
 setemail() { ##C BPSETTINGS Set email address
@@ -978,6 +1001,13 @@ setorg() { ##C BPSETTINGS Set default organisation
   bpChSetting "${bpSettingsFile}" "BP_ORG" "\"${2}\""  
 }
 
+setdiff() { ##C BPSETTINGS Set default organisation
+  bpChSetting "${bpSettingsFile}" "BP_DIFF" "\"${2}\""  
+}
+
+ed() { ##C BP_EDIT Open this file with standard editor
+  ${BP_EDITOR} $0
+}
 
 ##-
 
