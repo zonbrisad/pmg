@@ -68,6 +68,7 @@ desktopUtilPkgs=(              \
   "brasero"                    \
   "gnome-tweak-tool"           \
   "vlc"                        \
+	"mesa-utils"                 \
 )
 
 
