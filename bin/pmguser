@@ -101,6 +101,41 @@ config() { ## Create symbolic links
   done
 }
 
+##N- Backup
+
+#
+#
+bpAvail() { ##D Amount of available diskpace in directory in MB
+  df --output=avail --block-size=M .
+}
+
+bpBackupDir() { ## Backup directory
+  if [ ! -e "$1" ]; then
+    bpError "Source file \"${1}\" does not exist!"
+		return 1
+  fi
+	if [ ! -e "$2" ]; then 
+	  bpError "Destination dir $2 does not exist"
+		return 1
+	fi
+  
+	src=$(realpath "$1")
+	dst=$(realpath "$2")
+	
+	BF="backup_$(hostname)_${USER}_$(date +"%Y%m%d")-$(date +"%H%M%S")"
+
+#	echo "Available: $(bpAvail ".")"
+
+  bpInfo "Backing up $src to \"${dst}/${BF}\"."
+  rsync --info=progress2 --recursive --links ${src}/* "${dst}/${BF}"
+
+}
+
+backup() { ## Backup user data
+#  bpBackupDir ~/Project "$2"
+	bpBackupDir ~/ "$2"
+}
+
 
 #---------------------------------------------------------------------
 # Bashplate settings
@@ -130,7 +165,7 @@ LOG_ERROR=1
 LOG_CRITICAL=1
 
 ##V Lock file (uncomment to use lock file feature )
-LOCK_FILE=/tmp/${BPSCRIPTNAME}.lock
+LOCK_FILE=/tmp/${BP_SCRIPT_NAME}.lock
 
 # Activate settings function (will create settings file when run)
 #BPSETTINGS=1
@@ -749,11 +784,17 @@ setdiff() { ##C BPSETTINGS Set default organisation
   bpChSetting "${BP_SETTINGS_FILE}" "BP_DIFF" "\"${2}\""  
 }
 
-ed() { ##C BP_EDIT Open this file with standard editor
-  ${BP_EDITOR} $0
-}
 
 ##-
+
+ed() { ##C BP_EDIT Open this file with standard editor
+  if [ -n "$BP_EDITOR" ]; then
+    ${BP_EDITOR} $0
+  else
+    bpError "BP_EDITOR variable not set, can't open script file"
+  fi
+}
+
 
 # Logging ---------------------------------------------------------
 
@@ -817,7 +858,7 @@ mlog() {   ##C LOGFILE Monitor logfile
       tail -f "${LOGFILE}" | sed -r -e "s|\[Info\]|\[\\${BP_C_INFO}Info\\${E_END}\]|"  \
             -e "s|\[Warn\]|\[\\${BP_C_WARNING}Warn\\${E_END}\]|"  \
             -e "s|\[Erro\]|\[\\${BP_C_ERROR}Erro\\${E_END}\]|"    \
-            -e "s|\[ Ok \]|\[\\${BP_C_OK}Erro\\${E_END}\]|"    \
+            -e "s|\[ Ok \]|\[\\${BP_C_OK} Ok \\${E_END}\]|"    \
             -e "s/[-0-9]+/\\${E_GREEN}&\\${E_END}/1"            \
             -e "s/[:0-9]+/\\${E_BR_GREEN}&\\${E_END}/6"            \
             -e "s|\[Crit\]|\[\\${E_ON_RED}\\${E_WHITE}Crit\\${E_END}\]|"
@@ -1140,11 +1181,8 @@ bpRunCommand() {
     bpErrorExit "No command given"
   fi
 
-  funks=$(grep "##" "$0" | grep -v grep | grep -v help_line)
-  for line in ${funks}; do
-    command=$(echo "$line" | sed -s 's/(.*//')
-    if [ "$command" == "$1" ]; then
-
+  if [ "$( type -t $1 )" = "function" ]; then # Check if subcommand is declared as function
+      command=$1
       # execute pre command hook  if existing
       if [ -n "$PRECMDHOOK" ]; then
         "${PRECMDHOOK}" "$command"
@@ -1177,9 +1215,9 @@ bpRunCommand() {
         "${POSTCMDHOOK}" "$command"
       fi      
       bpExit
-    fi
-  done
-  bpErrorExit "Command \"$1\" not found"
+  else
+    bpErrorExit "Command \"$1\" not found"
+  fi
 }
 
 #---------------------------------------------------------------------
