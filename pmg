@@ -3,14 +3,16 @@
 # shellcheck disable=1090
 #---------------------------------------------------------------------
 #
+#  bp
+#
 #  [Description]
-#  Linux admin help script
+#    pmg management script
 #
 #  [Author]
 #    Peter Malmberg <peter.malmberg@gmail.com>
 #
 #  [Date]
-#    2016-xx-xx
+#    2018-06-17
 #
 #  [License]
 #     MIT
@@ -37,346 +39,70 @@
 # Exit script when undeclared variable is used
 #set -o nounset
 # Exit script when pipe fails
-#set -o pipefail
+set -o pipefail
 
 #---------------------------------------------------------------------
 # User defined Settings
 #---------------------------------------------------------------------
-
-serverPkgs=(               \
-  "rdiff-backup"           \
-  "nfs-common"             \
-  "qemu-kvm"               \
-  "virt-manager"           \
-  "virt-top"               \
-  "ssmtp"                  \
-  "mailutils"              \
-)
-
-basicPkgs=(         \
-  "jed"             \
-  "htop"            \
-  "nmap"            \
-  "lm-sensors"      \
-  "apt-file"        \
-  "net-tools"       \
-  "bridge-utils"    \
-  "openssh-server"  \
-)
-
-desktopUtilPkgs=(              \
-  "brasero"                    \
-  "gnome-tweak-tool"           \
-  "vlc"                        \
-	"mesa-utils"                 \
-)
-
-
-develToolsPkgs=(    \
-  "bison"           \
-  "flex"            \
-  "texinfo"         \
-  "git"             \
-  "gitk"            \
-  "subversion"      \
-  "meld"            \
-  "doxygen"         \
-  "shellcheck"      \
-)
-
-develCPkgs=(        \
-  "build-essential" \
-  "gdb"             \
-  "gdbserver"       \
-  "autoconf"        \
-  "cmake"           \
-  "ccache"          \
-  "colorgcc"        \
-  "gettext"         \
-  "libtool"         \
-  "libexpat-dev"    \
-  "splint"          \
-  "pkg-config"      \
-  "gperf"           \
-  "libncurses5"     \
-  "libncurses5-dev" \
-  "lua5.1"          \
-  "liblua5.1"       \
-  "libglib2.0-0"    \
-  "libglib2.0-dev"  \
-  "qt5-default"     \
-  "qt5-qmake"               \
-  "libqt5core5a"            \
-  "libqt5serialport5"       \
-  "libqt5serialport5-dev"   \
-  "qttools5-dev-tools"      \
-  "libsqlite3-dev"          \
-  "astudio"                 \
-  "libgtk-3-dev"            \
-  "libgtk-3-0-dbg"          \
-  "glade"                   \
-  "libc6-dev-amd64"         \
-  "libgtk-3-dev"            \
-  "astyle"                  \
-  "libelf-dev"              \
-  "freeglut3-dev"           \
-)
-
-armDevPkgs=(                \
-  "build-essential"         \
-  "gdb"                     \
-  "gdbserver"               \
-  "binutils-arm-none-eabi"  \ 
-  "gcc-arm-none-eabi"       \
-  "gdb-arm-none-eabi"       \
-  "libnewlib-arm-none-eabi" \
-  "openocd"                 \
-)
-
-avrDevPkgs=(                \
-  "build-essential"         \
-  "gdbserver"               \
-  "avrdude"                 \
-  "avr-libc"                \
-  "gcc-avr"                 \
-  "gdb-avr"                 \
-  "avrdude"                 \
-)
-
-pythonDevPkgs=(                \
-  "python"                     \
-  "python-pip"                 \
-  "python-qt4"                 \
-  "python-qwt5-qt4"            \
-  "python-numpy"               \
-  "python-scipy"               \
-  "python-serial"              \
-  "python3"                    \
-  "python3-serial"             \
-  "python3-pip"                \
-  "python3-pyqt5"              \
-  "python3-pyqt5.qtserialport" \
-  "python3-pyqt5.qtopengl"     \
-  "python3-guiqwt"             \
-  "python3-guidata"            \
-  "python3-numpy"              \
-  "python3-scipy"              \
-  "pyqt5-dev-tools"            \
-  "pyqt5-examples"             \
-)
-
 
 
 #---------------------------------------------------------------------
 # User defined functions
 #---------------------------------------------------------------------
 
-#
-# IP nr
-#
-#IP=`ip add show dev eth0 | grep "inet " | cut -c10-24 | cut -f1 -d'/'`
-#DATE=`date`
+##N- User: Peter Malmberg
 
-##N- Utils
 
-mountServer() {  ## Add mount rule to fileserver in fstab
-  bpAssertRoot
-  bpMkDir /storage
-  bpAppendIfNoSuchLine /etc/fstab  "fileserver:/storage  /storage nfs    auto   0 0"
+##N- Project management (git)
+
+clean() { ## Remove leftover files 
+  bpCd "${BP_SCRIPT_PATH}"
+
+  find . -name "*~"     -delete
+  find . -name "*.orig" -delete
+
+  # Remove untraced files
+  git clean -df -e *.log
+  bpCd -
 }
 
-printList() { # Print all packages
-	# list all packages
-#  bpTextLine $
-#	bpLine
-  for pkg in ${@}; do
-    echo ${pkg}
-  done
-	
-	
+commit() { ## Commit project to repository
+  bpCd "${BP_SCRIPT_PATH}"
+  git commit -a
+  #git push --tags -a
+  bpCd - 
 }
 
-list() { ## List packages
- # printList ${develToolsPkgs[@]}
+tag() { ## Make a new tag
+  bpCd "${BP_SCRIPT_PATH}"
+  # List existing tags
+  git tag
 
-  bpTextLine   basic
-  printList ${basicPkgs[@]}
-	
-  bpTextLine   server
-  printList ${serverPkgs[@]}
+  # read tag name/description
+  tag=$( bpRead "Tagname" "")
+  desc=$( bpRead "Description" "")
 
-  bpTextLine cDevelop
-  printList ${develCPkgs[@]}
-	
-  bpTextLine  ARMDevelop
-  printList ${armDevPkgs[@]}
-
-  bpTextLine avrDevelop
-  printList ${avrDevPkgs[@]}
-	
-  bpTextLine Develop
-  printList ${develToolsPkgs[@]}
+  # Tag revision
+  git tag -a "$tag" -m "$desc"
+  bpCd - 
 }
 
-##N- Install
+push() { ## Push project to GITHUB
+  bpCd "${BP_SCRIPT_PATH}"
+  git push --progress
+  bpCd - 
+} 
 
-addSambaUser() {
-  smbpasswd -a pmg
-}
-
-#
-# Installs array of packages
-# 
-# arg 1  array of packages
-installG() {
-  # first update all packages
-  apt-get update
-	
-	# install all packages in list
-  for pkg in ${@}; do
-    apt-get -y install ${pkg}
-  done
-}
-
-tools() {                  ## Install development tools like git svn
-  bpAssertRoot
-  installG ${develToolsPkgs[@]}
-}
-
-basic() {                   ## Install basic tools like editors
-  bpAssertRoot
-  installG ${basicPkgs[@]}
-}
-
-server() {                  ## Intstall server packages
-  bpAssertRoot
-  installG ${serverPkgs[@]}
-}
-
-cDevelop() {                ## Install packages for native C development 
-  bpAssertRoot
-  installG ${develCPkgs[@]}
-}
-				
-ARMDevelop() {              ## Install ARM C development packages
-  bpAssertRoot
-  installG ${armDevPkgs[@]}
-}
-
-avrDevelop() {              ## Install AVR C development packages
-  bpAssertRoot
-  installG ${avrDevPkgs[@]}
-}
-
-java() {                    ## Install Java development packages
-  bpAssertRoot
-  apt-get -y install python-software-properties
-  add-apt-repository ppa:webupd8team/java
-  apt-get -y update
-  apt-get -y install oracle-java8-installer
-}
-
-python() {                  ## Install python development packages
-  bpAssertRoot
-  installG ${pythonDevPkgs[@]}
-	
-  # Upgrade pip program
-  pip  install --upgrade pip
-  pip3 install --upgrade pip
-}
-
-users() {                   ## Create users and groups
-  bpAssertRoot
-  adduser lpmg -uid 1000
-}
+pull() { ## Pull project from GITHUB
+  bpCd "${BP_SCRIPT_PATH}"
+  git pull --progress
+  bpCd - 
+} 
 
 
-newDev() {                  ## Installs basic/tools/C development/python
-  bpAssertRoot
-	
-  basic
-  tools
-  cDevelop
-  python	
-}
-
-WORK=~/Downloads
-
-gitClonePull() {
-  if [ ! -d $2 ]; then
-    git clone $1
-  else
-    cd $2
-    git pull
-  fi
-}
-
-
-shellcheck() {  ## download compile and install latest version shellcheck
-
-  dpkg-query -l cabal-install > /dev/null
-	
-  if [ "$?" -eq 1 ]; then
-    sudo apt-get -y install cabal-install  
-  fi
-	
-  cabal update
-
-  cd "$WORK"
-
-  if [ ! -d "$WORK"/shellcheck ]; then
-    git clone https://github.com/koalaman/shellcheck.git
-  else
-    cd "$WORK"/shellcheck
-    git pull
-  fi
-
-  cd "$WORK"/shellcheck
-
-  cabal install
-
-  # check if path is setup right
-  which shellcheck
-
-  if [ "$?" -eq 1 ]; then
-    echo
-    echo "Add the following to global PATH."
-    echo 'export PATH="$HOME/.cabal/bin:$PATH"'
-  fi
-}
-
-AVRSIMDIR=~/Downloads/simavr
-
-avrsim() { ## Download compile and install avrsim
-  #git clone https://github.com/buserror/simavr  ${AVRSIMDIR}
-  cd ${AVRSIMDIR}
-  ls
-  make
-  cd -
-}
-
-
-photivo() { ## Photo RAW file editor
- # bpAssertRoot
-  sudo add-apt-repository ppa:dhor/myway
-  sudo apt-get update
-  sudo apt-get install photivo
-}
-
-
-##N- Projects
-
-projects() { ## Checkout all git projects
-  bpMkDir ~/Projects
-  git clone https://github.com/zonbrisad/makeplates.git
-  git clone https://github.com/zonbrisad/bashplates.git
-  git clone https://github.com/zonbrisad/.git
-  git clone https://github.com/zonbrisad/.git
-  git clone https://github.com/zonbrisad/.git
-  git clone https://github.com/zonbrisad/.git
-  git clone https://github.com/zonbrisad/.git
-  git clone https://github.com/zonbrisad/.git
-
+updatesettings() { ## Update settings
+  bpAddSettings 
+  bpChSetting "${BP_SETTINGS_FILE}" "BP_PATH" "${BP_SCRIPT_PATH}"
 }
 
 #---------------------------------------------------------------------
@@ -385,19 +111,19 @@ projects() { ## Checkout all git projects
 bpInitSettings() { 
 
 ##V Script version info
-VERSION="1.02"
+VERSION="1.0"
 
 ##V Bashplate version
 BPVERSION="1.11"
 
 ##V Usage info
-USAGE="Usage: ${BPSCRIPTNAME} command [option]"
+USAGE="Usage: ${BP_SCRIPT_NAME} command [option]"
 
 # Description text
-DESC="Linux admin tools"
+DESC="Peter Malmberg settings project management script"
 
 ##V logfile (uncomment to use logfile)
-#LOGFILE=${BP_SCRIPT_PATH}/${BP_SCRIPT_NAME}.log
+LOGFILE=${BP_SCRIPT_PATH}/${BP_SCRIPT_NAME}.log
 
 ##V Logging options (uncomment to activate logging parameters)
 LOG_OK=1
@@ -407,10 +133,10 @@ LOG_ERROR=1
 LOG_CRITICAL=1
 
 ##V Lock file (uncomment to use lock file feature )
-#LOCK_FILE=/tmp/${BP_SCRIPT_NAME}.lock
+LOCK_FILE=/tmp/${BP_SCRIPT_NAME}.lock
 
 # Activate settings function (will create settings file when run)
-#BPSETTINGS=1
+BPSETTINGS=1
 
 # Create settings file if non existent
 #CREATEPLSETTINGS=1
@@ -422,13 +148,6 @@ BP_EDIT=1
 #---------------------------------------------------------------------
 # Bashplate Hooks
 #---------------------------------------------------------------------
-
-##V Logging options (uncomment to activate logging parameters)
-LOG_OK=1
-LOG_INFO=1
-LOG_WARNING=1
-LOG_ERROR=1
-LOG_CRITICAL=1
 
 ##V Default command (uncomment to use a default command )
 DEFAULTCMD=help
@@ -447,7 +166,6 @@ DEFAULTCMD=help
 
 ##V Function to be executed after information command
 #INFOHOOK=
-
 
 #---------------------------------------------------------------------
 # Signal traps
@@ -473,7 +191,6 @@ signalTerm() {
 }
 
 ##CN- IHELP Exit and cleanup
-
 
 bpCleanUp() { ##D Cleanup function
   rm -f "$LOCK_FILE"    # remove Lock file
@@ -559,7 +276,6 @@ E_SHOW=$'\e[?25h'          # Show cursor
 
 E_END=$'\e[m'              # Clear Attributes
 
-
 # Default Bashplate colortheme
 BP_C_OK=$E_BR_GREEN
 BP_C_INFO=$E_BR_CYAN
@@ -578,7 +294,6 @@ BP_C_RESERVED=$E_RED
 BP_C_COMMENT=$E_CYAN
 BP_C_STRING=$E_GREEN
 BP_C_VAR=$E_BR_YELLOW
-
 
 # Exit codes
 #
@@ -679,7 +394,6 @@ bpPrintVar() {
   fi
 }
 
-##CN- IHELP File operations
 
 # Colorize string with filename
 #
@@ -702,6 +416,17 @@ bpFilterEscape() { ##D Filter escape characters from string
   
 
 ##CN- IHELP File operations
+
+#
+# $1 command to execute
+#
+bpRun() { ##D Execute command
+  if [ -e "$1" ]; then
+    ${1}
+  else
+    bpError "Could not execute $1, file does not exist!"
+  fi
+}
 
 #
 # $1 directory to change to
@@ -763,6 +488,18 @@ bpRm() { ##D Remove file
   rm -rf "${1}"
 }
 
+
+# 
+# Make backup of file
+#
+# $1 file to be backed up
+#
+bpBackup() { ##D Make backup of file
+  BF="${1}_$(date +"%Y%m%d")-$(date +"%H%M%S").bak"
+  bpInfo "Backing up file \"$1\" to \"${BF}\""
+  cp -rf "$1" "${BF}" 
+}
+
 # Replace text in file
 #
 # $1 file 
@@ -810,6 +547,7 @@ bpRemoveLineContaining() { ##D Remove line in file if it contains given string
 # return 1 for true, 0 for false
 #
 bpStrExist() { ##D Check if string exist in file
+  
   if grep -q -F "$2" "$1" ; then
     echo "1"
   else
@@ -986,6 +724,10 @@ bpLoadSettings() {
   fi
 }
 
+initSettings() { ##C BPINIT Initiate settins directory
+  echo init  
+}
+
 printSettings() { ##C BPSETTINGS Print plate information
   bpTextLine "Bashplates settings"
   bpPrintVar BP_NAME      "Name:"
@@ -1032,108 +774,6 @@ ed() { ##C BP_EDIT Open this file with standard editor
   fi
 }
 
-
-# Logging ---------------------------------------------------------
-
-##CN- IHELP Log functions
-
-# Settings file ------------------------------------------------------
-
-##CN- BPSETTINGS Settings
-
-bpAddSetting() { 
-
-  # Check if setting exist in file
-  S=$(bpStrExist $bpSettingsFile "${1}" )
-
-  if [ "${S}" == "0" ]; then
-    echo "# ${3}"    >>  ${bpSettingsFile}
-    echo "${1}=\"${2}\"" >> ${bpSettingsFile}
-    echo >> ${bpSettingsFile}
-  fi
-}
-
-bpAddSettings() { 
-  bpAddSetting "BP_NAME"  "John Doe"        "Name of user"
-  bpAddSetting "BP_EMAIL" "JohnDoe@foo.bar" "Email of user"
-  bpAddSetting "BP_EDITOR" "vi"             "Default editor"
-  bpAddSetting "BP_LICENSE" "MIT"           "Default project license"
-  bpAddSetting "BP_ORG"     "ACME"          "Default organisation"
-}
-
-# Change setting in config file (key value pair)
-#
-# arg1 config file
-# arg2 setting to change
-# arg3 new value for setting
-#
-chSetting() {  
-  SETTING="$2"
-  VAL="$3"
-	
-  S=$(bpStrExist "${1}" "${2}" )
-  if [ "${S}" == "0" ]; then
-    bpAddSettings
-  fi
-  sed -i "s/^\(${SETTING}\s*=\s*\).*\$/\1$VAL/" "$1"
-}
-
-bpCreateSettings() {
-			
-  echo "Creating new bashplates settings file. ${bpSettingsFile}"
-  bpMkDir ${bpSettingsDir}
-					
-  echo "# " >> ${bpSettingsFile}
-  echo "# Bashplates common settings" > ${bpSettingsFile}
-  echo "# " >> ${bpSettingsFile}
-  echo      >> ${bpSettingsFile}
-
-  bpAddSettings
-}
-
-bpLoadSettings() {
-  if [ -n "${bpSettingsFile}" ]; then
-    if [ -e "${bpSettingsFile}" ]; then
-      source "${bpSettingsFile}"
-    else
-      bpCreateSettings
-      source "${bpSettingsFile}"
-    fi
-  fi
-}
-
-printSettings() { ##C BPSETTINGS Print plate information
-  bpTextLine "Bashplates settings"
-  printVar BP_NAME      "Name:"
-  printVar BP_EMAIL     "Email:"
-  printVar BP_LICENSE   "Default license:"
-  printVar BP_EDITOR    "Default editor"
-  printVar BP_ORG       "Default organisation"
-  bpLine
-}
-
-setname() { ##C BPSETTINGS Set name
-  chSetting "${bpSettingsFile}" "BP_NAME" "\"${2}\""	
-}
-
-setemail() { ##C BPSETTINGS Set email address
-  chSetting "${bpSettingsFile}" "BP_EMAIL" "\"${2}\""	
-}
-
-seteditor() { ##C BPSETTINGS Set default editor
-  chSetting "${bpSettingsFile}" "BP_EDITOR" "\"${2}\""	
-}
-
-setlic() { ##C BPSETTINGS Set default license
-  chSetting "${bpSettingsFile}" "BP_LICENSE" "\"${2}\""	
-}
-
-setorg() { ##C BPSETTINGS Set default organisation
-  chSetting "${bpSettingsFile}" "BP_ORG" "\"${2}\""	
-}
-
-
-##-
 
 # Logging ---------------------------------------------------------
 
@@ -1358,30 +998,6 @@ printCondNamedLine() {
   fi
 }
 
-printCondLine() {
-  help_line="$1"
-  C=$(echo "$1" | sed -s 's/^.*##C-//' | awk '{print $1}')
-  eval "D=\$$C"
-  if [ -n "$D" ]; then
-     bpLine
-  fi
-}
-
-printNamedLine() {
-  name=$(echo "$1" | sed -e 's/^.*##N-//' -e 's/^[ \t]*//' )
-  bpTextLine "$name"
-}
-
-printCondNamedLine() {
-  help_line="$1"
-  C=$(echo "$1" | sed -s 's/^.*##CN-//' | awk '{print $1}')
-	name=$(echo "$help_line" | sed -e 's/^.*'"$C"'//' -e 's/^[ \t]*//' )
-  eval "D=\$$C"
-  if [ -n "$D" ]; then
-    bpTextLine "$name"
-  fi
-}
-
 help() { ## Print this help information
   echo "$USAGE"
   echo -e "$DESC"
@@ -1561,7 +1177,7 @@ bpRunCommand() {
 
           if [ -n "$D" ]; then
             # execute command
-            "${command}" "$1" "$2" "$3" "$4" "$5" "$6" "$7" "$8" "$9" "${10}"
+            "${command}" "$@" 
           else
             bpError "Command \"$command\" not available right now."
           fi
@@ -1570,7 +1186,7 @@ bpRunCommand() {
         fi
       else 
         # command is not conditional, execute
-        "${command}" "$1" "$2" "$3" "$4" "$5" "$6" "$7" "$8" "$9" "${10}"        
+        "${command}" "$@"
       fi
 
       # execute post command hook  if existing
@@ -1627,13 +1243,6 @@ bpInitSettings
 # Setup signal traps
 #---------------------------------------------------------------------
 
-##V Number of columns in terminal
-COLUMNS=$(tput cols)
-
-##V Number of lines in terminal
-LINES=$(tput lines)
-
-
 trap  signalQuit SIGQUIT
 trap  signalInt  SIGINT
 trap  signalHup  SIGHUP
@@ -1648,19 +1257,11 @@ bpLoadSettings
 
 # execute prescript hook if existing
 if [ -n "$PREHOOK" ]; then
-  ${PREHOOK} "$1" "$2" "$3" "$4" "$5" "$6" "$7" "$8" "$9" "${10}"
-fi
-
-# Load configuration file settings
-bpLoadSettings
-
-# execute prescript hook if existing
-if [ -n "$PREHOOK" ]; then
-  ${PREHOOK} "$1" "$2" "$3" "$4" "$5" "$6" "$7" "$8" "$9" "${10}"
+  ${PREHOOK} "$@"
 fi
 
 # Run command parser
-bpRunCommand "$1" "$2" "$3" "$4" "$5" "$6" "$7" "$8" "$9" "${10}"
+bpRunCommand "$@"
 
 # Exit cleanly
 bpExit
