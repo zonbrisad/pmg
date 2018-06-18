@@ -366,17 +366,38 @@ photivo() { ## Photo RAW file editor
 
 ##N- Projects
 
-projects() { ## Checkout all git projects
-  bpMkDir ~/Projects
-  git clone https://github.com/zonbrisad/makeplates.git
-  git clone https://github.com/zonbrisad/bashplates.git
-  git clone https://github.com/zonbrisad/.git
-  git clone https://github.com/zonbrisad/.git
-  git clone https://github.com/zonbrisad/.git
-  git clone https://github.com/zonbrisad/.git
-  git clone https://github.com/zonbrisad/.git
-  git clone https://github.com/zonbrisad/.git
+PROJDIR=~/Projectsx
 
+# Colorize string with url
+#
+# $1 string with url to colorize
+# ret colorized string
+#
+bpColorizeUrl() { ##D Colorize url
+	url=$(echo $1 | sed -r -e "s/^.*\/\///")
+	prot=$(echo $1 | sed -r -e "s/:\/.*//")
+  echo -e -n "${E_DARKGRAY}${prot}${E_END}://$(bpColorizeFile ${url})"
+}
+
+
+gclone() {
+  bpInfo "Retreiving $(bpColorizeUrl $1)"
+  bpCd "${PROJDIR}"
+  git clone "$1" 
+	bpCd -
+}
+
+projects() { ## Checkout all git projects
+  bpMkDir "${PROJDIR}"
+  
+	gclone https://github.com/zonbrisad/bashplates.git
+  gclone https://github.com/zonbrisad/Debugsock.git
+	gclone https://github.com/zonbrisad/pyplate.git
+	gclone https://github.com/zonbrisad/makeplates.git
+	gclone https://github.com/zonbrisad/LEF.git
+	gclone https://github.com/zonbrisad/mTerm.git
+	gclone https://github.com/zonbrisad/Tester.git
+	gclone https://github.com/zonbrisad/luaconf.git
 }
 
 #---------------------------------------------------------------------
