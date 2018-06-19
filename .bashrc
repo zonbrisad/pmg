@@ -27,7 +27,7 @@ HOSTNAME=$(hostname)
 OS=$(uname -s)
 
 # Paths ---------------------------------------------------------------------
-
+echo "AAA: $PATH"
 #export PATH=${PATH}:/home/pmg/Projekt/RaspberryPi/tools/arm-bcm2708/gcc-linaro-arm-linux-gnueabihf-raspbian-x64/bin
 export PATH=${PATH}:"$HOME"/.cabal/bin
 export PATH=${PATH}:"$HOME"/bin
@@ -68,7 +68,7 @@ host_fileserver() {
   alias b5='cd /storage/backup/fileserver/daily_5/storage/home/pmg'
 	
   # Load bashplate settings
-  source ~/Tester/bashplates/bp_init
+#  source ~/Tester/bashplates/bp_init
 }
 
 # Host: buildserver (Abelko) -------------------------------------------------
@@ -109,14 +109,23 @@ host_ustation() {
   alias pqe='cd /usr/share/doc/pyqt5-examples/examples'
 
   # Load pyplate settings
-  source ~/Project/pyplate/pyplate_init
-
+#  source ~/Project/pyplate/pyplate_init
+ 
   # Load bashplate settings
-  source ~/Project/bashplates/bp_init
+#  source ~/Project/bashplates/bp_init
 
   # Load makeplate settings
-  source ~/Project/makeplates/mp_init
+#  source ~/Project/makeplates/mp_init
 }
+
+# Host: pmg-pav  ------------------------------------------------------------
+#host_pmg-pav() {
+#if [ "${HOSTNAME}" == "pmg-pav" ]; then
+# echo "Kalle"
+	# Load bashplate settings
+#  source ~/Projects/bashplates/bp_init
+#fi
+#}
 
 #---------------------------------------------------------------------
 # bashrc personal functions
@@ -143,14 +152,6 @@ bpInitSettings() {
 function bpExit() {             # Function to run 
   return 1
 }
-
-# Host: ustation ------------------------------------------------------------
-if [ "${HOSTNAME}" == "pmg-pav" ]; then
-  #alias eclipse='~/Downloads/eclipse/eclipse'
-	# Load bashplate settings
-  source ~/Projects/bashplates/bp_init
-fi
-
 
 # SSH agent
 #eval `ssh-agent -s`
@@ -1392,28 +1393,24 @@ fi
 # Initiate bashplate settings
 bpInitSettings
 
-
-# If settings directory exist load settings/paths/modules
+# If bashplates settings directory exist load settings/paths/modules
 if [ -e "$BP_SETTINGS_DIR" ]; then
 
   # Load bashplate settings
   if [ -f "$BP_SETTINGS_FILE" ]; then
     source ${BP_CONF}
-  #  source ${BP_PATH}/bp_init
   fi
 
-  # Add PATH's
+  # Add bashplates PATH's
   for p in ${BP_SETTINGS_PATHS}/*; do
-#    echo  "PATH: $( readlink ${p} )"
     PATH="${PATH}: $( readlink ${p} )"
   done
   export PATH
   
-  # Run module scripts
+  # Run bashplates module scripts
   for m in ${BP_SETTINGS_MODULES}/*; do
     l=$( readlink ${m} )
     if [ -e ${l} ]; then
-#      echo  "Module: $l )"
       source $l
     else
       bpError "Module $( bpColorizeFile $l ) does not exist!"
