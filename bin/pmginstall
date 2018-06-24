@@ -68,7 +68,7 @@ desktopUtilPkgs=(              \
   "brasero"                    \
   "gnome-tweak-tool"           \
   "vlc"                        \
-	"mesa-utils"                 \
+  "mesa-utils"                 \
 )
 
 
@@ -186,7 +186,7 @@ mountServer() {  ## Add mount rule to fileserver in fstab
 }
 
 printList() { # Print all packages
-	# list all packages
+# list all packages
 #  bpTextLine $
 #	bpLine
   for pkg in ${@}; do
@@ -230,69 +230,71 @@ addSambaUser() {
 # arg 1  array of packages
 installG() {
   # first update all packages
-  apt-get update
+  sudo apt-get update
 	
-	# install all packages in list
+  # install all packages in list
   for pkg in ${@}; do
-    apt-get -y install ${pkg}
+    bpInfo "Installing: ${E_BR_GREEN}${pkg}${E_END}"
+    bpLine
+    sudo apt -y install ${pkg}
   done
 }
 
 tools() {                  ## Install development tools like git svn
-  bpAssertRoot
+#  bpAssertRoot
   installG ${develToolsPkgs[@]}
 }
 
 basic() {                   ## Install basic tools like editors
-  bpAssertRoot
+#  bpAssertRoot
   installG ${basicPkgs[@]}
 }
 
 server() {                  ## Intstall server packages
-  bpAssertRoot
+#  bpAssertRoot
   installG ${serverPkgs[@]}
 }
 
 cDevelop() {                ## Install packages for native C development 
-  bpAssertRoot
+#  bpAssertRoot
   installG ${develCPkgs[@]}
 }
 				
 ARMDevelop() {              ## Install ARM C development packages
-  bpAssertRoot
+#  bpAssertRoot
   installG ${armDevPkgs[@]}
 }
 
 avrDevelop() {              ## Install AVR C development packages
-  bpAssertRoot
+#  bpAssertRoot
   installG ${avrDevPkgs[@]}
 }
 
 java() {                    ## Install Java development packages
-  bpAssertRoot
-  apt-get -y install python-software-properties
-  add-apt-repository ppa:webupd8team/java
-  apt-get -y update
-  apt-get -y install oracle-java8-installer
+#  bpAssertRoot
+  sudo apt-get -y install python-software-properties
+  sudo add-apt-repository ppa:webupd8team/java
+  sudo apt-get -y update
+  sudo apt-get -y install oracle-java8-installer
 }
 
 python() {                  ## Install python development packages
-  bpAssertRoot
+#  bpAssertRoot
   installG ${pythonDevPkgs[@]}
 	
   # Upgrade pip program
-  pip  install --upgrade pip
-  pip3 install --upgrade pip
+  sudo pip  install --upgrade pip
+  sudo pip3 install --upgrade pip
 }
 
 users() {                   ## Create users and groups
-  bpAssertRoot
-  adduser lpmg -uid 1000
+#  bpAssertRoot
+  sudo adduser lpmg -uid 1000
 }
 
 
 newDev() {                  ## Installs basic/tools/C development/python
-  bpAssertRoot
+#  bpAssertRoot
 	
   basic
   tools
@@ -366,7 +368,10 @@ photivo() { ## Photo RAW file editor
 
 ##N- Projects
 
-PROJDIR=~/Projectsx
+PROJDIR="${HOME}/Projectsy"
+ghUser="zonbrisad"
+ghURL="github.com"
+
 
 # Colorize string with url
 #
@@ -374,30 +379,48 @@ PROJDIR=~/Projectsx
 # ret colorized string
 #
 bpColorizeUrl() { ##D Colorize url
-	url=$(echo $1 | sed -r -e "s/^.*\/\///")
-	prot=$(echo $1 | sed -r -e "s/:\/.*//")
+	url=$(echo -n $1 | sed -r -e "s/^.*\/\///")
+	prot=$(echo -n $1 | sed -r -e "s/:\/.*//")
+#	un=$( echo $url | sed -r -e 's/\(.*\)@/$1/')
+#	echo "UN: ${un}"
   echo -e -n "${E_DARKGRAY}${prot}${E_END}://$(bpColorizeFile ${url})"
 }
 
-
+#
+# Clone git repo
+#
+# $1 URL
+# $2 Destination dir
+#
 gclone() {
-  bpInfo "Retreiving $(bpColorizeUrl $1)"
-  bpCd "${PROJDIR}"
-  git clone "$1" 
+  fn=$(basename -- $1)
+	fn="${fn%.*}"
+  bpCd "${2}"
+  if [ -e "$fn" ]; then
+	  bpError "Directory $(bpColorizeFile $(realpath $fn)) already exists, skipping cloning"
+	else 
+    bpInfo "Retreiving $(bpColorizeUrl $1)"
+    git clone "$1" 
+	fi
 	bpCd -
 }
 
-projects() { ## Checkout all git projects
+ghClone() {  ##D Github clone
+  gclone "https://${ghUser}@${ghURL}/${ghUser}/${1}.git" "${PROJDIR}"
+}
+
+projects() { ## Checkout all git projects 
+  bpTextLine "Checking out projects"
   bpMkDir "${PROJDIR}"
-  
-	gclone https://github.com/zonbrisad/bashplates.git
-  gclone https://github.com/zonbrisad/Debugsock.git
-	gclone https://github.com/zonbrisad/pyplate.git
-	gclone https://github.com/zonbrisad/makeplates.git
-	gclone https://github.com/zonbrisad/LEF.git
-	gclone https://github.com/zonbrisad/mTerm.git
-	gclone https://github.com/zonbrisad/Tester.git
-	gclone https://github.com/zonbrisad/luaconf.git
+ 	
+	ghClone "bashplates"
+  ghClone Debugsock
+	ghClone pyplate
+	ghClone makeplates
+	ghClone LEF
+	ghClone mTerm
+	ghClone Tester
+	ghClone luaconf
 }
 
 #---------------------------------------------------------------------
@@ -728,7 +751,7 @@ bpFilterEscape() { ##D Filter escape characters from string
 # $1 directory to change to
 #
 bpCd() { ##D Safe cd function (exits on fail)
-  cd "$1" || bpExit "Failed to cd to [$1]"
+  cd "$1" > /dev/null || bpExit "Failed to cd to [$1]"
 }
 
 # Create a directory if it does not exist
