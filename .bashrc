@@ -27,10 +27,10 @@ HOSTNAME=$(hostname)
 OS=$(uname -s)
 
 # Paths ---------------------------------------------------------------------
-echo "AAA: $PATH"
+
 #export PATH=${PATH}:/home/pmg/Projekt/RaspberryPi/tools/arm-bcm2708/gcc-linaro-arm-linux-gnueabihf-raspbian-x64/bin
-export PATH=${PATH}:"$HOME"/.cabal/bin
-export PATH=${PATH}:"$HOME"/bin
+#export PATH=${PATH}:"$HOME"/.cabal/bin
+#export PATH=${PATH}:"$HOME"/bin
 
 export LD_LIBRARY_PATH=/usr/local/lib
 
