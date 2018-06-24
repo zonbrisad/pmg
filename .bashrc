@@ -921,16 +921,17 @@ function mydf()         # Pretty-print of 'df' output.
 }
 						
 						
-function my_ip() { # Get IP adress on ethernet.
+function bpIp() { # Get IP adress on ethernet.
   
-	case ${HOSTNAME} in
-	  "fileserver") MY_IP=$(/sbin/ifconfig br0    | awk '/inet/ { print $2 } ' | sed -e s/addr://) ;;
-		"vbPmg")      MY_IP=$(/sbin/ifconfig enp0s3 | awk '/inet/ { print $2 } ' | sed -e s/addr://) ;;
-		"ustation")   MY_IP=$(/sbin/ifconfig enp2s0 | awk '/inet/ { print $2 } ' | sed -e s/addr://) ;;		
-		*)            MY_IP=$(/sbin/ifconfig eth0   | awk '/inet/ { print $2 } ' | sed -e s/addr://) ;;
-	esac
+	ip addr | grep 'state UP' -A2 | tail -n1 | awk '{print $2}' | cut -f1  -d'/'
+#	case ${HOSTNAME} in
+#	  "fileserver") MY_IP=$(/sbin/ifconfig br0    | awk '/inet/ { print $2 } ' | sed -e s/addr://) ;;
+#		"vbPmg")      MY_IP=$(/sbin/ifconfig enp0s3 | awk '/inet/ { print $2 } ' | sed -e s/addr://) ;;
+#		"ustation")   MY_IP=$(/sbin/ifconfig enp2s0 | awk '/inet/ { print $2 } ' | sed -e s/addr://) ;;		
+#		*)            MY_IP=$(/sbin/ifconfig eth0   | awk '/inet/ { print $2 } ' | sed -e s/addr://) ;;
+#	esac
 
-  echo ${MY_IP:-"Not connected"}
+#  echo ${MY_IP:-"Not connected"}
 }
 					
 function ii() {  # Get current host related info.
@@ -943,7 +944,7 @@ function ii() {  # Get current host related info.
   echo -e ""
   bpPrintInfo "Username:"          "$USER"
   bpPrintInfo "Current date:"      "$(date)"
-  bpPrintInfo "Local IP Address:"  "$(my_ip)"
+  bpPrintInfo "Local IP Address:"  "$(bpIp)"
   bpPrintInfo "Machine Uptime:"    "$(uptime -p)"
   bpPrintInfo "Machine Type:"      "$(uname -m)"
   bpLine
