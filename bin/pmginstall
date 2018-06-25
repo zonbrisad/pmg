@@ -62,6 +62,7 @@ basicPkgs=(         \
   "net-tools"       \
   "bridge-utils"    \
   "openssh-server"  \
+
 )
 
 desktopUtilPkgs=(              \
@@ -69,6 +70,7 @@ desktopUtilPkgs=(              \
   "gnome-tweak-tool"           \
   "vlc"                        \
   "mesa-utils"                 \
+	"dconf-editor"               \
 )
 
 
@@ -241,37 +243,34 @@ installG() {
 }
 
 tools() {                  ## Install development tools like git svn
-#  bpAssertRoot
   installG ${develToolsPkgs[@]}
 }
 
-basic() {                   ## Install basic tools like editors
-#  bpAssertRoot
+utils() {                   ## Install text utility programs
   installG ${basicPkgs[@]}
 }
 
+desktopUtils() {            ## Install desktop utility programs
+  installG ${desktopUtilPkgs[@]}
+}
+
 server() {                  ## Intstall server packages
-#  bpAssertRoot
   installG ${serverPkgs[@]}
 }
 
 cDevelop() {                ## Install packages for native C development 
-#  bpAssertRoot
   installG ${develCPkgs[@]}
 }
 				
 ARMDevelop() {              ## Install ARM C development packages
-#  bpAssertRoot
   installG ${armDevPkgs[@]}
 }
 
 avrDevelop() {              ## Install AVR C development packages
-#  bpAssertRoot
   installG ${avrDevPkgs[@]}
 }
 
 java() {                    ## Install Java development packages
-#  bpAssertRoot
   sudo apt-get -y install python-software-properties
   sudo add-apt-repository ppa:webupd8team/java
   sudo apt-get -y update
@@ -279,7 +278,6 @@ java() {                    ## Install Java development packages
 }
 
 python() {                  ## Install python development packages
-#  bpAssertRoot
   installG ${pythonDevPkgs[@]}
 	
   # Upgrade pip program
@@ -288,14 +286,11 @@ python() {                  ## Install python development packages
 }
 
 users() {                   ## Create users and groups
-#  bpAssertRoot
   sudo adduser lpmg -uid 1000
 }
 
 
 newDev() {                  ## Installs basic/tools/C development/python
-#  bpAssertRoot
-	
   basic
   tools
   cDevelop
