@@ -50,6 +50,27 @@ set -o pipefail
 # User defined functions
 #---------------------------------------------------------------------
 
+
+##- New install options
+
+newt() { ##D Setup tools/users/config on new install without desktop
+  ${BP_SCRIPT_PATH}/pmginstall utils
+}
+
+newd() { ##D Setup tools/users/config on new install with desktop
+  newt
+	${BP_SCRIPT_PATH}/pmginstall utils
+}
+
+news() { ##D Setup tools/users/config on new server install
+  newt
+  ${BP_SCRIPT_PATH}/pmginstall server
+}
+
+devel() {
+  echo ""
+}
+
 ##- Users & Groups
 
 
