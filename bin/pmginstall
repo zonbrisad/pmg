@@ -62,7 +62,7 @@ basicPkgs=(         \
   "net-tools"       \
   "bridge-utils"    \
   "openssh-server"  \
-
+  "gddrescue"       \
 )
 
 desktopUtilPkgs=(              \
@@ -70,7 +70,7 @@ desktopUtilPkgs=(              \
   "gnome-tweak-tool"           \
   "vlc"                        \
   "mesa-utils"                 \
-	"dconf-editor"               \
+  "dconf-editor"               \
 )
 
 

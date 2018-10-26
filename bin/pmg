@@ -128,7 +128,7 @@ BP_LOG_ERROR=1
 BP_LOG_CRITICAL=1
 
 ##V Activate settings function (will create settings file when run)
-#BP_SETTINGS=1
+BP_SETTINGS=1
 
 }
 #---------------------------------------------------------------------
