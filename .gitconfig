@@ -1,8 +1,7 @@
 [user]
-	name = Peter
+	name  = Peter Malmberg
 	email = peter.malmberg@gmail.com
-	name = Peter
-	name = Peter
+
 [core]
 	editor = jed
 [diff]
@@ -17,3 +16,4 @@
 	hist = log --pretty=format:\"%h %ad | %s%d [%an]\" --graph --date=short 
 	type = cat-file -t 
 	dump = cat-file -p
+  deleted = log --diff-filter=D --summary

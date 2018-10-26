@@ -53,7 +53,7 @@ serverPkgs=(               \
   "mailutils"              \
 )
 
-basicPkgs=(         \
+utilsPkgs=(         \
   "jed"             \
   "htop"            \
   "nmap"            \
@@ -62,19 +62,23 @@ basicPkgs=(         \
   "net-tools"       \
   "bridge-utils"    \
   "openssh-server"  \
+  "smartmontools"   \
+  "testdisk"        \
   "gddrescue"       \
 )
 
 desktopUtilPkgs=(              \
   "brasero"                    \
   "gnome-tweak-tool"           \
+  "gnome-tweaks"               \
   "vlc"                        \
   "mesa-utils"                 \
   "dconf-editor"               \
+  "usb-creator-gtk"            \
 )
 
 
-develToolsPkgs=(    \
+devUtilsPkgs=(      \
   "bison"           \
   "flex"            \
   "texinfo"         \
@@ -173,12 +177,6 @@ pythonDevPkgs=(                \
 # User defined functions
 #---------------------------------------------------------------------
 
-#
-# IP nr
-#
-#IP=`ip add show dev eth0 | grep "inet " | cut -c10-24 | cut -f1 -d'/'`
-#DATE=`date`
-
 ##- Utils
 
 mountServer() {  ##D Add mount rule to fileserver in fstab
@@ -199,10 +197,10 @@ printList() { # Print all packages
 }
 
 list() { ##D List packages
- # printList ${develToolsPkgs[@]}
+ # printList ${devUtilsPkgs[@]}
 
   bpTextLine   basic
-  printList ${basicPkgs[@]}
+  printList ${utilsPkgs[@]}
 	
   bpTextLine   server
   printList ${serverPkgs[@]}
@@ -217,13 +215,18 @@ list() { ##D List packages
   printList ${avrDevPkgs[@]}
 	
   bpTextLine Develop
-  printList ${develToolsPkgs[@]}
+  printList ${devUtilsPkgs[@]}
 }
 
 ##- Install
 
 addSambaUser() {
   smbpasswd -a pmg
+}
+
+bpIsInstalled() { ##I Check if package is installed
+  dpkg -l $1  &> /dev/null
+	return $?
 }
 
 #
@@ -236,29 +239,35 @@ installG() {
 	
   # install all packages in list
   for pkg in ${@}; do
-    bpInfo "Installing: ${E_BR_GREEN}${pkg}${E_END}"
-    bpLine
-    sudo apt -y install ${pkg}
+	  if bpIsInstalled $pkg ; then
+		  bpOk "Package $pkg is already installed"
+		else
+      bpInfo "Installing: ${E_BR_GREEN}${pkg}${E_END}"
+      bpLine
+      sudo apt -y install ${pkg}
+      bpLine
+		fi
   done
 }
 
-tools() {                  ##D Install development tools like git svn
-  installG ${develToolsPkgs[@]}
-}
-
 utils() {                   ##D Install text utility programs
-  installG ${basicPkgs[@]}
+  installG ${utilsPkgs[@]}
 }
 
-desktopUtils() {            ##D Install desktop utility programs
+desktoputils() {            ##D Install desktop utility programs
   installG ${desktopUtilPkgs[@]}
 }
 
-server() {                  ##D Intstall server packages
+serverutils() {             ##D Intstall server packages
   installG ${serverPkgs[@]}
 }
 
-cDevelop() {                ##D Install packages for native C development 
+
+devutils() {                ##D Install development utls like git, svn, flex, doxygen
+  installG ${devUtilsPkgs[@]}
+}
+
+cdevelop() {                ##D Install packages for native C development 
   installG ${develCPkgs[@]}
 }
 				
@@ -285,9 +294,9 @@ python() {                  ##D Install python development packages
   sudo pip3 install --upgrade pip
 }
 
-users() {                   ##D Create users and groups
-  sudo adduser lpmg -uid 1000
-}
+#users() {                   ##D Create users and groups
+#  sudo adduser lpmg -uid 1000
+#}
 
 
 newDev() {                  ##D Installs basic/tools/C development/python
