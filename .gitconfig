@@ -1,11 +1,11 @@
 [user]
-	name  = Peter Malmberg
+	name = Peter Malmberg
 	email = peter.malmberg@gmail.com
 
 [core]
 	editor = jed
 [diff]
-	external = /home/pmg/bin/git_diff_meld.py
+	external = /home/lpmg/bin/git_diff_meld.py
 [push]
 	default = simple
 [alias]
