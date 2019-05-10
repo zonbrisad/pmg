@@ -20,6 +20,15 @@
 #
 # ---------------------------------------------------------------------------
 
+# Display commands as they are executed
+#set -o xtrace
+# Display shell input lines as they are read
+#set -v
+
+# Exit script when a command fails. Append ||true if error is expected
+#set -o errexit # || true
+# Exit script when undeclared variable is used
+#set -o nounset
 
 # Host specific vars --------------------------------------------------------
 
@@ -1385,7 +1394,8 @@ trap bpExit EXIT
 # Start
 #---------------------------------------------------------------------
 
-# Source global definitions (if any) ----------------------------------------
+
+# Source global definitions (if any) 
 
 if [ -f /etc/bashrc ]; then
   . /etc/bashrc   # --> Read /etc/bashrc, if present.
@@ -1399,12 +1409,13 @@ if [ -e "$BP_SETTINGS_DIR" ]; then
 
   # Load bashplate settings
   if [ -f "$BP_SETTINGS_FILE" ]; then
-    source ${BP_CONF}
+	    source ${BP_SETTINGS_FILE}
   fi
 
   # Add bashplates PATH's
   for p in ${BP_SETTINGS_PATHS}/*; do
     PATH="${PATH}: $( readlink ${p} )"
+		echo "P" $p
   done
   export PATH
   
@@ -1412,7 +1423,8 @@ if [ -e "$BP_SETTINGS_DIR" ]; then
   for m in ${BP_SETTINGS_MODULES}/*; do
     l=$( readlink ${m} )
     if [ -e ${l} ]; then
-      source $l
+#      source $l
+			echo "X" $l
     else
       bpError "Module $( bpColorizeFile $l ) does not exist!"
     fi
