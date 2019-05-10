@@ -3,8 +3,6 @@
 # shellcheck disable=1090
 #---------------------------------------------------------------------
 #
-#  bp
-#
 #  [Description]
 #    pmg management script
 #
@@ -45,11 +43,21 @@ set -o pipefail
 # User defined Settings
 #---------------------------------------------------------------------
 
+USERNAME="Peter Malmberg"
+USEREMAIL="peter.malmberg@gmail.com"
+
+EDITOR=jed
+
+
+MY_NAME="Peter Malmberg"
+MY_EMAIL="peter.malmberg@gmail.com"
+MY_EDITOR="jed"
+MY_DIFF="meld"
+MY_ORG="malmberg"
 
 #---------------------------------------------------------------------
 # User defined functions
 #---------------------------------------------------------------------
-
 
 ##- New install options
 
@@ -59,7 +67,7 @@ newt() { ##D Setup tools/users/config on new install without desktop
 
 newd() { ##D Setup tools/users/config on new install with desktop
   newt
-	${BP_SCRIPT_PATH}/pmginstall utils
+  ${BP_SCRIPT_PATH}/pmginstall utils
 }
 
 news() { ##D Setup tools/users/config on new server install
@@ -72,6 +80,104 @@ devel() {
 }
 
 ##- Users & Groups
+
+##- Setup
+
+all_setups() { ##D All setups 
+  git_setup
+  jed_setup
+  bp_setup
+  ln_setup
+}
+
+git_setup() { ##D Setup git correctly
+  git config --global user.name "${MY_NAME}"
+  git config --global user.email "${MY_EMAIL}"
+  git config --global core.editor "${MY_EDITOR}"
+  git config --global diff.external ~/bin/git_diff_meld.py
+#git config --global push.default simple	
+#git config --global push.default master
+  git config --list
+	
+}
+
+jed_setup() { ##D Setup jed editor
+  #bpAssertRoot
+  sudo bpCp ${BP_SCRIPT_PATH}/setupfiles/make.sl /usr/share/jed/lib/.
+}
+
+bp_setup() { ##D Setup bashplate
+  setname   "" "${MY_NAME}"
+  setemail  "" "${MY_EMAIL}"
+  seteditor "" "${MY_EDITOR}"
+  setdiff   "" "${MY_DIFF}"  
+}
+
+configFiles=(        \
+  "~/.bashrc"        \
+  "~/.bash_profile"  \
+  "~/.jedrc"         \
+  "~/bin"            \
+  "~/.gitconfig"     \
+)
+
+#
+# $1 file to be replaced
+#
+cf() {
+  eval F=${1}
+  if [ ! -h $F ]; then  # if not symbolic link do
+  echo $F
+    if [ -e $F ]; then  # if file already exist make a copy
+       bpBackup "$F"
+       bpRm "$F"
+    fi
+
+    eval X=${BP_SCRIPT_PATH}/../$(basename $F)
+    bpLn  ${BP_SCRIPT_PATH}/../$(basename $F) $F
+  fi
+}
+
+ln_setup() { ##D Create symbolic links   
+  for pkg in ${configFiles[@]}; do
+    cf "${pkg}"
+  done
+}
+
+##- Backup
+
+#
+#
+bpAvail() { ## Amount of available diskpace in directory in MB
+  df --output=avail --block-size=M .
+}
+
+bpBackupDir() { ##D Backup directory
+  if [ ! -e "$1" ]; then
+    bpError "Source file \"${1}\" does not exist!"
+		return 1
+  fi
+	if [ ! -e "$2" ]; then 
+	  bpError "Destination dir $2 does not exist"
+		return 1
+	fi
+  
+	src=$(realpath "$1")
+	dst=$(realpath "$2")
+	
+	BF="backup_$(hostname)_${USER}_$(date +"%Y%m%d")-$(date +"%H%M%S")"
+
+#	echo "Available: $(bpAvail ".")"
+
+  bpInfo "Backing up $src to \"${dst}/${BF}\"."
+  rsync --info=progress2 --recursive --links ${src}/* "${dst}/${BF}"
+
+}
+
+backup() { ##D Backup user data
+#  bpBackupDir ~/Project "$2"
+	bpBackupDir ~/ "$2"
+}
 
 
 ##- Project management (git)
@@ -149,7 +255,7 @@ BP_LOG_ERROR=1
 BP_LOG_CRITICAL=1
 
 ##V Activate settings function (will create settings file when run)
-BP_SETTINGS=1
+#BP_SETTINGS=1
 
 }
 #---------------------------------------------------------------------
