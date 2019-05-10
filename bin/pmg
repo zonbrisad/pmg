@@ -101,6 +101,13 @@ git_setup() { ##D Setup git correctly
 	
 }
 
+git_ssh() { ##D Generate SSH key for github
+  ssh-keygen -t rsa -b 4096 -C "${MY_EMAIL}"
+  ssh-add ~/.ssh/id_rsa
+	cat ~/.ssh/id_rsa.pub
+}
+
+
 jed_setup() { ##D Setup jed editor
   #bpAssertRoot
   sudo bpCp ${BP_SCRIPT_PATH}/setupfiles/make.sl /usr/share/jed/lib/.
