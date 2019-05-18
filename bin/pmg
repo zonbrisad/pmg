@@ -42,7 +42,7 @@ set -o pipefail
 #---------------------------------------------------------------------
 # User defined Settings
 #---------------------------------------------------------------------
-
+bpUserSettings() {
 USERNAME="Peter Malmberg"
 USEREMAIL="peter.malmberg@gmail.com"
 
@@ -54,7 +54,7 @@ MY_EMAIL="peter.malmberg@gmail.com"
 MY_EDITOR="jed"
 MY_DIFF="meld"
 MY_ORG="malmberg"
-
+}
 #---------------------------------------------------------------------
 # User defined functions
 #---------------------------------------------------------------------
@@ -79,7 +79,22 @@ devel() {
   echo ""
 }
 
+
+##- Tools
+
+#
+# $1 isofile
+# $2 device to write to
+#
+iso2usb() { ##D Write ISO file to USB drive
+  bpInfo "Writing ${3} to USB drive"
+  sudo dd if="$2" of="$3" bs=1MB status=progress
+}
+
 ##- Users & Groups
+ 
+ 
+ 
  
 ##- Setup
 
@@ -88,6 +103,7 @@ all_setups() { ##D All setups
   jed_setup
   bp_setup
   ln_setup
+	ssh_setup
 }
 
 git_setup() { ##D Setup git correctly
@@ -101,10 +117,10 @@ git_setup() { ##D Setup git correctly
 	
 }
 
-git_ssh() { ##D Generate SSH key for github
+ssh_setup() { ##D Generate SSH key 
   ssh-keygen -t rsa -b 4096 -C "${MY_EMAIL}"
   ssh-add ~/.ssh/id_rsa
-	cat ~/.ssh/id_rsa.pub
+  cat ~/.ssh/id_rsa.pub
 }
 
 
@@ -246,7 +262,7 @@ APP_VERSION="1.01"
 APP_USAGE="Usage: ${BP_SCRIPT_NAME} command [option]"
 
 ##V Description text
-DESC="Peter Malmberg settings project management script"
+DESC="Peter Malmberg's management script"
 
 ##V logfile (uncomment to use logfile)
 APP_LOGFILE=${BP_SCRIPT_PATH}/${BP_SCRIPT_NAME}.log
@@ -1418,7 +1434,7 @@ bpRunCommand() {
 #---------------------------------------------------------------------
 
 ##V Bashplate version
-BP_VERSION="1.11"
+BP_VERSION="1.20"
 
 ##V Directory where script is located
 BP_SCRIPT_PATH=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
@@ -1455,6 +1471,9 @@ BP_SETTINGS_MODULES="${BP_SETTINGS_DIR}/modules"
 
 # Initiate bashplate settings
 bpInitSettings
+
+# Initiate user settings
+bpUserSettings
 
 #---------------------------------------------------------------------
 # Setup signal traps

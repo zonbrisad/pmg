@@ -88,22 +88,11 @@ host_buildroot() {
   alias eclipse='/opt/eclipse_luna_sr2/eclipse'
   alias eclipsen='~/bin/eclipse/eclipse'
   alias netbeans='/home/peterm/bin/netbeans/bin/netbeans'
-	
-  # Load bashplate settings
-  #source ~/tester/bashplates/bp_init
-	
-  # Load makeplate settings
-  #source ~/tester/makeplates/mp_init
 }
 
 # Host: Virtual machine (Abelko) --------------------------------------------
 host_vbPmg() {
   alias eclipse='~/bin/eclipse/eclipse'
-  # Load bashplate settings
-  #source ~/Tester/bashplates/bp_init
-	
-  # Load makeplate settings
-  #source ~/Tester/makeplates/mp_init
 }
 
 # Host: ustation ------------------------------------------------------------
@@ -111,20 +100,9 @@ host_ustation() {
   alias eclipse='~/Downloads/eclipse/eclipse'
   alias lef='cd ~/Projekt/LEF'
 	
-#alias mp='cd ~/Projekt/makeplates'
-#alias bp='cd ~/Projekt/bashplates'
-
   # PyQt5 example and demos
   alias pqe='cd /usr/share/doc/pyqt5-examples/examples'
 
-  # Load pyplate settings
-#  source ~/Project/pyplate/pyplate_init
- 
-  # Load bashplate settings
-#  source ~/Project/bashplates/bp_init
-
-  # Load makeplate settings
-#  source ~/Project/makeplates/mp_init
 }
 
 # Host: pmg-pav  ------------------------------------------------------------
@@ -386,7 +364,7 @@ bpInfo() { ##D Info message
   if [ -n "$LOG_INFO" ]; then
     bpLogInfo "$1"
   fi
-  echo -e "[${BP_C_INFO}Info${E_END}] $1"
+  echo -e "[${BP_C_INFO}Info${E_END}]  $1"
 }
 										
 bpWarning() { ##D Warning message
@@ -1413,18 +1391,23 @@ if [ -e "$BP_SETTINGS_DIR" ]; then
   fi
 
   # Add bashplates PATH's
-  for p in ${BP_SETTINGS_PATHS}/*; do
-    PATH="${PATH}: $( readlink ${p} )"
-		echo "P" $p
+	for p in $(find ${BP_SETTINGS_PATHS} -type l) ; do
+	  l=$( readlink ${p} )
+		if [ -e ${l} ]; then
+      PATH="${PATH}:${l}"
+		  bpInfo "Adding path:  $l"
+	  else
+		  bpError "Path  $( bpColorizeFile $l ) does not exist!"
+		fi
   done
   export PATH
   
   # Run bashplates module scripts
-  for m in ${BP_SETTINGS_MODULES}/*; do
+	for m in $(find ${BP_SETTINGS_MODULES} -type l) ; do
     l=$( readlink ${m} )
     if [ -e ${l} ]; then
-#      source $l
-			echo "X" $l
+      source $l
+			bpInfo "Loading module $( bpColorizeFile $l )"
     else
       bpError "Module $( bpColorizeFile $l ) does not exist!"
     fi

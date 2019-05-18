@@ -42,7 +42,7 @@
 #---------------------------------------------------------------------
 # User defined Settings
 #---------------------------------------------------------------------
-
+bpUserSettings() {
 serverPkgs=(               \
   "rdiff-backup"           \
   "nfs-common"             \
@@ -172,7 +172,7 @@ pythonDevPkgs=(                \
 )
 
 
-
+}
 #---------------------------------------------------------------------
 # User defined functions
 #---------------------------------------------------------------------
@@ -439,7 +439,7 @@ APP_VERSION="1.03"
 APP_USAGE="Usage: ${BP_SCRIPT_NAME} command [option]"
 
 ##V Description text
-DESC="Linux admin tools"
+DESC="Peter Malmberg's install script"
 
 ##V logfile (uncomment to use logfile)
 APP_LOGFILE=${BP_SCRIPT_PATH}/${BP_SCRIPT_NAME}.log
@@ -1611,7 +1611,7 @@ bpRunCommand() {
 #---------------------------------------------------------------------
 
 ##V Bashplate version
-BP_VERSION="1.11"
+BP_VERSION="1.20"
 
 ##V Directory where script is located
 BP_SCRIPT_PATH=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
@@ -1648,6 +1648,9 @@ BP_SETTINGS_MODULES="${BP_SETTINGS_DIR}/modules"
 
 # Initiate bashplate settings
 bpInitSettings
+
+# Initiate user settings
+bpUserSettings
 
 #---------------------------------------------------------------------
 # Setup signal traps
