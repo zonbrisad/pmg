@@ -410,7 +410,9 @@ gclone() {
 }
 
 ghClone() {  ##D Github clone
-  gclone "https://${ghUser}@${ghURL}/${ghUser}/${1}.git" "${PROJDIR}"
+#  gclone "https://${ghUser}@${ghURL}/${ghUser}/${1}.git" "${PROJDIR}"
+  gclone "ssh://git@${ghURL}:/${ghUser}/${1}.git" "${PROJDIR}"
+
 }
 
 projects() { ##D Checkout all git projects 
@@ -418,13 +420,13 @@ projects() { ##D Checkout all git projects
   bpMkDir "${PROJDIR}"
  	
 	ghClone "bashplates"
-  ghClone Debugsock
-	ghClone pyplate
-	ghClone makeplates
-	ghClone LEF
-	ghClone mTerm
-	ghClone Tester
-	ghClone luaconf
+  ghClone "Debugsock"
+	ghClone "pyplate"
+	ghClone "makeplates"
+	ghClone "LEF"
+	ghClone "mTerm"
+	ghClone "Tester"
+	ghClone "luaconf"
 }
 
 #---------------------------------------------------------------------
@@ -433,7 +435,7 @@ projects() { ##D Checkout all git projects
 bpInitSettings() { 
 
 ##V Script version info
-APP_VERSION="1.03"
+APP_VERSION="1.04"
 
 ##V Usage info
 APP_USAGE="Usage: ${BP_SCRIPT_NAME} command [option]"
