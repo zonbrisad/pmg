@@ -123,6 +123,15 @@ ssh_setup() { ##D Generate SSH key
   cat ~/.ssh/id_rsa.pub
 }
 
+pmg2ssh() { ##D Change pmg remote repository to ssh
+  cd  ${BP_SCRIPT_PATH}/..
+	git remote -v
+  git remote set-url origin git@github.com:zonbrisad/pmg.git
+	git remote -v
+	cd  ${BP_SCRIPT_PATH}/..
+
+}
+
 
 jed_setup() { ##D Setup jed editor
   #bpAssertRoot
