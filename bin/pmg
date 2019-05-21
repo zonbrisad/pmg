@@ -174,8 +174,7 @@ pmg2ssh() { ##D Change pmg remote repository to ssh
 	git remote -v
   git remote set-url origin git@github.com:zonbrisad/pmg.git
 	git remote -v
-	cd  ${BP_SCRIPT_PATH}/..
-
+	cd  -
 }
 
 ##- Backup
