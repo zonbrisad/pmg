@@ -166,9 +166,15 @@ ln_setup() { ##D Create symbolic links
 ##- SSH
 
 ssh_setup() { ##D Generate SSH key 
-  ssh-keygen -t rsa -b 4096 -C "${MY_EMAIL}"
-  ssh-add ~/.ssh/id_rsa
-  cat ~/.ssh/id_rsa.pub
+  if [ -e ~/.ssh/id_rsa ]; then
+	  bpWarning "SSH key already exists."
+		if bpReadN "Do you want to overwrite existing key?" ; then
+		  bpInfo "Creating SSH key"
+			ssh-keygen -t rsa -b 4096 -C "${MY_EMAIL}"
+			ssh-add ~/.ssh/id_rsa
+			cat ~/.ssh/id_rsa.pub
+		fi
+	fi	
 }
 
 pmg2ssh() { ##D Change pmg remote repository to ssh
@@ -177,7 +183,12 @@ pmg2ssh() { ##D Change pmg remote repository to ssh
   git remote set-url origin git@github.com:zonbrisad/pmg.git
 	git remote -v
 	cd  ${BP_SCRIPT_PATH}/..
+}
 
+sshid() { ##D Install SSH public key on remote host
+  sn=$( bpRead "Remote host" "" )
+  un=$( bpRead "Username" "$USER" )
+  ssh-copy-id -i ~/.ssh/id_rsa.pub "${un}@${sn}"
 }
 
 ##- Backup
@@ -213,6 +224,24 @@ bpBackupDir() { ##D Backup directory
 backup() { ##D Backup user data
 #  bpBackupDir ~/Project "$2"
 	bpBackupDir ~/ "$2"
+}
+
+
+##- Information
+info() { ##D General information
+# bpPrintInfo 
+ bpTextLine "Hardware"
+ bpPrintInfo "CPU"  "$(cat /proc/cpuinfo | grep -m 1 "model name" | cut -n -b 14- )"
+ bpPrintInfo "Memory" "$( free --mega | grep Mem | awk '{ print $2 }') Mb"
+ bpPrintInfo "Graphics" "$( lspci  | grep VGA | sed -r 's/.*controller: //' )"
+ bpTextLine "System"
+ bpPrintInfo "Distibution" "$(lsb_release -a 2>/dev/null | grep Description | cut -b 14- )"
+ bpPrintInfo "Kernel" "$( uname -r )"
+ bpPrintVar TERM  "Terminal"
+ bpPrintInfo "Uptime" "$( uptime )"
+ bpPrintVar HOSTNAME "Hostname"
+ bpPrintVar USER     "Username"
+ bpLine
 }
 
 
@@ -562,7 +591,7 @@ bpPrintInfoAlt() {
 # $2 text for column 2
 # $3 optional text form column 1
 #
-bpPrintVar() {
+bpPrintVar() { 
   var="$1"      
   if [ "${!var}" ]; then
     if [ ! -z "$3" ]; then
@@ -901,7 +930,11 @@ bpChSetting() {
 }
 
 bpCreateSettings() {
-  bpInfo "Creating new bashplates settings. $( bpColorizeFile ${BP_SETTINGS_FILE} )"
+
+#  if [ ! -e ${BP_SETTINGS_DIR} ]; then
+#    bpInfo "Creating new bashplates settings. $( bpColorizeFile ${BP_SETTINGS_FILE} )"
+
+#	fi
   bpMkDir "${BP_SETTINGS_DIR}"
   bpMkDir "${BP_SETTINGS_PATHS}"
   bpMkDir "${BP_SETTINGS_MODULES}"
