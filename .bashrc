@@ -1391,27 +1391,31 @@ if [ -e "$BP_SETTINGS_DIR" ]; then
   fi
 
   # Add bashplates PATH's
-	for p in $(find ${BP_SETTINGS_PATHS} -type l) ; do
-	  l=$( readlink ${p} )
-		if [ -e ${l} ]; then
-      PATH="${PATH}:${l}"
-		  bpInfo "Adding path:  $l"
-	  else
-		  bpError "Path  $( bpColorizeFile $l ) does not exist!"
-		fi
-  done
-  export PATH
+  if [ -e "$BP_SETTINGS_PATHS" ]; then
+    for p in $(find ${BP_SETTINGS_PATHS} -type l) ; do
+	    l=$( readlink ${p} )
+		  if [ -e ${l} ]; then
+        PATH="${PATH}:${l}"
+  		  bpInfo "Adding path:  $l"
+	    else
+		    bpError "Path  $( bpColorizeFile $l ) does not exist!"
+  		fi
+    done
+    export PATH
+	fi
   
-  # Run bashplates module scripts
-	for m in $(find ${BP_SETTINGS_MODULES} -type l) ; do
-    l=$( readlink ${m} )
-    if [ -e ${l} ]; then
-      source $l
-			bpInfo "Loading module $( bpColorizeFile $l )"
-    else
-      bpError "Module $( bpColorizeFile $l ) does not exist!"
-    fi
-  done
+	# Run bashplates module scripts
+	if [ -e "$BP_SETTINGS_MODULES" ]; then
+	  for m in $(find ${BP_SETTINGS_MODULES} -type l) ; do
+      l=$( readlink ${m} )
+      if [ -e ${l} ]; then
+        source $l
+			  bpInfo "Loading module $( bpColorizeFile $l )"
+      else
+        bpError "Module $( bpColorizeFile $l ) does not exist!"
+      fi
+    done
+	fi	
 fi
 
 bpMkdir() {

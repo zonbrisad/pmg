@@ -145,15 +145,13 @@ configFiles=(        \
 cf() {
   eval F=${1}
   if [ ! -h $F ]; then  # if not symbolic link do
-  echo $F
     if [ -e $F ]; then  # if file already exist make a copy
        bpBackup "$F"
        bpRm "$F"
     fi
-
-    eval X=${BP_SCRIPT_PATH}/../$(basename $F)
-    bpLn  ${BP_SCRIPT_PATH}/../$(basename $F) $F
-  fi
+  fi 
+  eval X=${BP_SCRIPT_PATH}/../$(basename $F)
+  bpLn  ${BP_SCRIPT_PATH}/../$(basename $F) $F
 }
 
 ln_setup() { ##D Create symbolic links   
@@ -182,7 +180,7 @@ pmg2ssh() { ##D Change pmg remote repository to ssh
 	git remote -v
   git remote set-url origin git@github.com:zonbrisad/pmg.git
 	git remote -v
-	cd  ${BP_SCRIPT_PATH}/..
+ 	cd  -
 }
 
 sshid() { ##D Install SSH public key on remote host
@@ -681,7 +679,7 @@ bpMkDir() { ##I Create directory
 bpLn() { ##I Create symbolic link
   bpInfo "Creating link \"${2}\""
   if [ ! -L "$1" ]; then
-    ln -s "${1}" "${2}"
+    ln -sf "${1}" "${2}"
   fi
 }
 
