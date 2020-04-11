@@ -88,7 +88,7 @@ devel() {
 #
 iso2usb() { ##D Write ISO file to USB drive
   bpInfo "Writing ${3} to USB drive"
-  sudo dd if="$2" of="$3" bs=1MB status=progress
+  sudo dd if="$2" of="$3" bs=4MB status=progress oflag=sync
 }
 
 ##- Users & Groups
