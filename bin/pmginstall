@@ -67,14 +67,15 @@ utilsPkgs=(         \
   "gddrescue"       \
 )
 
-desktopUtilPkgs=(              \
-  "brasero"                    \
-  "gnome-tweak-tool"           \
-  "gnome-tweaks"               \
-  "vlc"                        \
-  "mesa-utils"                 \
-  "dconf-editor"               \
-  "usb-creator-gtk"            \
+desktopUtilPkgs=(                    \
+  "brasero"                          \
+  "gnome-tweak-tool"                 \
+  "gnome-tweaks"                     \
+  "gnome-shell-extension-impatience" \
+  "vlc"                              \
+  "mesa-utils"                       \
+  "dconf-editor"                     \
+  "usb-creator-gtk"                  \
 )
 
 
