@@ -54,10 +54,16 @@ MY_EMAIL="peter.malmberg@gmail.com"
 MY_EDITOR="jed"
 MY_DIFF="meld"
 MY_ORG="malmberg"
+
+
+SSH_KEY=~/.ssh/id_ed25519
+
 }
 #---------------------------------------------------------------------
 # User defined functions
 #---------------------------------------------------------------------
+
+
 
 ##- New install options
 
@@ -98,12 +104,12 @@ iso2usb() { ##D Write ISO file to USB drive
  
 ##- Setup
 
-all_setups() { ##D All setups 
+all_setups() { ##D All setups (except jed_setup)
   git_setup
-  jed_setup
+#  jed_setup
   bp_setup
   ln_setup
-	ssh_setup
+  ssh_setup
 }
 
 git_setup() { ##D Setup git correctly
@@ -120,8 +126,8 @@ git_setup() { ##D Setup git correctly
 
 
 jed_setup() { ##D Setup jed editor
-  #bpAssertRoot
-  sudo bpCp ${BP_SCRIPT_PATH}/setupfiles/make.sl /usr/share/jed/lib/.
+  bpAssertRoot
+  bpCp ${BP_SCRIPT_PATH}/setupfiles/make.sl /usr/share/jed/lib/.
 }
 
 bp_setup() { ##D Setup bashplate
@@ -163,24 +169,30 @@ ln_setup() { ##D Create symbolic links
 
 ##- SSH
 
+
+
 ssh_setup() { ##D Generate SSH key 
-  if [ -e ~/.ssh/id_rsa ]; then
-	  bpWarning "SSH key already exists."
-		if bpReadN "Do you want to overwrite existing key?" ; then
-		  bpInfo "Creating SSH key"
-			ssh-keygen -t rsa -b 4096 -C "${MY_EMAIL}"
-			ssh-add ~/.ssh/id_rsa
-			cat ~/.ssh/id_rsa.pub
-		fi
-	fi	
+  if  [ -e "${SSH_KEY}" ]; then
+    bpWarning "SSH key already exists."
+    if ! bpReadN "Do you want to overwrite existing key?" ; then
+      cat ${SSH_KEY}.pub
+      return 1
+    fi
+  fi	
+  
+  bpInfo "Creating SSH key"
+#  ssh-keygen -t rsa -b 4096 -C "${MY_EMAIL}"
+  ssh-keygen -t ed25519 -b 4096 -C "${MY_EMAIL}"
+  ssh-add ${SSH_KEY}
+  cat ${SSH_KEY}.pub
 }
 
-pmg2ssh() { ##D Change pmg remote repository to ssh
+pmg2ssh() { ##D Change pmg remote git repository to ssh
   cd  ${BP_SCRIPT_PATH}/..
-	git remote -v
+  git remote -v
   git remote set-url origin git@github.com:zonbrisad/pmg.git
-	git remote -v
- 	cd  -
+  git remote -v
+  cd  -
 }
 
 sshid() { ##D Install SSH public key on remote host
@@ -225,6 +237,12 @@ backup() { ##D Backup user data
 }
 
 
+
+
+
+
+
+
 ##- Information
 info() { ##D General information
 # bpPrintInfo 
@@ -239,6 +257,9 @@ info() { ##D General information
  bpPrintInfo "Uptime" "$( uptime )"
  bpPrintVar HOSTNAME "Hostname"
  bpPrintVar USER     "Username"
+ bpPrintInfo "SSH public key location" ${SSH_KEY}.pub
+ bpPrintInfo "SSH public key" "$( cat ${SSH_KEY}.pub )"
+ 
  bpLine
 }
 
@@ -488,7 +509,7 @@ BP_C_INFO=$E_BR_CYAN
 BP_C_WARNING=$E_BR_YELLOW
 BP_C_ERROR=$E_BR_RED
 BP_C_CRITICAL=$E_ON_RED$E_WHITE
-BP_C_LINE=$E_DARKGRAY
+BP_C_LINE=$E_GRAY
 BP_C_LINE_TEXT=$E_YELLOW
 BP_C_DESCRIPTION=$E_GREEN
 BP_C_ID=$E_CYAN

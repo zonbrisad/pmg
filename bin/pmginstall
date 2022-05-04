@@ -69,13 +69,14 @@ utilsPkgs=(         \
 
 desktopUtilPkgs=(                    \
   "brasero"                          \
-  "gnome-tweak-tool"                 \
   "gnome-tweaks"                     \
   "gnome-shell-extension-impatience" \
+  "gnome-shell-extension-manager"    \
   "vlc"                              \
   "mesa-utils"                       \
   "dconf-editor"                     \
   "usb-creator-gtk"                  \
+  "ubuntu-restricted-extras"         \
 )
 
 
@@ -128,6 +129,9 @@ develCPkgs=(        \
   "libelf-dev"              \
   "freeglut3-dev"           \
 )
+
+
+
 
 armDevPkgs=(                \
   "build-essential"         \
@@ -628,7 +632,7 @@ BP_C_INFO=$E_BR_CYAN
 BP_C_WARNING=$E_BR_YELLOW
 BP_C_ERROR=$E_BR_RED
 BP_C_CRITICAL=$E_ON_RED$E_WHITE
-BP_C_LINE=$E_DARKGRAY
+BP_C_LINE=$E_GRAY
 BP_C_LINE_TEXT=$E_YELLOW
 BP_C_DESCRIPTION=$E_GREEN
 BP_C_ID=$E_CYAN
