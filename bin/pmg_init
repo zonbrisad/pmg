@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+#---------------------------------------------------------------------
+# Makeplate environment init script
+#    
+#---------------------------------------------------------------------
+#
+
+#set -o xtrace   # Display commands as they are executed
+#set -o pipefail # Exit script when pipe fails
+
+# Directory where script is located
+scriptPath=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
+
+#---------------------------------------------------------------------
+
+
+export PATH=${PATH}:${scriptPath}:${scriptPath}/tools
+
+export MP_PATH=${scriptPath}
