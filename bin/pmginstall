@@ -1163,13 +1163,13 @@ bpLsModules() { ##I List modules
 bpAddModule() { ##I Add init script to
   m=$( realpath "${1}" )
   if [ ! -L "$m" ]; then
-	  rm -f "${BP_SETTINGS_MODULES}/$(basename $m)"
+    rm -f "${BP_SETTINGS_MODULES}/$(basename $m)"
     ln -s "$m" "${BP_SETTINGS_MODULES}/."
-		bpInfo "Adding module $(bpColorizeFile $m)"
+    bpInfo "Adding module $(bpColorizeFile $m)"
   fi
 }
 
-bpRmModules() { ##I Remove module
+bpRmModule() { ##I Remove module
   bpRm "${BP_SETTINGS_MODULES}/${1}"
 }
 
