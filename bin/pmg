@@ -250,10 +250,13 @@ info() { ##D General information
  bpPrintVar TERM  "Terminal"
  bpPrintInfo "Uptime" "$( uptime )"
  bpPrintVar HOSTNAME "Hostname"
- bpPrintVar USER     "Username"
+ bpPrintInfo "IP addr" "$( ip a | grep enp2s0 -m2 | grep inet | awk  '{print $2}' )"
+
+ bpTextLine "User"
+ bpPrintVar USER   "Username"
  bpPrintInfo "SSH public key location" ${SSH_KEY}.pub
  bpPrintInfo "SSH public key" "$( cat ${SSH_KEY}.pub )"
- 
+
  bpLine
 }
 
