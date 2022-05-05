@@ -1408,7 +1408,6 @@ if [ -e "$BP_SETTINGS_DIR" ]; then
 	if [ -e "$BP_SETTINGS_MODULES" ]; then
 	  for m in $(find ${BP_SETTINGS_MODULES} -type l) ; do
       l=$( readlink ${m} )
-			echo $l
       if [ -e ${l} ]; then
         source $l
 			  bpInfo "Loading module $( bpColorizeFile $l )"
