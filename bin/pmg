@@ -107,8 +107,6 @@ iso2usb() { ##D Write ISO file to USB drive
 all_setups() { ##D All setups (except jed_setup)
   pmg_setup
   git_setup
-  bp_setup
-  ln_setup
   ssh_setup
 	#  jed_setup
 }
