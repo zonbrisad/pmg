@@ -61,7 +61,6 @@ utilsPkgs=(         \
   "apt-file"        \
   "net-tools"       \
   "bridge-utils"    \
-  "openssh-server"  \
   "smartmontools"   \
   "testdisk"        \
   "gddrescue"       \
@@ -234,6 +233,13 @@ bpIsInstalled() { ##I Check if package is installed
 	return $?
 }
 
+bpInstall() { ##I Install a package
+  bpInfo "Installing: ${E_BR_GREEN}${pkg}${E_END}"
+  bpLine
+  sudo apt -y install ${pkg}
+  bpLine
+}
+
 #
 # Installs array of packages
 # 
@@ -247,11 +253,8 @@ installG() {
 	  if bpIsInstalled $pkg ; then
 		  bpOk "Package $pkg is already installed"
 		else
-      bpInfo "Installing: ${E_BR_GREEN}${pkg}${E_END}"
-      bpLine
-      sudo apt -y install ${pkg}
-      bpLine
-		fi
+		  bpInstall ${pkg}
+ 		fi
   done
 }
 
@@ -297,6 +300,12 @@ python() {                  ##D Install python development packages
   # Upgrade pip program
   sudo pip  install --upgrade pip
   sudo pip3 install --upgrade pip
+}
+
+sshserver() { ##D Install and activate ssh server
+  bpInstall "openssh-server" 
+	sudo systemctl enable ssh
+	sudo systemctl start ssh
 }
 
 #users() {                   ##D Create users and groups
