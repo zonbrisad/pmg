@@ -53,6 +53,13 @@ serverPkgs=(               \
   "mailutils"              \
 )
 
+kvmPkgs=(                  \
+  "qemu-kvm"               \
+  "virt-manager"           \
+  "virt-top"               \
+)
+
+
 utilsPkgs=(         \
   "jed"             \
   "htop"            \
@@ -234,10 +241,19 @@ bpIsInstalled() { ##I Check if package is installed
 }
 
 bpInstall() { ##I Install a package
-  bpInfo "Installing: ${E_BR_GREEN}${pkg}${E_END}"
+#  bpInfo "Installing: ${E_BR_GREEN}${pkg}${E_END}"
+#  bpLine
+#  sudo apt -y install ${pkg}
+	if sudo apt -y install $1; then
+	  bpInfo "Installing: ${E_BR_GREEN}${1}${E_END}"
+	else
+	  bpError "Failed installing ${E_BR_GREEN}${1}${E_END}"
+	fi
   bpLine
-  sudo apt -y install ${pkg}
-  bpLine
+}
+
+xxx() { ##D installtest
+  bpInstall "python3-numpyx"
 }
 
 #
@@ -270,6 +286,9 @@ serverutils() {             ##D Intstall server packages
   installG ${serverPkgs[@]}
 }
 
+kvm() {  ##D Install KVM virtual machine manager
+  installG ${kvmPkgs[@]}
+}
 
 devutils() {                ##D Install development utls like git, svn, flex, doxygen
   installG ${devUtilsPkgs[@]}
