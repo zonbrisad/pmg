@@ -107,40 +107,10 @@ iso2usb() { ##D Write ISO file to USB drive
 all_setups() { ##D All setups (except jed_setup)
   pmg_setup
   git_setup
-  bp_setup
-  ln_setup
   ssh_setup
 	#  jed_setup
 }
 
-pmg_setup() { ##D Initiates pmg infrastructure
-  bpAddModule ${BP_SCRIPT_PATH}/pmg_init
-}
-
-
-git_setup() { ##D Setup git correctly
-  git config --global user.name "${MY_NAME}"
-  git config --global user.email "${MY_EMAIL}"
-  git config --global core.editor "${MY_EDITOR}"
-  git config --global diff.external ~/bin/git_diff_meld.py
-#git config --global push.default simple	
-#git config --global push.default master
-  git config --list
-	
-}
-
-
-jed_setup() { ##D Setup jed editor (requires root access)
-  bpAssertRoot
-  bpCp ${BP_SCRIPT_PATH}/setupfiles/make.sl /usr/share/jed/lib/.
-}
-
-bp_setup() { ##D Setup bashplate
-  setname   "" "${MY_NAME}"
-  setemail  "" "${MY_EMAIL}"
-  seteditor "" "${MY_EDITOR}"
-  setdiff   "" "${MY_DIFF}"  
-}
 
 configFiles=(        \
   "~/.bashrc"        \
@@ -165,17 +135,42 @@ cf() {
   bpLn  ${BP_SCRIPT_PATH}/../$(basename $F) $F
 }
 
-ln_setup() { ##D Create symbolic links   
+pmg_setup() { ##D Initiates pmg infrastructure
+  bpAddModule ${BP_SCRIPT_PATH}/pmg_init
+
   for pkg in ${configFiles[@]}; do
     cf "${pkg}"
   done
+
+  setname   "" "${MY_NAME}"
+  setemail  "" "${MY_EMAIL}"
+  seteditor "" "${MY_EDITOR}"
+  setdiff   "" "${MY_DIFF}"  
 }
 
 
+git_setup() { ##D Setup git correctly
+  git config --global user.name "${MY_NAME}"
+  git config --global user.email "${MY_EMAIL}"
+  git config --global core.editor "${MY_EDITOR}"
+  git config --global diff.external ~/bin/git_diff_meld.py
+	
+	# merge strategy
+	git config pull.rebase false
+	
+#git config --global push.default simple	
+#git config --global push.default master
+  git config --list
+}
+
+
+jed_setup() { ##D Setup jed editor (requires root access)
+  bpAssertRoot
+  bpCp ${BP_SCRIPT_PATH}/setupfiles/make.sl /usr/share/jed/lib/.
+}
+
 
 ##- SSH
-
-
 
 ssh_setup() { ##D Generate SSH key 
   if  [ -e "${SSH_KEY}" ]; then
@@ -204,7 +199,8 @@ pmg2ssh() { ##D Change pmg remote git repository to ssh
 sshid() { ##D Install SSH public key on remote host
   sn=$( bpRead "Remote host" "" )
   un=$( bpRead "Username" "$USER" )
-  ssh-copy-id -i ~/.ssh/id_rsa.pub "${un}@${sn}"
+#  ssh-copy-id -i ~/.ssh/id_rsa.pub "${un}@${sn}"
+	ssh-copy-id -i ${SSH_KEY}.pub "${un}@${sn}"
 }
 
 ##- Backup
@@ -705,7 +701,7 @@ bpMkDir() { ##I Create directory
 bpLn() { ##I Create symbolic link
   bpInfo "Creating link \"${2}\""
   if [ ! -L "$1" ]; then
-    ln -s "${1}" "${2}"
+    ln -sf "${1}" "${2}"
   fi
 }
 
