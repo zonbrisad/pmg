@@ -74,6 +74,7 @@ desktopUtilPkgs=(                    \
   "gnome-tweaks"                     \
   "gnome-shell-extension-impatience" \
   "gnome-shell-extension-manager"    \
+	"gnome-screenshot"                 \
   "vlc"                              \
   "mesa-utils"                       \
   "dconf-editor"                     \
