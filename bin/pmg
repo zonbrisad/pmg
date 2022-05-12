@@ -207,8 +207,10 @@ sshid() { ##D Install SSH public key on remote host
 ##- Samba
 
 initsamba() { ##D Initiate samba server
-  echo  
+  :  
 }
+
+
 
 ##- Backup
 
