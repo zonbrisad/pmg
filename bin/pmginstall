@@ -43,11 +43,24 @@
 # User defined Settings
 #---------------------------------------------------------------------
 bpUserSettings() {
+
+PROJDIR="${HOME}/Projects"
+ghUser="zonbrisad"
+ghURL="github.com"
+
+
 serverPkgs=(               \
   "rdiff-backup"           \
   "nfs-common"             \
   "ssmtp"                  \
   "mailutils"              \
+)
+
+sambaPkgs=(               \
+  "samba-common"          \
+	"samba"                 \
+	"smbclient"             \
+	"smbc"                  \
 )
 
 kvmPkgs=(                  \
@@ -181,9 +194,8 @@ pythonDevPkgs=(                \
 # User defined functions
 #---------------------------------------------------------------------
 
-##- Utils
 
-mountServer() {  ##D Add mount rule to fileserver in fstab
+mountServer() {  ## Add mount rule to fileserver in fstab
   bpAssertRoot
   bpMkDir /storage
   bpAppendIfNoSuchLine /etc/fstab  "fileserver:/storage  /storage nfs    auto   0 0"
@@ -198,7 +210,7 @@ printList() { # Print all packages
   done
 }
 
-list() { ##D List packages
+list() { ## List packages
  # printList ${devUtilsPkgs[@]}
 
   bpTextLine   basic
@@ -222,29 +234,18 @@ list() { ##D List packages
 
 ##- Install
 
-addSambaUser() {
-  smbpasswd -a pmg
-}
-
 bpIsInstalled() { ##I Check if package is installed
   dpkg -l $1  &> /dev/null
 	return $?
 }
 
 bpInstall() { ##I Install a package
-#  bpInfo "Installing: ${E_BR_GREEN}${pkg}${E_END}"
-#  bpLine
-#  sudo apt -y install ${pkg}
 	if sudo apt -y install $1; then
 	  bpOk "Installing: ${E_BR_GREEN}${1}${E_END}"
 	else
 	  bpError "Failed installing ${E_BR_GREEN}${1}${E_END}"
 	fi
   bpLine
-}
-
-xxx() { ##D installtest
-  bpInstall "python3-numpyx"
 }
 
 #
@@ -273,7 +274,9 @@ desktoputils() {            ##D Install desktop utility programs
   installG ${desktopUtilPkgs[@]}
 }
 
-serverutils() {             ##D Intstall server packages
+##- Install server systems
+
+serverutils() {             ##D Install server packages
   installG ${serverPkgs[@]}
 }
 
@@ -281,6 +284,18 @@ kvm() {  ##D Install KVM virtual machine manager
   installG ${kvmPkgs[@]}
 }
 
+sshserver() { ##D Install and activate ssh server
+  bpInstall "openssh-server" 
+	sudo systemctl enable ssh
+	sudo systemctl start ssh
+}
+
+samba() { ##D Install samba server and tools
+  installG ${sambaPkgs[@]}
+}
+
+
+##- Install development tools
 devutils() {                ##D Install development utls like git, svn, flex, doxygen
   installG ${devUtilsPkgs[@]}
 }
@@ -311,16 +326,6 @@ python() {                  ##D Install python development packages
   sudo pip  install --upgrade pip
   sudo pip3 install --upgrade pip
 }
-
-sshserver() { ##D Install and activate ssh server
-  bpInstall "openssh-server" 
-	sudo systemctl enable ssh
-	sudo systemctl start ssh
-}
-
-#users() {                   ##D Create users and groups
-#  sudo adduser lpmg -uid 1000
-#}
 
 
 newDev() {                  ##D Installs basic/tools/C development/python
@@ -386,6 +391,7 @@ avrsim() { ##D Download compile and install avrsim
 }
 
 
+##- Install single programs outside apt
 photivo() { ##D Photo RAW file editor
  # bpAssertRoot
   sudo add-apt-repository ppa:dhor/myway
@@ -395,24 +401,6 @@ photivo() { ##D Photo RAW file editor
 
 
 ##- Projects
-
-PROJDIR="${HOME}/Projects"
-ghUser="zonbrisad"
-ghURL="github.com"
-
-
-# Colorize string with url
-#
-# $1 string with url to colorize
-# ret colorized string
-#
-bpColorizeUrl() { ##D Colorize url
-	url=$(echo -n $1 | sed -r -e "s/^.*\/\///")
-	prot=$(echo -n $1 | sed -r -e "s/:\/.*//")
-#	un=$( echo $url | sed -r -e 's/\(.*\)@/$1/')
-#	echo "UN: ${un}"
-  echo -e -n "${E_DARKGRAY}${prot}${E_END}://$(bpColorizeFile ${url})"
-}
 
 #
 # Clone git repo
@@ -433,10 +421,8 @@ gclone() {
 	bpCd -
 }
 
-ghClone() {  ##D Github clone
-#  gclone "https://${ghUser}@${ghURL}/${ghUser}/${1}.git" "${PROJDIR}"
+ghClone() {  ## Github clone
   gclone "ssh://git@${ghURL}:/${ghUser}/${1}.git" "${PROJDIR}"
-
 }
 
 projects() { ##D Checkout all git projects 

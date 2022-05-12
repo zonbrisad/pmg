@@ -203,6 +203,15 @@ sshid() { ##D Install SSH public key on remote host
 	ssh-copy-id -i ${SSH_KEY}.pub "${un}@${sn}"
 }
 
+
+##- Samba
+
+initsamba() { ##D Initiate samba server
+  :  
+}
+
+
+
 ##- Backup
 
 #
