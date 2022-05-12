@@ -234,14 +234,25 @@ list() { ## List packages
 
 ##- Install
 
+#
+# Install 
+#
 bpIsInstalled() { ##I Check if package is installed
-  dpkg -l $1  &> /dev/null
-	return $?
+	if dpkg -s $1 &> /dev/null ; then
+	  a=0
+	else
+	  a=1
+	fi
+	
+	return $a
 }
 
+#
+# Install a package 
+#
 bpInstall() { ##I Install a package
 	if sudo apt -y install $1; then
-	  bpOk "Installing: ${E_BR_GREEN}${1}${E_END}"
+	  bpOk "Installed: ${E_BR_GREEN}${1}${E_END}"
 	else
 	  bpError "Failed installing ${E_BR_GREEN}${1}${E_END}"
 	fi
@@ -252,6 +263,7 @@ bpInstall() { ##I Install a package
 # Installs array of packages
 # 
 # arg 1  array of packages
+#
 installG() {
   # first update all packages
   sudo apt-get update
