@@ -196,8 +196,6 @@ printList() { # Print all packages
   for pkg in ${@}; do
     echo ${pkg}
   done
-	
-	
 }
 
 list() { ##D List packages
