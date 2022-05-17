@@ -206,8 +206,26 @@ sshid() { ##D Install SSH public key on remote host
 
 ##- Samba
 
+#
+# Add smb user
+#
+smbadd() {
+  # add user
+  sudo smbpasswd -a $1
+	# enable user
+	sudo smbpasswd -a $1
+}
+
 initsamba() { ##D Initiate samba server
-  :  
+
+#  d=$( bpRead "Directory to share" )
+	
+#  sudo mkdir -p $d
+	
+
+	
+  #smbadd pi
+  sudo systemctl restart smbd
 }
 
 

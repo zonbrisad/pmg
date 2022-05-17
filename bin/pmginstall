@@ -60,7 +60,6 @@ sambaPkgs=(               \
   "samba-common"          \
 	"samba"                 \
 	"smbclient"             \
-	"smbc"                  \
 )
 
 kvmPkgs=(                  \
