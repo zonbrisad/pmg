@@ -52,6 +52,12 @@ groupList=(
   "10003 groupname2" \
 )
 
+
+RPSERVER=rpserver
+RPSERVER_SHARE=${RPSERVER}:\Files
+RPSERVER_MNT=/mnt/rpserver
+
+
 #---------------------------------------------------------------------
 # User defined functions
 #---------------------------------------------------------------------
@@ -83,19 +89,22 @@ addSambaUser() {
   smbpasswd -a pmg
 }
 
-RPSERVER=192.168.1.30
-MNT_RPSERVER=/mnt/rpserver
 
-
-mrps() { ##D Mount rpserver
-#  bpAssertRoot
-  sudo mkdir -p ${MNT_RPSERVER}
-  if sudo mount -t nfs ${RPSERVER}:/Files  $MNT_RPSERVER ; then
-	  bpOk "Rpserver mounted on ${MNT_RPSERVER}"
+mrps() { ##D Mount rpserver nfs share
+  sudo mkdir -p ${RPSERVER_MNT}
+  if sudo mount -t nfs ${RPSERVER_SHARE}  $RPSERVER_MNT ; then
+	  bpOk "Rpserver mounted on ${RPSERVER_MNT}"
 	else
 	  bpError "Failed to mount rpserver nfs share"
 	fi 
 }
+
+addrps() {  ##D Add mount rule to rpserver in fstab
+#  bpAssertRoot
+  cDir /storage
+  appendIfNoSuchLine /etc/fstab  "${RPSERVER_SHARE}  ${RPSERVER_MNT} nfs    auto   0 0"
+}
+
 
 
 #
