@@ -80,6 +80,7 @@ utilsPkgs=(         \
   "smartmontools"   \
   "testdisk"        \
   "gddrescue"       \
+	"tmux"            \
 )
 
 desktopUtilPkgs=(                    \
@@ -187,6 +188,7 @@ pythonDevPkgs=(                \
   "python3-scipy"              \
   "pyqt5-dev-tools"            \
   "pyqt5-examples"             \
+	"bpython"                    \
 )
 
 }
