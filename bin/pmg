@@ -107,7 +107,7 @@ iso2usb() { ##D Write ISO file to USB drive
 all_setups() { ##D All setups (except jed_setup)
   pmg_setup
   git_setup
-  ssh_setup
+  ssh
 	#  jed_setup
 }
 
@@ -172,7 +172,7 @@ jed_setup() { ##D Setup jed editor (requires root access)
 
 ##- SSH
 
-ssh_setup() { ##D Generate SSH key 
+ssh() { ##D Generate SSH key 
   if  [ -e "${SSH_KEY}" ]; then
     bpWarning "SSH key already exists."
     if ! bpReadN "Do you want to overwrite existing key?" ; then

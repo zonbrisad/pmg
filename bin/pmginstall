@@ -279,7 +279,7 @@ installG() {
   done
 }
 
-utils() {                   ##D Install text utility programs
+utils() {                   ##D Install terminal utility programs
   installG ${utilsPkgs[@]}
 }
 
