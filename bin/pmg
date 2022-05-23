@@ -150,18 +150,7 @@ pmg_setup() { ##D Initiates pmg infrastructure
 
 
 git_setup() { ##D Setup git correctly
-  git config --global user.name "${MY_NAME}"
-  git config --global user.email "${MY_EMAIL}"
-  git config --global core.editor "${MY_EDITOR}"
-  git config --global diff.external ~/bin/git_diff_meld.py
-  git config --global init.defaultBranch master
-
-	# merge strategy
-	git config pull.rebase false
-	
-#git config --global push.default simple	
-#git config --global push.default master
-  git config --list
+  pmgg setup
 }
 
 
