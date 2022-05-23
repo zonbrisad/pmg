@@ -43,7 +43,7 @@ set -o pipefail
 bpUserSettings() {
   TEMPLATES=${BP_DIR}/templates
 	
-	GIG=${TEMPLATES}/gitignore
+	GIG=${TEMPLATES}/.gitignore
 	GRM=${TEMPLATES}/README.md
 }
 #---------------------------------------------------------------------
@@ -62,12 +62,10 @@ newt() {
 }
 
 ngig() { ##D Create new gitignore
-  #bpCp ${GIG} $(pwd)/.
 	newt ${GIG} 
 }
 
 ngrm() { ##D Create new github README.md
-#  bpCp ${GRM} $(pwd)/.
 	newt ${GRM}
 }
 

@@ -41,27 +41,55 @@ set -o pipefail
 # User defined Settings
 #---------------------------------------------------------------------
 bpUserSettings() {
-  GH="github.com"
-	GHU="zonbrisad"
+  GITSERVER="github.com"
+	GITUSER="zonbrisad"
 }
 #---------------------------------------------------------------------
 # User defined functions
 #---------------------------------------------------------------------
 
-igh() { ##D Initiate github project
-  name=$( bpRead "Name of github project?" )
-	
-	if bpReadY "Create README.md file?" ; then
-	  :
+##- Git 
+
+init() { ##D Init new git project 
+  git init
+
+  if bpReadY "Create README.md file?" ; then
+	  pmgt ngrm
+		git add README.md
 	fi
 	
 	if bpReadY "Create gitignore file?" ; then
-	  :
+	  pmgt ngig
+		git add .gitignore
 	fi
+
+	git commit -m "first commit"
+	git branch -M main
+}
+
+igh() { ##D Upload repo to github, create repo if not existing
+  name=$( bpRead "Name of github project?" )
+	rep=$( bpRead "Repo: " "ssh://git@${GITSERVER}/${GITUSER}/${name}.git" )
+	
+	if [ ! -e ".git" ] ; then
+	  init	
+	fi
+	git remote add origin ${rep}
+	git push -u origin main
 }
 
 
+setup() { ##D Setup git 
+  git config --global user.name "${BP_NAME}"
+  git config --global user.email "${BP_EMAIL}"
+  git config --global core.editor "${BP_EDITOR}"
+  git config --global diff.external "${BP_DIR}/bin/git_diff_meld.py"
+  git config --global init.defaultBranch master
 
+	# merge strategy
+	git config pull.rebase false	
+  git config --list
+}
 
 
 #---------------------------------------------------------------------
@@ -83,7 +111,7 @@ BP_VERSION="1.00"
 BP_USAGE="Usage: ${BP_NAME} command [option]"
 
 ##V Description text
-BP_DESC="Description goes here"
+BP_DESC="Git/github management"
 
 ##V logfile (uncomment to use logfile)
 #BP_LOGFILE=${BP_DIR}/${BP_NAME}.log

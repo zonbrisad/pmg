@@ -154,7 +154,8 @@ git_setup() { ##D Setup git correctly
   git config --global user.email "${MY_EMAIL}"
   git config --global core.editor "${MY_EDITOR}"
   git config --global diff.external ~/bin/git_diff_meld.py
-	
+  git config --global init.defaultBranch master
+
 	# merge strategy
 	git config pull.rebase false
 	
