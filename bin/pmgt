@@ -3,10 +3,10 @@
 # shellcheck disable=1090
 #---------------------------------------------------------------------
 #
-#  pmggit
+#  pmgt
 #
 #  [Description]
-#    A script for managing git projects.
+#    Handle misc templates.
 #
 #  [Author]
 #    Peter Malmberg <peter.malmberg@gmail.com>
@@ -41,28 +41,54 @@ set -o pipefail
 # User defined Settings
 #---------------------------------------------------------------------
 bpUserSettings() {
-  GH="github.com"
-	GHU="zonbrisad"
+  TEMPLATES=${BP_DIR}/templates
+	
+	GIG=${TEMPLATES}/gitignore
+	GRM=${TEMPLATES}/README.md
 }
 #---------------------------------------------------------------------
 # User defined functions
 #---------------------------------------------------------------------
 
-igh() { ##D Initiate github project
-  name=$( bpRead "Name of github project?" )
-	
-	if bpReadY "Create README.md file?" ; then
-	  :
+##- Templates
+
+newt() {
+  if [ -e $(basename $1) ]; then
+	  if ! bpReadN "File exist $1 already exist. Overwrite?" ; then
+		  return 1
+		fi
 	fi
-	
-	if bpReadY "Create gitignore file?" ; then
-	  :
-	fi
+  bpCp ${1} $(pwd)/.
 }
 
+ngig() { ##D Create new gitignore
+  #bpCp ${GIG} $(pwd)/.
+	newt ${GIG} 
+}
 
+ngrm() { ##D Create new github README.md
+#  bpCp ${GRM} $(pwd)/.
+	newt ${GRM}
+}
 
+##- Edit templates
 
+egig() { ##D Edit gitignore
+  bpEdit ${GIG}
+}
+
+egrm() { ##D Edit github README.md
+  bpEdit ${GRM}
+}
+
+##- 
+addTemplate() { ##D Add new template file
+  if bpCp $2 ${TEMPLATES}/. ; then
+    cd ${TEMPLATES}/.
+	  git add $( basename $2 )
+	  cd -
+	fi
+}
 
 #---------------------------------------------------------------------
 # Bashplate modules
