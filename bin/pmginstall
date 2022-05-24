@@ -456,6 +456,7 @@ projects() { ##D Checkout all git projects
 	ghClone "mTerm"
 	ghClone "Tester"
 	ghClone "luaconf"
+	ghClone "gittest"
 }
 
 #---------------------------------------------------------------------
