@@ -158,7 +158,7 @@ armDevPkgs=(                \
   "apt" "openocd"                 \
 )
 
-avrDevPkgs=(                \
+avrDevPkgs=(                      \
   "apt" "build-essential"         \
   "apt" "gdbserver"               \
   "apt" "avrdude"                 \
@@ -176,7 +176,7 @@ avrDevPkgs=(                \
 #  "python-scipy"               \
 #  "python-serial"              \
 
-pythonDevPkgs=(                \
+pythonDevPkgs=(                      \
   "apt" "python3"                    \
   "apt" "python3-serial"             \
   "apt" "python3-pip"                \
@@ -196,8 +196,6 @@ pythonDevPkgs=(                \
 #---------------------------------------------------------------------
 # User defined functions
 #---------------------------------------------------------------------
-
-
 
 #
 # $1 packagename 
@@ -281,7 +279,7 @@ installPkgs() { ##I Install array of packages
 		let i++
 	  pkg=${arr[$i]}
 		let i++
-		echo $pkgt " " $pkg
+#		echo $pkgt " " $pkg
 		installGeneric ${pkgt} ${pkg}
 	done
 }
