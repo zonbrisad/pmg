@@ -45,15 +45,32 @@ bpUserSettings() {
 	
 	GIG=${TEMPLATES}/.gitignore
 	GRM=${TEMPLATES}/README.md
+	GHS=${TEMPLATES}/HISTORY.md
 }
 #---------------------------------------------------------------------
 # User defined functions
 #---------------------------------------------------------------------
 
+##- Project
+new() { ##D Create new project files from templates
+  if bpReadY "Create .gitignore?" ; then
+    ngig
+	fi
+
+  if bpReadY "Create README.md?" ; then
+    ngrm
+	fi
+
+  if bpReadY "Create HISTORY.md?" ; then
+    nhst
+	fi
+
+}
+
 ##- Templates
 
 newt() {
-  if [ -e $(basename $1) ]; then
+  if [ -e $(pwd)/$(basename $1) ]; then
 	  if ! bpReadN "File exist $1 already exist. Overwrite?" ; then
 		  return 1
 		fi
@@ -67,6 +84,10 @@ ngig() { ##D Create new gitignore
 
 ngrm() { ##D Create new github README.md
 	newt ${GRM}
+}
+
+nhst() { ##D Create ne HISTORY.md
+  newt ${GHS}
 }
 
 ##- Edit templates

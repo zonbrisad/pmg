@@ -1,5 +1,5 @@
 
-# README.md example
+# Title
 
 
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
@@ -52,6 +52,10 @@
 
 ## Freqlenty asked Questions
 
+
+## History
+
+[HISTORY.md](/HISTORY.md)
 
 ## Links
 
