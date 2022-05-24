@@ -50,120 +50,122 @@ ghURL="github.com"
 
 
 serverPkgs=(               \
-  "rdiff-backup"           \
-  "nfs-common"             \
-  "ssmtp"                  \
-  "mailutils"              \
+  "apt" "rdiff-backup"           \
+  "apt" "nfs-common"             \
+  "apt" "ssmtp"                  \
+  "apt" "mailutils"              \
 )
 
 sambaPkgs=(               \
-  "samba-common"          \
-	"samba"                 \
-	"smbclient"             \
+  "apt" "samba-common"          \
+	"apt" "samba"                 \
+	"apt" "smbclient"             \
 )
 
 kvmPkgs=(                  \
-  "qemu-kvm"               \
-  "virt-manager"           \
-  "virt-top"               \
+  "apt" "qemu-kvm"               \
+  "apt" "virt-manager"           \
+  "apt" "virt-top"               \
 )
 
 utilsPkgs=(         \
-  "jed"             \
-  "htop"            \
-  "nmap"            \
-  "lm-sensors"      \
-  "apt-file"        \
-  "net-tools"       \
-  "bridge-utils"    \
-  "smartmontools"   \
-  "testdisk"        \
-  "gddrescue"       \
-	"tmux"            \
+  "apt" "jed"             \
+  "apt" "htop"            \
+  "apt" "nmap"            \
+  "apt" "lm-sensors"      \
+  "apt" "apt-file"        \
+  "apt" "net-tools"       \
+  "apt" "bridge-utils"    \
+  "apt" "smartmontools"   \
+  "apt" "testdisk"        \
+  "apt" "gddrescue"       \
+	"apt" "tmux"            \
+	"apt" "npm"             \
 )
 
 desktopUtilPkgs=(                    \
-  "brasero"                          \
-  "gnome-tweaks"                     \
-  "gnome-shell-extension-impatience" \
-  "gnome-shell-extension-manager"    \
-	"gnome-screenshot"                 \
-  "vlc"                              \
-  "mesa-utils"                       \
-  "dconf-editor"                     \
-  "usb-creator-gtk"                  \
-  "ubuntu-restricted-extras"         \
+  "apt" "brasero"                          \
+  "apt" "gnome-tweaks"                     \
+  "apt" "gnome-shell-extension-impatience" \
+  "apt" "gnome-shell-extension-manager"    \
+	"apt" "gnome-screenshot"                 \
+  "apt" "vlc"                              \
+  "apt" "mesa-utils"                       \
+  "apt" "dconf-editor"                     \
+  "apt" "usb-creator-gtk"                  \
+  "apt" "ubuntu-restricted-extras"         \
 )
 
 devUtilsPkgs=(      \
-  "bison"           \
-  "flex"            \
-  "texinfo"         \
-  "git"             \
-  "gitk"            \
-  "subversion"      \
-  "meld"            \
-  "doxygen"         \
-  "shellcheck"      \
+  "apt" "bison"           \
+  "apt" "flex"            \
+  "apt" "texinfo"         \
+  "apt" "git"             \
+  "apt" "gitk"            \
+  "apt" "subversion"      \
+  "apt" "meld"            \
+  "apt" "doxygen"         \
+  "apt" "shellcheck"      \
+  "npm" "doctocx"         \
 )
 
 develCPkgs=(        \
-  "build-essential" \
-  "gdb"             \
-  "gdbserver"       \
-  "autoconf"        \
-  "cmake"           \
-  "ccache"          \
-  "colorgcc"        \
-  "gettext"         \
-  "libtool"         \
-  "libexpat-dev"    \
-  "splint"          \
-  "pkg-config"      \
-  "gperf"           \
-  "libncurses5"     \
-  "libncurses5-dev" \
-  "lua5.1"          \
-  "liblua5.1"       \
-  "libglib2.0-0"    \
-  "libglib2.0-dev"  \
-  "qt5-default"     \
-  "qt5-qmake"               \
-  "libqt5core5a"            \
-  "libqt5serialport5"       \
-  "libqt5serialport5-dev"   \
-  "qttools5-dev-tools"      \
-  "libsqlite3-dev"          \
-  "astudio"                 \
-  "libgtk-3-dev"            \
-  "libgtk-3-0-dbg"          \
-  "glade"                   \
-  "libc6-dev-amd64"         \
-  "libgtk-3-dev"            \
-  "astyle"                  \
-  "libelf-dev"              \
-  "freeglut3-dev"           \
+  "apt" "build-essential" \
+  "apt" "gdb"             \
+  "apt" "gdbserver"       \
+  "apt" "autoconf"        \
+  "apt" "cmake"           \
+  "apt" "ccache"          \
+  "apt" "colorgcc"        \
+  "apt" "gettext"         \
+  "apt" "libtool"         \
+  "apt" "libexpat-dev"    \
+  "apt" "splint"          \
+  "apt" "pkg-config"      \
+  "apt" "gperf"           \
+  "apt" "libncurses5"     \
+  "apt" "libncurses5-dev" \
+  "apt" "lua5.1"          \
+  "apt" "liblua5.1"       \
+  "apt" "libglib2.0-0"    \
+  "apt" "libglib2.0-dev"  \
+  "apt" "qt5-default"     \
+  "apt" "qt5-qmake"               \
+  "apt" "libqt5core5a"            \
+  "apt" "libqt5serialport5"       \
+  "apt" "libqt5serialport5-dev"   \
+  "apt" "qttools5-dev-tools"      \
+  "apt" "libsqlite3-dev"          \
+  "apt" "astudio"                 \
+  "apt" "libgtk-3-dev"            \
+  "apt" "libgtk-3-0-dbg"          \
+  "apt" "glade"                   \
+  "apt" "libc6-dev-amd64"         \
+  "apt" "libgtk-3-dev"            \
+  "apt" "astyle"                  \
+  "apt" "libelf-dev"              \
+  "apt" "freeglut3-dev"           \
 )
 
 armDevPkgs=(                \
-  "build-essential"         \
-  "gdb"                     \
-  "gdbserver"               \
-  "binutils-arm-none-eabi"  \ 
-  "gcc-arm-none-eabi"       \
-  "gdb-arm-none-eabi"       \
-  "libnewlib-arm-none-eabi" \
-  "openocd"                 \
+  "apt" "build-essential"         \
+  "apt" "gdb"                     \
+  "apt" "gdbserver"               \
+  "apt" "binutils-arm-none-eabi"  \ 
+  "apt" "gcc-arm-none-eabi"       \
+  "apt" "gdb-arm-none-eabi"       \
+  "apt" "libnewlib-arm-none-eabi" \
+  "apt" "openocd"                 \
 )
 
 avrDevPkgs=(                \
-  "build-essential"         \
-  "gdbserver"               \
-  "avrdude"                 \
-  "avr-libc"                \
-  "gcc-avr"                 \
-  "gdb-avr"                 \
-  "avrdude"                 \
+  "apt" "build-essential"         \
+  "apt" "gdbserver"               \
+  "apt" "avrdude"                 \
+  "apt" "avr-libc"                \
+  "apt" "gcc-avr"                 \
+  "apt" "gdb-avr"                 \
+  "apt" "avrdude"                 \
 )
 
 #  "python"                     \
@@ -175,19 +177,19 @@ avrDevPkgs=(                \
 #  "python-serial"              \
 
 pythonDevPkgs=(                \
-  "python3"                    \
-  "python3-serial"             \
-  "python3-pip"                \
-  "python3-pyqt5"              \
-  "python3-pyqt5.qtserialport" \
-  "python3-pyqt5.qtopengl"     \
-  "python3-guiqwt"             \
-  "python3-guidata"            \
-  "python3-numpy"              \
-  "python3-scipy"              \
-  "pyqt5-dev-tools"            \
-  "pyqt5-examples"             \
-	"bpython"                    \
+  "apt" "python3"                    \
+  "apt" "python3-serial"             \
+  "apt" "python3-pip"                \
+  "apt" "python3-pyqt5"              \
+  "apt" "python3-pyqt5.qtserialport" \
+  "apt" "python3-pyqt5.qtopengl"     \
+  "apt" "python3-guiqwt"             \
+  "apt" "python3-guidata"            \
+  "apt" "python3-numpy"              \
+  "apt" "python3-scipy"              \
+  "apt" "pyqt5-dev-tools"            \
+  "apt" "pyqt5-examples"             \
+	"apt" "bpython"                    \
 )
 
 }
@@ -196,105 +198,112 @@ pythonDevPkgs=(                \
 #---------------------------------------------------------------------
 
 
-mountServer() {  ## Add mount rule to fileserver in fstab
-  bpAssertRoot
-  bpMkDir /storage
-  bpAppendIfNoSuchLine /etc/fstab  "fileserver:/storage  /storage nfs    auto   0 0"
-}
-
-printList() { # Print all packages
-# list all packages
-#  bpTextLine $
-#	bpLine
-  for pkg in ${@}; do
-    echo ${pkg}
-  done
-}
-
-list() { ## List packages
- # printList ${devUtilsPkgs[@]}
-
-  bpTextLine   basic
-  printList ${utilsPkgs[@]}
-	
-  bpTextLine   server
-  printList ${serverPkgs[@]}
-
-  bpTextLine cDevelop
-  printList ${develCPkgs[@]}
-	
-  bpTextLine  ARMDevelop
-  printList ${armDevPkgs[@]}
-
-  bpTextLine avrDevelop
-  printList ${avrDevPkgs[@]}
-	
-  bpTextLine Develop
-  printList ${devUtilsPkgs[@]}
-}
-
-##- Install
 
 #
-# Install 
+# $1 packagename 
 #
-bpIsInstalled() { ##I Check if package is installed
+aptIsInstalled() { ##I Check if apt package is installed
 	if dpkg -s $1 &> /dev/null ; then
-	  a=0
+	  return 0
 	else
-	  a=1
+	  return 1
 	fi
-	
-	return $a
 }
 
 #
-# Install a package 
+# $1 packagename
 #
-bpInstall() { ##I Install a package
+npmIsInstalled() { ##I Check if npm package is installed
+  if npm list --depth 1 --global $1 > /dev/null 2>&1 ; then
+	  return 0
+	else
+	  return 1
+	fi
+}
+
+#
+# $1 package to install
+#
+installApt() { ##I Install a apt package
+  if aptIsInstalled $1 ; then
+	  bpInfo "APT package $1 is already installed"
+		return
+	fi
+
 	if sudo apt -y install $1; then
 	  bpOk "Installed: ${E_BR_GREEN}${1}${E_END}"
 	else
 	  bpError "Failed installing ${E_BR_GREEN}${1}${E_END}"
 	fi
-  bpLine
 }
 
 #
-# Installs array of packages
+# $1 packagename
+#
+installNpm() { ##I Install npm package
+  if npmIsInstalled $1 ; then
+	  bpInfo "NPM package $1 is already installed"
+		return
+	fi
+
+  if sudo npm install --global $1; then
+    bpOk "Installed: ${E_BR_GREEN}${1}${E_END}"
+	else
+	  bpError "Failed installing ${E_BR_GREEN}${1}${E_END}"
+	fi
+}
+
+#
+# $1 package system
+# $2 package name
+#
+installGeneric() {
+  if [ $1 == "apt" ]; then
+#	  echo "Install apt package $2"
+		installApt $2
+	fi
+	
+  if [ $1 == "npm" ]; then
+#	  echo "Install npm package $2"
+		installNpm $2
+	fi
+}
+
 # 
 # arg 1  array of packages
 #
-installG() {
-  # first update all packages
-  sudo apt-get update
-	
-  # install all packages in list
-  for pkg in ${@}; do
-	  if bpIsInstalled $pkg ; then
-		  bpInfo "Package $pkg is already installed"
-		else
-		  bpInstall ${pkg}
- 		fi
-  done
+installPkgs() { ##I Install array of packages	
+	arr=("${@}")
+	len=${#arr[@]}
+	i=0
+	while [ $i -lt $len ]; do
+	  pkgt=${arr[$i]}
+		let i++
+	  pkg=${arr[$i]}
+		let i++
+		echo $pkgt " " $pkg
+		installGeneric ${pkgt} ${pkg}
+	done
 }
 
+##- Utils
+
 terminalutils() {           ##D Install terminal utility programs
-  installG ${utilsPkgs[@]}
+  installPkgs ${utilsPkgs[@]}
 }
 
 desktoputils() {            ##D Install desktop utility programs
-  installG ${desktopUtilPkgs[@]}
+  installPkgs ${desktopUtilPkgs[@]}
 }
 
-##- Install server systems
+##- Server systems
 
 serverutils() {             ##D Install server packages
-  installG ${serverPkgs[@]}
+  installPkgs ${serverPkgs[@]}
 }
 
 kvm() {  ##D Install KVM virtual machine manager
-  installG ${kvmPkgs[@]}
+  installPkgs ${kvmPkgs[@]}
 }
 
 sshserver() { ##D Install and activate ssh server
@@ -304,25 +313,24 @@ sshserver() { ##D Install and activate ssh server
 }
 
 samba() { ##D Install samba server and tools
-  installG ${sambaPkgs[@]}
+  installPkgs ${sambaPkgs[@]}
 }
 
-
-##- Install development tools
+##- Development tools
 devutils() {                ##D Install development utls like git, svn, flex, doxygen
-  installG ${devUtilsPkgs[@]}
+  installPkgs ${devUtilsPkgs[@]}
 }
 
 cdevelop() {                ##D Install packages for native C development 
-  installG ${develCPkgs[@]}
+  installPkgs ${develCPkgs[@]}
 }
 				
 ARMDevelop() {              ##D Install ARM C development packages
-  installG ${armDevPkgs[@]}
+  installPkgs ${armDevPkgs[@]}
 }
 
 avrDevelop() {              ##D Install AVR C development packages
-  installG ${avrDevPkgs[@]}
+  installPkgs ${avrDevPkgs[@]}
 }
 
 java() {                    ##D Install Java development packages
@@ -333,11 +341,11 @@ java() {                    ##D Install Java development packages
 }
 
 python() {                  ##D Install python development packages
-  installG ${pythonDevPkgs[@]}
+  installPkgs ${pythonDevPkgs[@]}
 	
   # Upgrade pip program
-  sudo pip  install --upgrade pip
-  sudo pip3 install --upgrade pip
+#  sudo pip  install --upgrade pip
+#  sudo pip3 install --upgrade pip
 }
 
 
