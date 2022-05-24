@@ -49,6 +49,8 @@
 
 ### Installation
 
+### Configuration
+
 
 ## Freqlenty asked Questions
 
