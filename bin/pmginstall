@@ -284,6 +284,24 @@ installPkgs() { ##I Install array of packages
 	done
 }
 
+
+##- New
+newdesktop() { ##D Install new desktop
+  terminalutils
+	desktoputils
+}
+
+newserver() { ##D Install new server
+  terminalutils
+	serverutils
+}
+
+newDev() {  ##D Installs c and python development tools
+  devutils
+  cdevelop
+  python
+}
+
 ##- Utils
 
 terminalutils() {           ##D Install terminal utility programs
@@ -340,19 +358,8 @@ java() {                    ##D Install Java development packages
 
 python() {                  ##D Install python development packages
   installPkgs ${pythonDevPkgs[@]}
-	
-  # Upgrade pip program
-#  sudo pip  install --upgrade pip
-#  sudo pip3 install --upgrade pip
 }
 
-
-newDev() {                  ##D Installs basic/tools/C development/python
-  basic
-  tools
-  cDevelop
-  python	
-}
 
 WORK=~/Downloads
 
