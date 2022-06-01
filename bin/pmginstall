@@ -48,6 +48,18 @@ PROJDIR="${HOME}/Projects"
 ghUser="zonbrisad"
 ghURL="github.com"
 
+projects=(     \
+  "bashplates" \
+  "Debugsock"  \
+	"pyplate"    \
+	"makeplates" \
+	"LEF"        \
+	"mTerm"      \
+	"Tester"     \
+	"luaconf"    \
+	"gittest"    \
+)
+
 
 serverPkgs=(               \
   "apt" "rdiff-backup"           \
@@ -439,12 +451,17 @@ gclone() {
 	fn="${fn%.*}"
   bpCd "${2}"
   if [ -e "$fn" ]; then
-	  bpError "Directory $(bpColorizeFile $(realpath $fn)) already exists, skipping cloning"
-	else 
-    bpInfo "Retreiving $(bpColorizeUrl $1)"
-    git clone "$1" 
+	  bpInfo "Directory $(bpColorizeFile $(realpath $fn)) already exists, skipping cloning"
+		bpCd -
+		return
 	fi
-	bpCd -
+	
+	if git clone "$1" ; then
+	  bpOk "Cloning of $(bpColorizeUrl $1) successfull."
+	else
+	  bpError "Cloning of $(bpColorizeUrl $1) failed."
+	fi
+	
 }
 
 ghClone() {  ## Github clone
@@ -452,9 +469,14 @@ ghClone() {  ## Github clone
 }
 
 projects() { ##D Checkout all git projects 
-  bpTextLine "Checking out projects"
+  bpTextLine "Cloning github projects"
   bpMkDir "${PROJDIR}"
- 	
+	
+	for prj in ${projects[@]}; do 
+	  echo $prj
+		ghClone $prj
+	done
+ 	return
 	ghClone "bashplates"
   ghClone "Debugsock"
 	ghClone "pyplate"
