@@ -118,6 +118,7 @@ configFiles=(        \
   "~/.jedrc"         \
   "~/bin"            \
   "~/.gitconfig"     \
+	"~/.tmux.conf"     \
 )
 
 #
@@ -125,12 +126,16 @@ configFiles=(        \
 #
 cf() {
   eval F=${1}
-  if [ ! -h $F ]; then  # if not symbolic link do
-    if [ -e $F ]; then  # if file already exist make a copy
-       bpBackup "$F"
-       bpRm "$F"
-    fi
-  fi 
+  
+	if [ -h $F ]; then  # if aldready symbolic return
+	  return
+  fi
+	
+  if [ -e $F ]; then  # if file already exist make a copy
+    bpBackup "$F"
+    bpRm "$F"
+  fi
+   
   eval X=${BP_SCRIPT_PATH}/../$(basename $F)
   bpLn  ${BP_SCRIPT_PATH}/../$(basename $F) $F
 }
