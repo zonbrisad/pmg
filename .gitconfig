@@ -5,7 +5,7 @@
 [core]
 	editor = jed
 [diff]
-	external = /home/lpmg/bin/git_diff_meld.py
+	external = /srv/dev-disk-by-uuid-cac1320a-3455-43b4-aa30-ce3051130d7e/home/pmg/pmg/bin/bin/git_diff_meld.py
 [push]
 	default = simple
 [alias]

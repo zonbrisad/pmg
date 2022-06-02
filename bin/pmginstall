@@ -48,6 +48,18 @@ PROJDIR="${HOME}/Projects"
 ghUser="zonbrisad"
 ghURL="github.com"
 
+projects=(     \
+  "bashplates" \
+  "Debugsock"  \
+	"pyplate"    \
+	"makeplates" \
+	"LEF"        \
+	"mTerm"      \
+	"Tester"     \
+	"luaconf"    \
+	"gittest"    \
+)
+
 
 serverPkgs=(              \
   "apt" "rdiff-backup"    \
@@ -296,6 +308,24 @@ installPkgs() { ##I Install array of packages
 	done
 }
 
+
+##- New
+newdesktop() { ##D Install new desktop
+  terminalutils
+	desktoputils
+}
+
+newserver() { ##D Install new server
+  terminalutils
+	serverutils
+}
+
+newDev() {  ##D Installs c and python development tools
+  devutils
+  cdevelop
+  python
+}
+
 ##- Utils
 
 terminalutils() {           ##D Install terminal utility programs
@@ -352,19 +382,8 @@ java() {                    ##D Install Java development packages
 
 python() {                  ##D Install python development packages
   installPkgs ${pythonDevPkgs[@]}
-	
-  # Upgrade pip program
-#  sudo pip  install --upgrade pip
-#  sudo pip3 install --upgrade pip
 }
 
-
-newDev() {                  ##D Installs basic/tools/C development/python
-  basic
-  tools
-  cDevelop
-  python	
-}
 
 WORK=~/Downloads
 
@@ -444,12 +463,17 @@ gclone() {
 	fn="${fn%.*}"
   bpCd "${2}"
   if [ -e "$fn" ]; then
-	  bpError "Directory $(bpColorizeFile $(realpath $fn)) already exists, skipping cloning"
-	else 
-    bpInfo "Retreiving $(bpColorizeUrl $1)"
-    git clone "$1" 
+	  bpInfo "Directory $(bpColorizeFile $(realpath $fn)) already exists, skipping cloning"
+		bpCd -
+		return
 	fi
-	bpCd -
+	
+	if git clone "$1" ; then
+	  bpOk "Cloning of $(bpColorizeUrl $1) successfull."
+	else
+	  bpError "Cloning of $(bpColorizeUrl $1) failed."
+	fi
+	
 }
 
 ghClone() {  ## Github clone
@@ -457,9 +481,14 @@ ghClone() {  ## Github clone
 }
 
 projects() { ##D Checkout all git projects 
-  bpTextLine "Checking out projects"
+  bpTextLine "Cloning github projects"
   bpMkDir "${PROJDIR}"
- 	
+	
+	for prj in ${projects[@]}; do 
+	  echo $prj
+		ghClone $prj
+	done
+ 	return
 	ghClone "bashplates"
   ghClone "Debugsock"
 	ghClone "pyplate"
