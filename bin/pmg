@@ -262,6 +262,19 @@ backup() { ##D Backup user data
 }
 
 
+##- Misc
+stopwatch() { ##D Stopwatch function
+  start=$( date +%s )
+  while true; do
+	  end=$( date +%s )
+	  #printf '%s\n' "$(date)"
+		dur=$(( end - start ))
+		durs=$(( dur % 60 ))
+		echo ${dur} ${durs} 
+		sleep 1
+	done
+}
+
 ##- Information
 info() { ##D General information
 # bpPrintInfo 
