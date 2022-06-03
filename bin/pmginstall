@@ -61,26 +61,26 @@ projects=(     \
 )
 
 
-serverPkgs=(               \
-  "apt" "rdiff-backup"           \
-  "apt" "nfs-common"             \
-  "apt" "ssmtp"                  \
-  "apt" "mailutils"              \
+serverPkgs=(              \
+  "apt" "rdiff-backup"    \
+  "apt" "nfs-common"      \
+  "apt" "ssmtp"           \
+  "apt" "mailutils"       \
 )
 
 sambaPkgs=(               \
-  "apt" "samba-common"          \
-	"apt" "samba"                 \
-	"apt" "smbclient"             \
+  "apt" "samba-common"    \
+	"apt" "samba"           \
+	"apt" "smbclient"       \
 )
 
-kvmPkgs=(                  \
-  "apt" "qemu-kvm"               \
-  "apt" "virt-manager"           \
-  "apt" "virt-top"               \
+kvmPkgs=(                 \
+  "apt" "qemu-kvm"        \
+  "apt" "virt-manager"    \
+  "apt" "virt-top"        \
 )
 
-utilsPkgs=(         \
+utilsPkgs=(               \
   "apt" "jed"             \
   "apt" "htop"            \
   "apt" "nmap"            \
@@ -95,7 +95,7 @@ utilsPkgs=(         \
 	"apt" "npm"             \
 )
 
-desktopUtilPkgs=(                    \
+desktopUtilPkgs=(                          \
   "apt" "brasero"                          \
   "apt" "gnome-tweaks"                     \
   "apt" "gnome-shell-extension-impatience" \
@@ -108,7 +108,7 @@ desktopUtilPkgs=(                    \
   "apt" "ubuntu-restricted-extras"         \
 )
 
-devUtilsPkgs=(      \
+devUtilsPkgs=(            \
   "apt" "bison"           \
   "apt" "flex"            \
   "apt" "texinfo"         \
@@ -121,7 +121,7 @@ devUtilsPkgs=(      \
   "npm" "doctocx"         \
 )
 
-develCPkgs=(        \
+develCPkgs=(              \
   "apt" "build-essential" \
   "apt" "gdb"             \
   "apt" "gdbserver"       \
@@ -159,7 +159,7 @@ develCPkgs=(        \
   "apt" "freeglut3-dev"           \
 )
 
-armDevPkgs=(                \
+armDevPkgs=(                      \
   "apt" "build-essential"         \
   "apt" "gdb"                     \
   "apt" "gdbserver"               \
@@ -179,14 +179,6 @@ avrDevPkgs=(                      \
   "apt" "gdb-avr"                 \
   "apt" "avrdude"                 \
 )
-
-#  "python"                     \
-#  "python-pip"                 \
-#  "python-qt4"                 \
-#  "python-qwt5-qt4"            \
-#  "python-numpy"               \
-#  "python-scipy"               \
-#  "python-serial"              \
 
 pythonDevPkgs=(                      \
   "apt" "python3"                    \
@@ -221,7 +213,7 @@ aptIsInstalled() { ##I Check if apt package is installed
 }
 
 #
-# $1 packagename
+# $1 package name
 #
 npmIsInstalled() { ##I Check if npm package is installed
   if npm list --depth 1 --global $1 > /dev/null 2>&1 ; then
@@ -232,7 +224,7 @@ npmIsInstalled() { ##I Check if npm package is installed
 }
 
 #
-# $1 package to install
+# $1 apt package name
 #
 installApt() { ##I Install a apt package
   if aptIsInstalled $1 ; then
@@ -248,7 +240,7 @@ installApt() { ##I Install a apt package
 }
 
 #
-# $1 packagename
+# $1 npm package name
 #
 installNpm() { ##I Install npm package
   if npmIsInstalled $1 ; then
@@ -264,18 +256,39 @@ installNpm() { ##I Install npm package
 }
 
 #
+# $1 pip package name
+#
+installPip() { ##I Install pip package 
+  if pip install $1; then
+	  bpOk "Installed: ${E_BR_GREEN}${1}${E_END}"
+	else
+	  bpError "Failed installing ${E_BR_GREEN}${1}${E_END}"
+	fi
+}
+
+installSnap() { ##I Install snap package
+  bpError "Snap install function is not developed yet"
+}
+
+#
 # $1 package system
 # $2 package name
 #
 installGeneric() {
   if [ $1 == "apt" ]; then
-#	  echo "Install apt package $2"
 		installApt $2
 	fi
 	
   if [ $1 == "npm" ]; then
-#	  echo "Install npm package $2"
 		installNpm $2
+	fi
+
+  if [ $1 == "pip" ]; then
+		installPip $2
+	fi
+	
+	if [ $1 == "snap" ]; then
+		installSnap $2
 	fi
 }
 
@@ -291,7 +304,6 @@ installPkgs() { ##I Install array of packages
 		let i++
 	  pkg=${arr[$i]}
 		let i++
-#		echo $pkgt " " $pkg
 		installGeneric ${pkgt} ${pkg}
 	done
 }

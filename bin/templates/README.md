@@ -45,9 +45,14 @@
 
 ## Install
 
+
 ### Download
 
+
 ### Installation
+
+
+### Configuration
 
 
 ## Freqlenty asked Questions
@@ -56,6 +61,10 @@
 ## History
 
 [HISTORY.md](/HISTORY.md)
+
+
+## ToDo
+
 
 ## Links
 
