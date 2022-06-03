@@ -51,13 +51,13 @@ ghURL="github.com"
 projects=(     \
   "bashplates" \
   "Debugsock"  \
-	"pyplate"    \
-	"makeplates" \
-	"LEF"        \
-	"mTerm"      \
-	"Tester"     \
-	"luaconf"    \
-	"gittest"    \
+  "pyplate"    \
+  "makeplates" \
+  "LEF"        \
+  "mTerm"      \
+  "Tester"     \
+  "luaconf"    \
+  "gittest"    \
 )
 
 
@@ -70,8 +70,8 @@ serverPkgs=(              \
 
 sambaPkgs=(               \
   "apt" "samba-common"    \
-	"apt" "samba"           \
-	"apt" "smbclient"       \
+  "apt" "samba"           \
+  "apt" "smbclient"       \
 )
 
 kvmPkgs=(                 \
@@ -91,8 +91,8 @@ utilsPkgs=(               \
   "apt" "smartmontools"   \
   "apt" "testdisk"        \
   "apt" "gddrescue"       \
-	"apt" "tmux"            \
-	"apt" "npm"             \
+  "apt" "tmux"            \
+  "apt" "npm"             \
 )
 
 desktopUtilPkgs=(                          \
@@ -100,7 +100,7 @@ desktopUtilPkgs=(                          \
   "apt" "gnome-tweaks"                     \
   "apt" "gnome-shell-extension-impatience" \
   "apt" "gnome-shell-extension-manager"    \
-	"apt" "gnome-screenshot"                 \
+  "apt" "gnome-screenshot"                 \
   "apt" "vlc"                              \
   "apt" "mesa-utils"                       \
   "apt" "dconf-editor"                     \
@@ -205,11 +205,11 @@ pythonDevPkgs=(                      \
 # $1 packagename 
 #
 aptIsInstalled() { ##I Check if apt package is installed
-	if dpkg -s $1 &> /dev/null ; then
-	  return 0
-	else
-	  return 1
-	fi
+  if dpkg -s $1 &> /dev/null ; then
+    return 0
+  else
+    return 1
+  fi
 }
 
 #
@@ -217,10 +217,10 @@ aptIsInstalled() { ##I Check if apt package is installed
 #
 npmIsInstalled() { ##I Check if npm package is installed
   if npm list --depth 1 --global $1 > /dev/null 2>&1 ; then
-	  return 0
-	else
-	  return 1
-	fi
+    return 0
+  else
+    return 1
+  fi
 }
 
 #
@@ -228,15 +228,15 @@ npmIsInstalled() { ##I Check if npm package is installed
 #
 installApt() { ##I Install a apt package
   if aptIsInstalled $1 ; then
-	  bpInfo "APT package $1 is already installed"
-		return
-	fi
+    bpInfo "APT package $1 is already installed"
+    return
+  fi
 
-	if sudo apt -y install $1; then
-	  bpOk "Installed: ${E_BR_GREEN}${1}${E_END}"
-	else
-	  bpError "Failed installing ${E_BR_GREEN}${1}${E_END}"
-	fi
+  if sudo apt -y install $1; then
+      bpOk "Installed: ${E_BR_GREEN}${1}${E_END}"
+  else
+    bpError "Failed installing ${E_BR_GREEN}${1}${E_END}"
+  fi
 }
 
 #
@@ -244,15 +244,15 @@ installApt() { ##I Install a apt package
 #
 installNpm() { ##I Install npm package
   if npmIsInstalled $1 ; then
-	  bpInfo "NPM package $1 is already installed"
-		return
-	fi
+    bpInfo "NPM package $1 is already installed"
+    return
+  fi
 
   if sudo npm install --global $1; then
     bpOk "Installed: ${E_BR_GREEN}${1}${E_END}"
-	else
-	  bpError "Failed installing ${E_BR_GREEN}${1}${E_END}"
-	fi
+  else
+    bpError "Failed installing ${E_BR_GREEN}${1}${E_END}"
+  fi
 }
 
 #
@@ -260,10 +260,10 @@ installNpm() { ##I Install npm package
 #
 installPip() { ##I Install pip package 
   if pip install $1; then
-	  bpOk "Installed: ${E_BR_GREEN}${1}${E_END}"
-	else
-	  bpError "Failed installing ${E_BR_GREEN}${1}${E_END}"
-	fi
+    bpOk "Installed: ${E_BR_GREEN}${1}${E_END}"
+  else
+    bpError "Failed installing ${E_BR_GREEN}${1}${E_END}"
+  fi
 }
 
 installSnap() { ##I Install snap package
@@ -276,48 +276,52 @@ installSnap() { ##I Install snap package
 #
 installGeneric() {
   if [ $1 == "apt" ]; then
-		installApt $2
-	fi
+    installApt $2
+  fi
 	
   if [ $1 == "npm" ]; then
-		installNpm $2
-	fi
+    installNpm $2
+  fi
 
   if [ $1 == "pip" ]; then
-		installPip $2
-	fi
+    installPip $2
+  fi
 	
-	if [ $1 == "snap" ]; then
-		installSnap $2
-	fi
+  if [ $1 == "snap" ]; then
+    installSnap $2
+  fi
 }
 
 # 
 # arg 1  array of packages
 #
 installPkgs() { ##I Install array of packages	
-	arr=("${@}")
-	len=${#arr[@]}
-	i=0
-	while [ $i -lt $len ]; do
-	  pkgt=${arr[$i]}
-		let i++
-	  pkg=${arr[$i]}
-		let i++
-		installGeneric ${pkgt} ${pkg}
-	done
+  arr=("${@}")
+  len=${#arr[@]}
+  i=0
+  while [ $i -lt $len ]; do
+    pkgt=${arr[$i]}
+    let i++
+    pkg=${arr[$i]}
+    let i++
+    installGeneric ${pkgt} ${pkg}
+  done
 }
 
-
 ##- New
-newdesktop() { ##D Install new desktop
+
+newterminal() { ##D Install new terminal computer
   terminalutils
-	desktoputils
+}
+
+newdesktop() { ##D Install new desktop computer
+  terminalutils
+  desktoputils
 }
 
 newserver() { ##D Install new server
   terminalutils
-	serverutils
+  serverutils
 }
 
 newDev() {  ##D Installs c and python development tools
@@ -328,17 +332,17 @@ newDev() {  ##D Installs c and python development tools
 
 ##- Utils
 
-terminalutils() {           ##D Install terminal utility programs
+terminalutils() { ##D Install terminal utility programs
   installPkgs ${utilsPkgs[@]}
 }
 
-desktoputils() {            ##D Install desktop utility programs
+desktoputils() { ##D Install desktop utility programs
   installPkgs ${desktopUtilPkgs[@]}
 }
 
 ##- Server systems
 
-serverutils() {             ##D Install server packages
+serverutils() {  ##D Install server packages
   installPkgs ${serverPkgs[@]}
 }
 
@@ -348,8 +352,8 @@ kvm() {  ##D Install KVM virtual machine manager
 
 sshserver() { ##D Install and activate ssh server
   bpInstall "openssh-server" 
-	sudo systemctl enable ssh
-	sudo systemctl start ssh
+  sudo systemctl enable ssh
+  sudo systemctl start ssh
 }
 
 samba() { ##D Install samba server and tools
@@ -357,11 +361,11 @@ samba() { ##D Install samba server and tools
 }
 
 ##- Development tools
-devutils() {                ##D Install development utls like git, svn, flex, doxygen
+devutils() { ##D Install development utls like git, svn, flex, doxygen
   installPkgs ${devUtilsPkgs[@]}
 }
 
-cdevelop() {                ##D Install packages for native C development 
+cdevelop() { ##D Install packages for native C development 
   installPkgs ${develCPkgs[@]}
 }
 				
@@ -460,20 +464,19 @@ photivo() { ##D Photo RAW file editor
 #
 gclone() {
   fn=$(basename -- $1)
-	fn="${fn%.*}"
+  fn="${fn%.*}"
   bpCd "${2}"
   if [ -e "$fn" ]; then
-	  bpInfo "Directory $(bpColorizeFile $(realpath $fn)) already exists, skipping cloning"
-		bpCd -
-		return
-	fi
+    bpInfo "Directory $(bpColorizeFile $(realpath $fn)) already exists, skipping cloning"
+    bpCd -
+    return
+  fi
 	
-	if git clone "$1" ; then
-	  bpOk "Cloning of $(bpColorizeUrl $1) successfull."
-	else
-	  bpError "Cloning of $(bpColorizeUrl $1) failed."
-	fi
-	
+  if git clone "$1" ; then
+    bpOk "Cloning of $(bpColorizeUrl $1) successfull."
+  else
+    bpError "Cloning of $(bpColorizeUrl $1) failed."
+  fi	
 }
 
 ghClone() {  ## Github clone
@@ -484,20 +487,11 @@ projects() { ##D Checkout all git projects
   bpTextLine "Cloning github projects"
   bpMkDir "${PROJDIR}"
 	
-	for prj in ${projects[@]}; do 
-	  echo $prj
-		ghClone $prj
-	done
- 	return
-	ghClone "bashplates"
-  ghClone "Debugsock"
-	ghClone "pyplate"
-	ghClone "makeplates"
-	ghClone "LEF"
-	ghClone "mTerm"
-	ghClone "Tester"
-	ghClone "luaconf"
-	ghClone "gittest"
+  for prj in ${projects[@]}; do 
+    echo $prj
+    ghClone $prj
+  done
+   return
 }
 
 #---------------------------------------------------------------------
