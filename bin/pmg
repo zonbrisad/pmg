@@ -68,17 +68,18 @@ SSH_KEY=~/.ssh/id_ed25519
 ##- New install options
 
 newt() { ##D Setup tools/users/config on new install without desktop
-  ${BP_DIR}/pmginstall utils
+  all_setups
+  ${BP_DIR}/pmginstall newterminal
 }
 
 newd() { ##D Setup tools/users/config on new install with desktop
   newt
-  ${BP_DIR}/pmginstall utils
+  ${BP_DIR}/pmginstall newdesktop
 }
 
 news() { ##D Setup tools/users/config on new server install
   newt
-  ${BP_DIR}/pmginstall server
+  ${BP_DIR}/pmginstall newserver
 }
 
 devel() {
@@ -100,16 +101,15 @@ iso2usb() { ##D Write ISO file to USB drive
 ##- Users & Groups
  
  
- 
- 
 ##- Setup
 
 all_setups() { ##D All setups (except jed_setup)
   pmg_setup
-	ssh
   git_setup
+  ssh
+  pmg2ssh
 
-	#  jed_setup
+#  jed_setup
 }
 
 
@@ -119,7 +119,7 @@ configFiles=(        \
   "~/.jedrc"         \
   "~/bin"            \
   "~/.gitconfig"     \
-	"~/.tmux.conf"     \
+  "~/.tmux.conf"     \
 )
 
 #
@@ -128,8 +128,8 @@ configFiles=(        \
 cf() {
   eval F=${1}
   
-	if [ -h $F ]; then  # if aldready symbolic return
-	  return
+  if [ -h $F ]; then  # if aldready symbolic return
+    return
   fi
 	
   if [ -e $F ]; then  # if file already exist make a copy
@@ -283,6 +283,16 @@ info() { ##D General information
  bpPrintInfo "SSH public key" "$( cat ${SSH_KEY}.pub )"
 
  bpLine
+}
+
+
+hwinfo() { ##D Print general hardware information
+  inxi --full --usb --filter
+}
+
+
+hwinfoe() { ##D Print general hardware information
+  sudo inxi --full --extra 3 --usb --filter --memory-modules
 }
 
 
