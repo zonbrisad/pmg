@@ -93,6 +93,7 @@ utilsPkgs=(                 \
   "apt" "gddrescue"     ":"  \
   "apt" "tmux"          ":"  \
   "apt" "npm"           ":"  \
+	"apt" "acpi"          ":"  \
   "apt" "bat"           ":"  \
 	"git" "https://github.com/ogham/exa" ":" \
 )
