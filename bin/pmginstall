@@ -61,146 +61,147 @@ projects=(     \
   "gittest"    \
 )
 
-serverPkgs=(              \
-  "apt" "rdiff-backup"    \
-  "apt" "nfs-common"      \
-  "apt" "ssmtp"           \
-  "apt" "mailutils"       \
+serverPkgs=(                \
+  "apt" "rdiff-backup" ":"   \
+  "apt" "nfs-common"   ":"   \
+  "apt" "ssmtp"        ":"   \
+  "apt" "mailutils"    ":"   \
 )
 
-sambaPkgs=(               \
-  "apt" "samba-common"    \
-  "apt" "samba"           \
-  "apt" "smbclient"       \
+sambaPkgs=(                 \
+  "apt" "samba-common" ":"   \
+  "apt" "samba"        ":"   \
+  "apt" "smbclient"    ":"   \
 )
 
-kvmPkgs=(                 \
-  "apt" "qemu-kvm"        \
-  "apt" "virt-manager"    \
-  "apt" "virt-top"        \
+kvmPkgs=(                   \
+  "apt" "qemu-kvm"     ":"   \
+  "apt" "virt-manager" ":"   \
+  "apt" "virt-top"     ":"   \
 )
 
-utilsPkgs=(               \
-  "apt" "jed"             \
-  "apt" "htop"            \
-  "apt" "nmap"            \
-  "apt" "lm-sensors"      \
-  "apt" "apt-file"        \
-  "apt" "net-tools"       \
-  "apt" "bridge-utils"    \
-  "apt" "smartmontools"   \
-  "apt" "testdisk"        \
-  "apt" "gddrescue"       \
-  "apt" "tmux"            \
-  "apt" "npm"             \
-  "apt" "bat"             \
-	"git" "https://github.com/ogham/exa" \
+utilsPkgs=(                 \
+  "apt" "jed"          ":"   \
+  "apt" "htop"         ":"   \
+  "apt" "nmap"         ":"   \
+  "apt" "lm-sensors"   ":"   \
+  "apt" "apt-file"     ":"   \
+  "apt" "net-tools"    ":"   \
+  "apt" "bridge-utils" ":"   \
+  "apt" "smartmontools" ":"  \
+  "apt" "testdisk"      ":"  \
+  "apt" "gddrescue"     ":"  \
+  "apt" "tmux"          ":"  \
+  "apt" "npm"           ":"  \
+  "apt" "bat"           ":"  \
+	"git" "https://github.com/ogham/exa" ":" \
 )
 
-desktopUtilPkgs=(                          \
-  "apt" "brasero"                          \
-  "apt" "gnome-tweaks"                     \
-  "apt" "gnome-shell-extension-impatience" \
-  "apt" "gnome-shell-extension-manager"    \
-  "apt" "gnome-screenshot"                 \
-  "apt" "vlc"                              \
-  "apt" "mesa-utils"                       \
-  "apt" "dconf-editor"                     \
-  "apt" "usb-creator-gtk"                  \
-  "apt" "ubuntu-restricted-extras"         \
-  "apt" "guvcview"                         \
+desktopUtilPkgs=(                             \
+  "apt" "brasero" ":"                         \
+  "apt" "gnome-tweaks" ":"                     \
+  "apt" "gnome-shell-extension-impatience" ":" \
+  "apt" "gnome-shell-extension-manager" ":"    \
+  "apt" "gnome-screenshot" ":"                 \
+  "apt" "vlc" ":"                              \
+  "apt" "mesa-utils" ":"                       \
+  "apt" "dconf-editor" ":"                     \
+  "apt" "usb-creator-gtk" ":"                  \
+  "apt" "ubuntu-restricted-extras" ":"         \
+  "apt" "guvcview" ":"                         \
+	"ppa" "inkscape" "ppa:inkscape.dev/stable"  \
 )
 
-devUtilsPkgs=(            \
-  "apt" "bison"           \
-  "apt" "flex"            \
-  "apt" "texinfo"         \
-  "apt" "git"             \
-  "apt" "gitk"            \
-  "apt" "subversion"      \
-  "apt" "meld"            \
-  "apt" "doxygen"         \
-  "apt" "shellcheck"      \
-  "npm" "doctoc"          \
+devUtilsPkgs=(              \
+  "apt" "bison"       ":"    \
+  "apt" "flex"        ":"    \
+  "apt" "texinfo"     ":"    \
+  "apt" "git"         ":"    \
+  "apt" "gitk"        ":"    \
+  "apt" "subversion"  ":"    \
+  "apt" "meld"        ":"    \
+  "apt" "doxygen"     ":"    \
+  "apt" "shellcheck"  ":"    \
+  "npm" "doctoc"      ":"    \
 )
 
-develCPkgs=(              \
-  "apt" "build-essential" \
-  "apt" "gdb"             \
-  "apt" "gdbserver"       \
-  "apt" "autoconf"        \
-  "apt" "cmake"           \
-  "apt" "ccache"          \
-  "apt" "colorgcc"        \
-  "apt" "gettext"         \
-  "apt" "libtool"         \
-  "apt" "libexpat-dev"    \
-  "apt" "splint"          \
-  "apt" "pkg-config"      \
-  "apt" "gperf"           \
-  "apt" "libncurses5"     \
-  "apt" "libncurses5-dev" \
-  "apt" "lua5.1"          \
-  "apt" "liblua5.1"       \
-  "apt" "libglib2.0-0"    \
-  "apt" "libglib2.0-dev"  \
-  "apt" "qt5-default"     \
-  "apt" "qt5-qmake"               \
-  "apt" "libqt5core5a"            \
-  "apt" "libqt5serialport5"       \
-  "apt" "libqt5serialport5-dev"   \
-  "apt" "qttools5-dev-tools"      \
-  "apt" "libsqlite3-dev"          \
-  "apt" "astudio"                 \
-  "apt" "libgtk-3-dev"            \
-  "apt" "libgtk-3-0-dbg"          \
-  "apt" "glade"                   \
-  "apt" "libc6-dev-amd64"         \
-  "apt" "libgtk-3-dev"            \
-  "apt" "astyle"                  \
-  "apt" "libelf-dev"              \
-  "apt" "freeglut3-dev"           \
+develCPkgs=(                 \
+  "apt" "build-essential" ":" \
+  "apt" "gdb"             ":" \
+  "apt" "gdbserver"       ":" \
+  "apt" "autoconf"        ":" \
+  "apt" "cmake"           ":" \
+  "apt" "ccache"          ":" \
+  "apt" "colorgcc"        ":" \
+  "apt" "gettext"         ":" \
+  "apt" "libtool"         ":" \
+  "apt" "libexpat-dev"    ":" \
+  "apt" "splint"          ":" \
+  "apt" "pkg-config"      ":" \
+  "apt" "gperf"           ":" \
+  "apt" "libncurses5"     ":" \
+  "apt" "libncurses5-dev" ":" \
+  "apt" "lua5.1"          ":" \
+  "apt" "liblua5.1"       ":" \
+  "apt" "libglib2.0-0"    ":" \
+  "apt" "libglib2.0-dev"  ":" \
+  "apt" "qt5-default"     ":" \
+  "apt" "qt5-qmake"       ":"        \
+  "apt" "libqt5core5a"    ":"        \
+  "apt" "libqt5serialport5" ":"      \
+  "apt" "libqt5serialport5-dev" ":"  \
+  "apt" "qttools5-dev-tools"    ":"  \
+  "apt" "libsqlite3-dev"        ":"  \
+  "apt" "astudio"               ":"  \
+  "apt" "libgtk-3-dev"          ":"  \
+  "apt" "libgtk-3-0-dbg"        ":"  \
+  "apt" "glade"                 ":"  \
+  "apt" "libc6-dev-amd64"       ":"  \
+  "apt" "libgtk-3-dev"          ":"  \
+  "apt" "astyle"                ":"  \
+  "apt" "libelf-dev"            ":"  \
+  "apt" "freeglut3-dev"         ":"  \
 )
 
-armDevPkgs=(                      \
-  "apt" "build-essential"         \
-  "apt" "gdb"                     \
-  "apt" "gdbserver"               \
-  "apt" "binutils-arm-none-eabi"  \ 
-  "apt" "gcc-arm-none-eabi"       \
-  "apt" "gdb-arm-none-eabi"       \
-  "apt" "libnewlib-arm-none-eabi" \
-  "apt" "openocd"                 \
+armDevPkgs=(                         \         
+  "apt" "build-essential"         ":" \
+  "apt" "gdb"                     ":" \
+  "apt" "gdbserver"               ":" \
+  "apt" "binutils-arm-none-eabi"  ":" \ 
+  "apt" "gcc-arm-none-eabi"       ":" \
+  "apt" "gdb-arm-none-eabi"       ":" \
+  "apt" "libnewlib-arm-none-eabi" ":" \
+  "apt" "openocd"                 ":" \
 )
 
 avrDevPkgs=(                      \
-  "apt" "build-essential"         \
-  "apt" "gdbserver"               \
-  "apt" "avrdude"                 \
-  "apt" "avr-libc"                \
-  "apt" "gcc-avr"                 \
-  "apt" "gdb-avr"                 \
-  "apt" "avrdude"                 \
+  "apt" "build-essential"      ":" \
+  "apt" "gdbserver"            ":" \
+  "apt" "avrdude"              ":" \
+  "apt" "avr-libc"             ":" \
+  "apt" "gcc-avr"              ":" \
+  "apt" "gdb-avr"              ":" \
+  "apt" "avrdude"              ":" \
 )
 
-pythonDevPkgs=(                      \
-  "apt" "python3"                    \
-  "apt" "python3-serial"             \
-  "apt" "python3-pip"                \
-  "apt" "python3-pyqt5"              \
-  "apt" "python3-pyqt5.qtserialport" \
-  "apt" "python3-pyqt5.qtopengl"     \
-  "apt" "python3-guiqwt"             \
-  "apt" "python3-guidata"            \
-  "apt" "python3-numpy"              \
-  "apt" "python3-scipy"              \
-  "apt" "pyqt5-dev-tools"            \
-  "apt" "pyqt5-examples"             \
-	"apt" "bpython"                    \
+pythonDevPkgs=(                         \
+  "apt" "python3"                    ":" \
+  "apt" "python3-serial"             ":" \
+  "apt" "python3-pip"                ":" \
+  "apt" "python3-pyqt5"              ":" \
+  "apt" "python3-pyqt5.qtserialport" ":" \
+  "apt" "python3-pyqt5.qtopengl"     ":" \
+  "apt" "python3-guiqwt"             ":" \
+  "apt" "python3-guidata"            ":" \
+  "apt" "python3-numpy"              ":" \
+  "apt" "python3-scipy"              ":" \
+  "apt" "pyqt5-dev-tools"            ":" \
+  "apt" "pyqt5-examples"             ":" \
+	"apt" "bpython"                    ":" \
 )
 
-rustDevPkgs=(          \
-  "apt" "rustc"        \
+rustDevPkgs=(           \
+  "apt" "rustc"      ":" \
 )
 
 }
@@ -246,6 +247,30 @@ installApt() { ##I Install a apt package
   fi
 }
 
+ppaIsInstalled() { ##I Check if a PPA is added to source list
+#  if  grep -q "^deb .*${1}" /etc/apt/sources.list /etc/apt/sources.list.d/*; then
+
+  if grep -q $1  /etc/apt/sources.list.d/* ; then
+	  return 0
+	else
+	  return 1
+	fi
+}
+
+installPPA() { ##I Install package from ppa
+
+  bpError "PPA install not available"
+
+  if ! ppaIsInstalled $1 ; then 
+    sudo add-apt-repository --yes $2
+		sudo apt update
+	fi
+	
+	installApt $1
+}
+
+
+
 #
 # $1 npm package name
 #
@@ -289,6 +314,7 @@ installGit() { ##I Install git package
 	cd -
 }
 
+
 #
 # $1 package system
 # $2 package name
@@ -313,6 +339,12 @@ installGeneric() {
 	if [ $1 == "git" ]; then
     installGit $2
   fi
+	
+	if [ $1 == "ppa" ]; then
+    installPPA $2 $3
+  fi
+	
+	
 }
 
 # 
@@ -327,7 +359,9 @@ installPkgs() { ##I Install array of packages
     let i++
     pkg=${arr[$i]}
     let i++
-    installGeneric ${pkgt} ${pkg}
+		x=${arr[$i]}
+		let i++
+    installGeneric ${pkgt} ${pkg} ${x}
   done
 }
 
@@ -1692,9 +1726,9 @@ bpRunCommand() {
   fi
 
   if [ "$( type -t $1 )" != "function" ]; then # Check if subcommand is declared as function
-	  bpErrorExit "Command \"$1\" not found"
-	fi
-	
+    bpErrorExit "Command \"$1\" not found"
+  fi
+
   command=$1
   # execute pre command hook  if existing
   if [ -n "$PRE_CMD_HOOK" ]; then
