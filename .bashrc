@@ -1414,9 +1414,9 @@ if [ -e "$BP_SETTINGS_DIR" ]; then
       l=$( readlink ${m} )
       if [ -e ${l} ]; then
         source $l
-			  bpInfo "Loading module $( bpColorizeFile $l )"
+			  bpOk "Loaded module $( bpColorizeFile $l )"
       else
-        bpError "Module $( bpColorizeFile $l ) does not exist!"
+        bpError "Failed to load module $( bpColorizeFile $l )"
       fi
     done
 	fi	

@@ -61,33 +61,33 @@ projects=(     \
   "gittest"    \
 )
 
-serverPkgs=(                \
+serverPkgs=(                 \
   "apt" "rdiff-backup" ":"   \
   "apt" "nfs-common"   ":"   \
   "apt" "ssmtp"        ":"   \
   "apt" "mailutils"    ":"   \
 )
 
-sambaPkgs=(                 \
+sambaPkgs=(                  \
   "apt" "samba-common" ":"   \
   "apt" "samba"        ":"   \
   "apt" "smbclient"    ":"   \
 )
 
-kvmPkgs=(                   \
+kvmPkgs=(                    \
   "apt" "qemu-kvm"     ":"   \
   "apt" "virt-manager" ":"   \
   "apt" "virt-top"     ":"   \
 )
 
-utilsPkgs=(                 \
-  "apt" "jed"          ":"   \
-  "apt" "htop"         ":"   \
-  "apt" "nmap"         ":"   \
-  "apt" "lm-sensors"   ":"   \
-  "apt" "apt-file"     ":"   \
-  "apt" "net-tools"    ":"   \
-  "apt" "bridge-utils" ":"   \
+utilsPkgs=(                  \
+  "apt" "jed"           ":"  \
+  "apt" "htop"          ":"  \
+  "apt" "nmap"          ":"  \
+  "apt" "lm-sensors"    ":"  \
+  "apt" "apt-file"      ":"  \
+  "apt" "net-tools"     ":"  \
+  "apt" "bridge-utils"  ":"  \
   "apt" "smartmontools" ":"  \
   "apt" "testdisk"      ":"  \
   "apt" "gddrescue"     ":"  \
@@ -98,8 +98,8 @@ utilsPkgs=(                 \
 	"git" "https://github.com/ogham/exa" ":" \
 )
 
-desktopUtilPkgs=(                             \
-  "apt" "brasero" ":"                         \
+desktopUtilPkgs=(                              \
+  "apt" "brasero" ":"                          \
   "apt" "gnome-tweaks" ":"                     \
   "apt" "gnome-shell-extension-impatience" ":" \
   "apt" "gnome-shell-extension-manager" ":"    \
@@ -110,10 +110,10 @@ desktopUtilPkgs=(                             \
   "apt" "usb-creator-gtk" ":"                  \
   "apt" "ubuntu-restricted-extras" ":"         \
   "apt" "guvcview" ":"                         \
-	"ppa" "inkscape" "ppa:inkscape.dev/stable"  \
+	"ppa" "inkscape" "ppa:inkscape.dev/stable"   \
 )
 
-devUtilsPkgs=(              \
+devUtilsPkgs=(               \
   "apt" "bison"       ":"    \
   "apt" "flex"        ":"    \
   "apt" "texinfo"     ":"    \
@@ -126,7 +126,7 @@ devUtilsPkgs=(              \
   "npm" "doctoc"      ":"    \
 )
 
-develCPkgs=(                 \
+develCPkgs=(                  \
   "apt" "build-essential" ":" \
   "apt" "gdb"             ":" \
   "apt" "gdbserver"       ":" \
@@ -147,8 +147,8 @@ develCPkgs=(                 \
   "apt" "libglib2.0-0"    ":" \
   "apt" "libglib2.0-dev"  ":" \
   "apt" "qt5-default"     ":" \
-  "apt" "qt5-qmake"       ":"        \
-  "apt" "libqt5core5a"    ":"        \
+  "apt" "qt5-qmake"       ":" \
+  "apt" "libqt5core5a"    ":" \
   "apt" "libqt5serialport5" ":"      \
   "apt" "libqt5serialport5-dev" ":"  \
   "apt" "qttools5-dev-tools"    ":"  \
@@ -164,7 +164,7 @@ develCPkgs=(                 \
   "apt" "freeglut3-dev"         ":"  \
 )
 
-armDevPkgs=(                         \         
+armDevPkgs=(                          \         
   "apt" "build-essential"         ":" \
   "apt" "gdb"                     ":" \
   "apt" "gdbserver"               ":" \
@@ -175,7 +175,7 @@ armDevPkgs=(                         \
   "apt" "openocd"                 ":" \
 )
 
-avrDevPkgs=(                      \
+avrDevPkgs=(                       \
   "apt" "build-essential"      ":" \
   "apt" "gdbserver"            ":" \
   "apt" "avrdude"              ":" \
@@ -185,7 +185,7 @@ avrDevPkgs=(                      \
   "apt" "avrdude"              ":" \
 )
 
-pythonDevPkgs=(                         \
+pythonDevPkgs=(                          \
   "apt" "python3"                    ":" \
   "apt" "python3-serial"             ":" \
   "apt" "python3-pip"                ":" \
@@ -201,7 +201,7 @@ pythonDevPkgs=(                         \
 	"apt" "bpython"                    ":" \
 )
 
-rustDevPkgs=(           \
+rustDevPkgs=(            \
   "apt" "rustc"      ":" \
 )
 
