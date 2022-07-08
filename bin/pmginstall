@@ -95,6 +95,7 @@ utilsPkgs=(                  \
   "apt" "npm"           ":"  \
 	"apt" "acpi"          ":"  \
   "apt" "bat"           ":"  \
+	"apt" "ncdu"          ":"  \
 	"git" "https://github.com/ogham/exa" ":" \
 )
 
@@ -111,6 +112,7 @@ desktopUtilPkgs=(                              \
   "apt" "ubuntu-restricted-extras" ":"         \
   "apt" "guvcview" ":"                         \
 	"ppa" "inkscape" "ppa:inkscape.dev/stable"   \
+	"ppa" "krita" "ppa:kritalime/ppa"            \ 
 )
 
 devUtilsPkgs=(               \
@@ -164,6 +166,24 @@ develCPkgs=(                  \
   "apt" "freeglut3-dev"         ":"  \
 )
 
+develQtPkgs=( \
+  "apt" "libglib2.0-0"    ":" \
+  "apt" "libglib2.0-dev"  ":" \
+  "apt" "qt5-default"     ":" \
+  "apt" "qt5-qmake"       ":" \
+  "apt" "libqt5core5a"    ":" \
+  "apt" "libqt5serialport5" ":"      \
+  "apt" "libqt5serialport5-dev" ":"  \
+  "apt" "qttools5-dev-tools"    ":"  \
+  "apt" "python3-pyqt5"              ":" \
+  "apt" "python3-pyqt5.qtserialport" ":" \
+  "apt" "python3-pyqt5.qtopengl"     ":" \
+  "apt" "python3-guiqwt"             ":" \
+  "apt" "python3-guidata"            ":" \
+  "apt" "pyqt5-dev-tools"            ":" \
+  "apt" "pyqt5-examples"             ":" \
+)
+
 armDevPkgs=(                          \         
   "apt" "build-essential"         ":" \
   "apt" "gdb"                     ":" \
@@ -199,11 +219,18 @@ pythonDevPkgs=(                          \
   "apt" "pyqt5-dev-tools"            ":" \
   "apt" "pyqt5-examples"             ":" \
 	"apt" "bpython"                    ":" \
+	"pip" "GitPython"                  ":" \
 )
 
 rustDevPkgs=(            \
   "apt" "rustc"      ":" \
 )
+
+
+sciPkgs=(     \
+  "apt" "scilab"   ":" \
+)
+
 
 }
 #---------------------------------------------------------------------
@@ -230,6 +257,18 @@ npmIsInstalled() { ##I Check if npm package is installed
   else
     return 1
   fi
+}
+
+
+#
+# $1 package name
+#
+pipIsInstalled() { ##I
+  if pip list  | grep GitPython &> /dev/null ; then 
+    return 0
+	else
+	  return 1
+	fi
 }
 
 #
@@ -271,7 +310,6 @@ installPPA() { ##I Install package from ppa
 }
 
 
-
 #
 # $1 npm package name
 #
@@ -292,6 +330,11 @@ installNpm() { ##I Install npm package
 # $1 pip package name
 #
 installPip() { ##I Install pip package 
+  if pipIsInstalled $1; then
+	  bpInfo "PIP package $1 is already installed"
+		return
+	fi
+	
   if pip install $1; then
     bpOk "Installed: ${E_BR_GREEN}${1}${E_END}"
   else
@@ -446,6 +489,13 @@ java() {                    ##D Install Java development packages
 python() {                  ##D Install python development packages
   installPkgs ${pythonDevPkgs[@]}
 }
+
+
+sci() {                  ##D Install science and technology packages
+  installPkgs ${sciPkgs[@]}
+}
+
+
 
 
 WORK=~/Downloads
