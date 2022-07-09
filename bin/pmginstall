@@ -220,6 +220,7 @@ pythonDevPkgs=(                          \
   "apt" "pyqt5-examples"             ":" \
 	"apt" "bpython"                    ":" \
 	"pip" "GitPython"                  ":" \
+	"pip" "black"                      ":" \
 )
 
 rustDevPkgs=(            \
