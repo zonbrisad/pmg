@@ -99,15 +99,29 @@ iso2usb() { ##D Write ISO file to USB drive
 }
 
 ##- Users & Groups
- 
+
+bpAddUserGroup() {
+  :
+}
+
+add_groups() { ##D Add user into groups
+
+  #u=$USER
+  # Dialout group is used by serial ports
+  sudo usermod -a -G dialout lpmg
+	
+
+}
  
 ##- Setup
 
 all_setups() { ##D All setups (except jed_setup)
   pmg_setup
+	add_groups
   git_setup
   ssh
   pmg2ssh
+	
 
 #  jed_setup
 }
