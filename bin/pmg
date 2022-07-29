@@ -369,7 +369,6 @@ pull() { ##D Pull project from GITHUB
   bpCd - 
 } 
 
-
 #---------------------------------------------------------------------
 # Bashplate settings
 #---------------------------------------------------------------------
@@ -388,7 +387,7 @@ BP_DESC="Peter Malmberg's management script"
 BP_LOGFILE=${BP_DIR}/${BP_NAME}.log
 
 ##V Lock file (uncomment to use lock file feature )
-BP_LOCK_FILE=/tmp/${BP_NAME}.lock
+BP_LOCK_FILE=/tmp/${BP_SELF}.lock
 
 ##V Logging options (uncomment to activate logging parameters)
 BP_LOG_OK=1
@@ -1356,7 +1355,6 @@ printCondCommand() {
   arr=($1)
   IFS=$'\n'
   help_info=${arr[@]:4}
-  BP_CONF=1
   COND=${arr[3]}
   eval "D=\$$COND"
 
@@ -1603,7 +1601,6 @@ bpRunCommand() {
     # Check if condition is true and then execute else printout error message
     ARR=($CL)
     CV="${ARR[3]}"
-
     if [ -n "$CV" ]; then
       eval "D=\$$CV"
       if [ -n "$D" ]; then
