@@ -69,17 +69,17 @@ SSH_KEY=~/.ssh/id_ed25519
 
 newt() { ##D Setup tools/users/config on new install without desktop
   all_setups
-  ${BP_DIR}/pmginstall newterminal
+  ${BP_SELF_DIR}/pmginstall newterminal
 }
 
 newd() { ##D Setup tools/users/config on new install with desktop
   newt
-  ${BP_DIR}/pmginstall newdesktop
+  ${BP_SELF_DIR}/pmginstall newdesktop
 }
 
 news() { ##D Setup tools/users/config on new server install
   newt
-  ${BP_DIR}/pmginstall newserver
+  ${BP_SELF_DIR}/pmginstall newserver
 }
 
 devel() {
@@ -151,12 +151,12 @@ cf() {
     bpRm "$F"
   fi
    
-  eval X=${BP_DIR}/../$(basename $F)
-  bpLn  ${BP_DIR}/../$(basename $F) $F
+  eval X=${BP_SELF_DIR}/../$(basename $F)
+  bpLn  ${BP_SELF_DIR}/../$(basename $F) $F
 }
 
 pmg_setup() { ##D Initiates pmg infrastructure
-  bpAddModule ${BP_DIR}/pmg_init
+  bpAddModule ${BP_SELF_DIR}/pmg_init
 
   for pkg in ${configFiles[@]}; do
     cf "${pkg}"
@@ -176,7 +176,7 @@ git_setup() { ##D Setup git correctly
 
 jed_setup() { ##D Setup jed editor (requires root access)
   bpAssertRoot
-  bpCp ${BP_DIR}/setupfiles/make.sl /usr/share/jed/lib/.
+  bpCp ${BP_SELF_DIR}/setupfiles/make.sl /usr/share/jed/lib/.
 }
 
 
@@ -199,7 +199,7 @@ ssh() { ##D Generate SSH key
 }
 
 pmg2ssh() { ##D Change pmg remote git repository to ssh
-  cd  ${BP_DIR}/..
+  cd  ${BP_SELF_DIR}/..
   git remote -v
   git remote set-url origin git@github.com:zonbrisad/pmg.git
   git remote -v
@@ -326,7 +326,7 @@ hwinfoe() { ##D Print general hardware information
 ##- Project management (git)
 
 clean() { ##D Remove leftover files 
-  bpCd "${BP_DIR}"
+  bpCd "${BP_SELF_DIR}"
 
   find . -name "*~"     -delete
   find . -name "*.orig" -delete
@@ -337,14 +337,14 @@ clean() { ##D Remove leftover files
 }
 
 commit() { ##D Commit project to repository
-  bpCd "${BP_DIR}"
+  bpCd "${BP_SELF_DIR}"
   git commit -a
   #git push --tags -a
   bpCd - 
 }
 
 tag() { ##D Make a new tag
-  bpCd "${BP_DIR}"
+  bpCd "${BP_SELF_DIR}"
   # List existing tags
   git tag
 
@@ -358,13 +358,13 @@ tag() { ##D Make a new tag
 }
 
 push() { ##D Push project to GITHUB
-  bpCd "${BP_DIR}"
+  bpCd "${BP_SELF_DIR}"
   git push --progress
   bpCd - 
 } 
 
 pull() { ##D Pull project from GITHUB
-  bpCd "${BP_DIR}"
+  bpCd "${BP_SELF_DIR}"
   git pull --progress
   bpCd - 
 } 
@@ -378,13 +378,13 @@ bpInitSettings() {
 BP_VERSION="1.00"
 
 ##V Usage info
-BP_USAGE="Usage: ${BP_NAME} command [option]"
+BP_USAGE="Usage: ${BP_SELF} command [option]"
 
 ##V Description text
 BP_DESC="Peter Malmberg's management script"
 
 ##V logfile (uncomment to use logfile)
-BP_LOGFILE=${BP_DIR}/${BP_NAME}.log
+BP_LOGFILE=${BP_SELF_DIR}/${BP_SELF}.log
 
 ##V Lock file (uncomment to use lock file feature )
 BP_LOCK_FILE=/tmp/${BP_SELF}.lock
@@ -1041,7 +1041,7 @@ bpAddSettings() {
   bpAddSetting $BP_SETTINGS "BP_LICENSE" "MIT"               "Default project license"
   bpAddSetting $BP_SETTINGS "BP_ORG"     "ACME"              "Default organisation"
   bpAddSetting $BP_SETTINGS "BP_DIFF"    "meld"              "Default diff program"  
-  bpAddSetting $BP_SETTINGS "BP_PATH"    "${BP_DIR}" "Path to Bashplates directory"
+  bpAddSetting $BP_SETTINGS "BP_PATH"    "${BP_SELF_DIR}" "Path to Bashplates directory"
 }
 
 # Change setting in config file (key value pair)
