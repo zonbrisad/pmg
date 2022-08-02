@@ -670,23 +670,27 @@ alias mv='mv -i'
 # -> Prevents accidentally clobbering files.
 alias mkdir='mkdir -p'
 
-alias h='history'
-alias j='jobs -l'
 alias which='type -a'
-alias ..='cd ..'
+alias grep='grep --color=auto'
+alias du='du -kh'    # Makes a more readable output.
+alias df='df -kTh'
+
+# If available use batcat instead of cat
+if type batcat ; then
+  alias cat='batcat'
+else
+  alias cat='cat'
+fi
 
 # Pretty-print of some PATH variables:
 alias path='echo -e ${PATH//:/\\n}'
 alias libpath='echo -e ${LD_LIBRARY_PATH//:/\\n}'
 
-
-alias du='du -kh'    # Makes a more readable output.
-alias df='df -kTh'
-
+alias ..='cd ..'
+alias j='jobs -l'
+alias h='history'
 alias eb='jed ~/.bashrc'
 
-
-alias grep='grep --color=auto'
 
 # The 'ls' family -----------------------------------------------------------
 
@@ -1410,9 +1414,9 @@ if [ -e "$BP_SETTINGS_DIR" ]; then
       l=$( readlink ${m} )
       if [ -e ${l} ]; then
         source $l
-			  bpInfo "Loading module $( bpColorizeFile $l )"
+			  bpOk "Loaded module $( bpColorizeFile $l )"
       else
-        bpError "Module $( bpColorizeFile $l ) does not exist!"
+        bpError "Failed to load module $( bpColorizeFile $l )"
       fi
     done
 	fi	
