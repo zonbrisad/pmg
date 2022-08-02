@@ -261,6 +261,12 @@ backup() { ##D Backup user data
 	bpBackupDir ~/ "$2"
 }
 
+##- System Management
+
+update() { ##D  Update operating system
+  sudo apt update && sudo apt upgrade --assume-yes && sudo apt autoremove && sudo apt autoclean
+}
+
 
 ##- Information
 info() { ##D General information
