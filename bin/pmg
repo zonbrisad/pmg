@@ -331,6 +331,12 @@ hwinfoe() { ##D Print general hardware information
 
 ##- Project management (git)
 
+hist() { ##D Show project history
+  bpCd "${BP_SELF_DIR}"
+  git hist
+  bpCd -
+}
+
 clean() { ##D Remove leftover files 
   bpCd "${BP_SELF_DIR}"
 
