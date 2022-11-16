@@ -37,6 +37,7 @@
 #---------------------------------------------------------------------
 bpUserSettings() {
 
+<<<<<<< HEAD
   PROJDIR="${HOME}/Projects"
   ghUser="zonbrisad"
   ghURL="github.com"
@@ -233,6 +234,203 @@ snap_unrestrict() {
   sciPkgs=(
     "apt" "scilab" ":"
   )
+=======
+PROJDIR="${HOME}/Projects"
+ghUser="zonbrisad"
+ghURL="github.com"
+PMG_TEMP=~/pmg/tmp
+
+projects=(     \
+  "bashplates" \
+  "Debugsock"  \
+  "pyplate"    \
+  "makeplates" \
+  "LEF"        \
+  "mTerm"      \
+  "Tester"     \
+  "luaconf"    \
+  "gittest"    \
+)
+
+serverPkgs=(                 \
+  "apt" "rdiff-backup" ":"   \
+  "apt" "nfs-common"   ":"   \
+  "apt" "ssmtp"        ":"   \
+  "apt" "mailutils"    ":"   \
+)
+
+sambaPkgs=(                  \
+  "apt" "samba-common" ":"   \
+  "apt" "samba"        ":"   \
+  "apt" "smbclient"    ":"   \
+)
+
+kvmPkgs=(                    \
+  "apt" "qemu-kvm"     ":"   \
+  "apt" "virt-manager" ":"   \
+  "apt" "virt-top"     ":"   \
+)
+
+utilsPkgs=(                  \
+  "apt" "jed"           ":"  \
+  "apt" "htop"          ":"  \
+  "apt" "nmap"          ":"  \
+  "apt" "lm-sensors"    ":"  \
+  "apt" "apt-file"      ":"  \
+  "apt" "net-tools"     ":"  \
+  "apt" "bridge-utils"  ":"  \
+  "apt" "smartmontools" ":"  \
+  "apt" "testdisk"      ":"  \
+  "apt" "gddrescue"     ":"  \
+  "apt" "tmux"          ":"  \
+  "apt" "npm"           ":"  \
+	"apt" "acpi"          ":"  \
+  "apt" "bat"           ":"  \
+	"apt" "ncdu"          ":"  \
+	"git" "https://github.com/ogham/exa" ":" \
+)
+
+desktopUtilPkgs=(                              \
+  "apt" "brasero" ":"                          \
+  "apt" "gnome-tweaks" ":"                     \
+  "apt" "gnome-shell-extension-impatience" ":" \
+  "apt" "gnome-shell-extension-manager" ":"    \
+  "apt" "gnome-screenshot" ":"                 \
+  "apt" "vlc" ":"                              \
+  "apt" "mesa-utils" ":"                       \
+  "apt" "dconf-editor" ":"                     \
+  "apt" "usb-creator-gtk" ":"                  \
+  "apt" "ubuntu-restricted-extras" ":"         \
+  "apt" "guvcview" ":"                         \
+	"ppa" "inkscape" "ppa:inkscape.dev/stable"   \
+	"ppa" "krita" "ppa:kritalime/ppa"            \ 
+)
+
+devUtilsPkgs=(               \
+  "apt" "bison"       ":"    \
+  "apt" "flex"        ":"    \
+  "apt" "texinfo"     ":"    \
+  "apt" "git"         ":"    \
+  "apt" "gitk"        ":"    \
+  "apt" "subversion"  ":"    \
+  "apt" "meld"        ":"    \
+  "apt" "doxygen"     ":"    \
+  "apt" "shellcheck"  ":"    \
+  "npm" "doctoc"      ":"    \
+)
+
+libqtPkgs=(                   \
+  "apt" "qt5-default"     ":" \
+  "apt" "qt5-qmake"       ":" \
+  "apt" "libqt5core5a"    ":" \
+  "apt" "libqt5serialport5" ":"      \
+  "apt" "libqt5serialport5-dev" ":"  \
+  "apt" "qttools5-dev-tools"    ":"  \
+)
+
+libgtkPkgs=(                         \
+  "apt" "libgtk-3-dev"          ":"  \
+  "apt" "libgtk-3-0-dbg"        ":"  \
+  "apt" "glade"                 ":"   
+)
+
+develCPkgs=(                  \
+  "apt" "build-essential" ":" \
+  "apt" "gdb"             ":" \
+  "apt" "gdbserver"       ":" \
+  "apt" "autoconf"        ":" \
+  "apt" "cmake"           ":" \
+  "apt" "ccache"          ":" \
+  "apt" "colorgcc"        ":" \
+  "apt" "gettext"         ":" \
+  "apt" "libtool"         ":" \
+  "apt" "libexpat-dev"    ":" \
+  "apt" "splint"          ":" \
+  "apt" "pkg-config"      ":" \
+  "apt" "gperf"           ":" \
+  "apt" "libncurses5"     ":" \
+  "apt" "libncurses5-dev" ":" \
+  "apt" "lua5.1"          ":" \
+  "apt" "liblua5.1"       ":" \
+  "apt" "libglib2.0-0"    ":" \
+  "apt" "libglib2.0-dev"  ":" \
+  "apt" "libsqlite3-dev"        ":"  \
+  "apt" "astudio"               ":"  \
+  "apt" "libc6-dev-amd64"       ":"  \
+  "apt" "astyle"                ":"  \
+  "apt" "libelf-dev"            ":"  \
+  "apt" "freeglut3-dev"         ":"  \
+)
+
+develQtPkgs=( \
+  "apt" "libglib2.0-0"    ":" \
+  "apt" "libglib2.0-dev"  ":" \
+  "apt" "qt5-default"     ":" \
+  "apt" "qt5-qmake"       ":" \
+  "apt" "libqt5core5a"    ":" \
+  "apt" "libqt5serialport5" ":"      \
+  "apt" "libqt5serialport5-dev" ":"  \
+  "apt" "qttools5-dev-tools"    ":"  \
+  "apt" "python3-pyqt5"              ":" \
+  "apt" "python3-pyqt5.qtserialport" ":" \
+  "apt" "python3-pyqt5.qtopengl"     ":" \
+  "apt" "python3-guiqwt"             ":" \
+  "apt" "python3-guidata"            ":" \
+  "apt" "pyqt5-dev-tools"            ":" \
+  "apt" "pyqt5-examples"             ":" \
+)
+
+armDevPkgs=(                          \         
+  "apt" "build-essential"         ":" \
+  "apt" "gdb"                     ":" \
+  "apt" "gdbserver"               ":" \
+  "apt" "binutils-arm-none-eabi"  ":" \ 
+  "apt" "gcc-arm-none-eabi"       ":" \
+  "apt" "gdb-arm-none-eabi"       ":" \
+  "apt" "libnewlib-arm-none-eabi" ":" \
+  "apt" "openocd"                 ":" \
+)
+
+avrDevPkgs=(                       \
+  "apt" "build-essential"      ":" \
+  "apt" "gdbserver"            ":" \
+  "apt" "avrdude"              ":" \
+  "apt" "avr-libc"             ":" \
+  "apt" "gcc-avr"              ":" \
+  "apt" "gdb-avr"              ":" \
+  "apt" "avrdude"              ":" \
+)
+
+pythonDevPkgs=(                          \
+  "apt" "python3"                    ":" \
+  "apt" "python3-serial"             ":" \
+  "apt" "python3-pip"                ":" \
+  "apt" "python3-pyqt5"              ":" \
+  "apt" "python3-pyqt5.qtserialport" ":" \
+  "apt" "python3-pyqt5.qtopengl"     ":" \
+  "apt" "python3-guiqwt"             ":" \
+  "apt" "python3-guidata"            ":" \
+  "apt" "python3-numpy"              ":" \
+  "apt" "python3-scipy"              ":" \
+  "apt" "pyqt5-dev-tools"            ":" \
+  "apt" "pyqt5-examples"             ":" \
+	"apt" "bpython"                    ":" \
+	"pip" "GitPython"                  ":" \
+	"pip" "black"                      ":" \
+	"pip" "rich"                       ":" \
+	"pip" "textual"                    ":" \
+)
+
+rustDevPkgs=(            \
+  "apt" "rustc"      ":" \
+)
+
+
+sciPkgs=(     \
+  "apt" "scilab"   ":" \
+)
+
+>>>>>>> ba1ef1f226191268c0ffeb9fca2b107659eff3c4
 
 }
 
@@ -501,9 +699,12 @@ python() { ##D Install python development packages
   installPkgs "${pythonDevPkgs[@]}"
 }
 
+<<<<<<< HEAD
 sci() { ##D Install science and technology packages
   installPkgs "${sciPkgs[@]}"
 }
+=======
+>>>>>>> ba1ef1f226191268c0ffeb9fca2b107659eff3c4
 
 WORK=~/Downloads
 
@@ -518,6 +719,7 @@ gitClonePull() {
 
 shellcheck() { ##D download compile and install latest version shellcheck
 
+<<<<<<< HEAD
   dpkg-query -l cabal-install >/dev/null
 
   if [ "$?" -eq 1 ]; then
@@ -549,6 +751,8 @@ shellcheck() { ##D download compile and install latest version shellcheck
   fi
 }
 
+=======
+>>>>>>> ba1ef1f226191268c0ffeb9fca2b107659eff3c4
 AVRSIMDIR=~/Downloads/simavr
 
 avrsim() { ##D Download compile and install avrsim
@@ -559,6 +763,27 @@ avrsim() { ##D Download compile and install avrsim
   cd - || bpExit
 }
 
+<<<<<<< HEAD
+=======
+
+##- Development libraries
+
+libqt() { ##D Install Qt development libraries
+  installPkgs ${libqtPkgs[@]}
+}
+
+libgtk() { ##D Install GTK+ development libraries
+  installPkgs ${libgtkPkgs[@]}
+}
+
+##- Science and technology
+
+sci() {                  ##D Install science and technology packages
+  installPkgs ${sciPkgs[@]}
+}
+
+
+>>>>>>> ba1ef1f226191268c0ffeb9fca2b107659eff3c4
 ##- Install single programs outside apt
 photivo() { ##D Photo RAW file editor
   # bpAssertRoot
@@ -621,8 +846,13 @@ bpInitSettings() {
   ##V Description text
   BP_DESC="Peter Malmberg's install script"
 
+<<<<<<< HEAD
   ##V logfile (uncomment to use logfile)
   BP_LOGFILE=${BP_SELF_DIR}/${BP_SELF}.log
+=======
+##V logfile (uncomment to use logfile)
+BP_LOGFILE=${BP_SELF_DIR}/${BP_NAME}.log
+>>>>>>> ba1ef1f226191268c0ffeb9fca2b107659eff3c4
 
   ##V Lock file (uncomment to use lock file feature )
   #BP_LOCK_FILE=/tmp/${BP_SELF}.lock

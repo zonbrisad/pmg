@@ -189,6 +189,7 @@ ssh() { ##D Generate SSH key
 
 pmg2ssh() { ##D Change pmg remote git repository to ssh
   cd "${BP_SELF_DIR}/.." || bpExit
+
   git remote -v
   git remote set-url origin git@github.com:zonbrisad/pmg.git
   git remote -v
@@ -259,6 +260,14 @@ backup() { ##D Backup user data
   bpBackupDir ~/ "$2"
 }
 
+
+##- System Management
+
+update() { ##D  Update operating system
+  sudo apt update && sudo apt upgrade --assume-yes && sudo apt autoremove && sudo apt autoclean
+}
+
+
 ##- Misc
 stopwatch() { ##D Stopwatch function
   start=$(date +%s)
@@ -305,7 +314,13 @@ hwinfoe() { ##D Print general hardware information
 
 ##- Project management (git)
 
-clean() { ##D Remove leftover files
+hist() { ##D Show project history
+  bpCd "${BP_SELF_DIR}"
+  git hist
+  bpCd -
+}
+
+clean() { ##D Remove leftover files 
   bpCd "${BP_SELF_DIR}"
 
   find . -name "*~" -delete
@@ -479,7 +494,6 @@ bpExit() { ##I Function for safely exiting script
   else
     exit "$1"
   fi
-
 }
 
 bpErrorExit() { ##I Safely exit script with a error
