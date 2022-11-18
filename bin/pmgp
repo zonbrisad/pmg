@@ -3,17 +3,19 @@
 # shellcheck disable=1090
 #---------------------------------------------------------------------
 #
+#  pmgp
+#
 #  [Description]
-#    pmg management script
+#    Project creator script
 #
 #  [Author]
 #    Peter Malmberg <peter.malmberg@gmail.com>
 #
 #  [Date]
-#    2018-06-17
+#    2022-08-24
 #
 #  [License]
-#     MIT
+#    MIT
 #
 #---------------------------------------------------------------------
 # Generated with bashplates. [https://github.com/zonbrisad/bashplates]
@@ -36,346 +38,234 @@ set -o pipefail
 # User defined Settings
 #---------------------------------------------------------------------
 bpUserSettings() {
-  USERNAME="Peter Malmberg"
-  USEREMAIL="peter.malmberg@gmail.com"
+  GITSERVER="github.com"
+  GITUSER="zonbrisad"
 
-  EDITOR=jed
+  GIT="git@${GITSERVER}:${GITUSER}"
 
-  MY_NAME="Peter Malmberg"
-  MY_EMAIL="peter.malmberg@gmail.com"
-  MY_EDITOR="jed"
-  MY_DIFF="meld"
-  MY_ORG="malmberg"
+  TEMPLATES=${BP_SELF_DIR}/templates
 
-  SSH_KEY=~/.ssh/id_ed25519
+  GIG=${TEMPLATES}/default/.gitignore
+  GRM=${TEMPLATES}/default/README.md
+  GHS=${TEMPLATES}/default/HISTORY.md
 
+  PGIG=${TEMPLATES}/Python/.gitignore
+  CGIG=${TEMPLATES}/C/.gitignore
+
+  #BP_DEBUG=1
 }
 #---------------------------------------------------------------------
 # User defined functions
 #---------------------------------------------------------------------
 
-##- New install options
+##- Project
 
-newt() { ##D Setup tools/users/config on new install without desktop
-  all_setups
-  "${BP_SELF_DIR}"/pmginstall newterminal
-}
-
-newd() { ##D Setup tools/users/config on new install with desktop
-  newt
-  "${BP_SELF_DIR}"/pmginstall newdesktop
-}
-
-news() { ##D Setup tools/users/config on new server install
-  newt
-  "${BP_SELF_DIR}"/pmginstall newserver
-}
-
-devel() {
-  echo ""
-}
-
-##- Tools
-
-#
-# $1 isofile
-# $2 device to write to
-#
-iso2usb() { ##D Write ISO file to USB drive
-  bpInfo "Writing ${3} to USB drive"
-  sudo dd if="$2" of="$3" bs=4MB status=progress oflag=sync
-}
-
-##- Users & Groups
-
-bpAddUserGroup() {
-  :
-}
-
-add_groups() { ##D Add user into groups
-
-  #u=$USER
-  # Dialout group is used by serial ports
-  sudo usermod -a -G dialout lpmg
-}
-
-##- Setup
-
-all_setups() { ##D All setups (except jed_setup)
-  pmg_setup
-  add_groups
-  git_setup
-  ssh
-  pmg2ssh
-
-  #  jed_setup
-}
-
-configFiles=(
-  "~/.bashrc"
-  "~/.bash_profile"
-  "~/.jedrc"
-  "~/bin"
-  "~/.gitconfig"
-  "~/.tmux.conf"
-)
-
-#
-# $1 file to be replaced
-#
-cf() {
-  eval F="${1}"
-
-  if [ -h "$F" ]; then # if aldready symbolic return
-    return
+repExist() { ##I Check if github repository exists
+  if git ls-remote "ssh://git@${GITSERVER}/${GITUSER}/${1}.git" &>/dev/null; then
+    return 0
+  else
+    return 1
   fi
+}
 
-  if [ -e "$F" ]; then # if file already exist make a copy
-    bpBackup "$F"
-    bpRm "$F"
+agh() { ##D Add project to github
+
+  echo "Add project to $GIT"
+  a=$(bpRead "Github project name?" "${1}")
+
+  if repExist "${a}"; then
+    git remote add origin "${GIT}/${a}.git"
+    git push --set-upstream origin master
+  else
+    bpError "Could not find ${a} at Github"
   fi
-
-  eval X="${BP_SELF_DIR}/../$(basename "$F")"
-  bpLn "${BP_SELF_DIR}/../$(basename "$F") $F"
 }
 
-pmg_setup() { ##D Initiates pmg infrastructure
-  bpAddModule "${BP_SELF_DIR}/pmg_init"
+#
+# $1 file
+# $2 template path
+# $3 destination
+#
+new_file() {
+  F="${2}/${1}"
+  bpInfo "$F"
+  if [ -e "${F}" ]; then
+    if bpReadY "Create ${1} file?"; then
 
-  for pkg in "${configFiles[@]}"; do
-    cf "${pkg}"
-  done
+      bpCp "${F}" "$(pwd)/${3}" -L
 
-  setname "" "${MY_NAME}"
-  setemail "" "${MY_EMAIL}"
-  seteditor "" "${MY_EDITOR}"
-  setdiff "" "${MY_DIFF}"
-}
-
-git_setup() { ##D Setup git correctly
-  git config --global user.name "${BP_NAME}"
-  git config --global user.email "${BP_EMAIL}"
-  git config --global core.editor "${BP_EDITOR}"
-  git config --global diff.external "${BP_SELF_DIR}/git_diff_meld.py"
-  git config --global init.defaultBranch master
-
-  # merge strategy
-  git config pull.rebase false
-  git config --list
-}
-
-jed_setup() { ##D Setup jed editor (requires root access)
-  bpAssertRoot
-  bpCp "${BP_SELF_DIR}"/setupfiles/make.sl /usr/share/jed/lib/.
-}
-
-##- SSH
-
-ssh() { ##D Generate SSH key
-  if [ -e "${SSH_KEY}" ]; then
-    bpWarning "SSH key already exists."
-    if ! bpReadN "Do you want to overwrite existing key?"; then
-      cat ${SSH_KEY}.pub
-      return 1
+      git add "${1}"
     fi
   fi
-
-  bpInfo "Creating SSH key"
-  #  ssh-keygen -t rsa -b 4096 -C "${MY_EMAIL}"
-  ssh-keygen -t ed25519 -b 4096 -C "${MY_EMAIL}"
-  ssh-add ${SSH_KEY}
-  cat ${SSH_KEY}.pub
 }
 
-pmg2ssh() { ##D Change pmg remote git repository to ssh
-  cd "${BP_SELF_DIR}/.." || bpExit
+new_proj() { ##I New project
+  proj_name=$(bpRead "Project name?")
+  proj_dir=$(bpRead "Project directory?" "${proj_name}")
 
-  git remote -v
-  git remote set-url origin git@github.com:zonbrisad/pmg.git
-  git remote -v
-  cd -
-}
-
-sshid() { ##D Install SSH public key on remote host
-  sn=$(bpRead "Remote host" "")
-  un=$(bpRead "Username" "$USER")
-  #  ssh-copy-id -i ~/.ssh/id_rsa.pub "${un}@${sn}"
-  ssh-copy-id -i ${SSH_KEY}.pub "${un}@${sn}"
-}
-
-##- Samba
-
-#
-# Add smb user
-#
-smbadd() {
-  # add user
-  sudo smbpasswd -a "$1"
-  # enable user
-  sudo smbpasswd -a "$1"
-}
-
-initsamba() { ##D Initiate samba server
-
-  #  d=$( bpRead "Directory to share" )
-
-  #  sudo mkdir -p $d
-
-  #smbadd pi
-  sudo systemctl restart smbd
-}
-
-##- Backup
-
-#
-#
-bpAvail() { ## Amount of available diskpace in directory in MB
-  df --output=avail --block-size=M .
-}
-
-bpBackupDir() { ##D Backup directory
-  if [ ! -e "$1" ]; then
-    bpError "Source file \"${1}\" does not exist!"
-    return 1
-  fi
-  if [ ! -e "$2" ]; then
-    bpError "Destination dir $2 does not exist"
-    return 1
+  if [ -n "$1" ]; then
+    #bpError "$1"
+    bpFindInList "$1" "${languages[@]}"
+    bpDebug "Return value: $bpReturn"
+  else
+    bpSelectFromList "${languages[@]}"
   fi
 
-  src=$(realpath "$1")
-  dst=$(realpath "$2")
+  TEMPLATE="${TEMPLATES}/$bpReturn"
+  HOOK_TEMPLATES="${TEMPLATES}/git/hooks"
+  echo -e "${TEMPLATE}"
 
-  BF="backup_$(hostname)_${USER}_$(date +"%Y%m%d")-$(date +"%H%M%S")"
+  if ! bpMkDir "${proj_dir}"; then
+    bpExit
+  fi
 
-  #	echo "Available: $(bpAvail ".")"
+  cd "${proj_dir}" || bpExit "Failed to enter directory ${proj_dir}"
 
-  bpInfo "Backing up $src to \"${dst}/${BF}\"."
-  rsync --info=progress2 --recursive --links "${src}"/* "${dst}/${BF}"
+  git init
 
+  new_file "README.md" "$TEMPLATE" "."
+  new_file "HISTORY.md" "$TEMPLATE" "."
+  new_file ".gitignore" "$TEMPLATE" "."
+  new_file "pre-commit" "$HOOK_TEMPLATES" ".git/hooks/."
+
+  git commit -m "Initial commit"
+  git branch -M master
+
+  if bpReadY "Upload git repo to github?"; then
+    agh "${proj_name}"
+  fi
+
+  cd - || bpExit
 }
 
-backup() { ##D Backup user data
-  #  bpBackupDir ~/Project "$2"
-  bpBackupDir ~/ "$2"
+new() { ##D New project
+  new_proj
 }
 
-
-##- System Management
-
-update() { ##D  Update operating system
-  sudo apt update && sudo apt upgrade --assume-yes && sudo apt autoremove && sudo apt autoclean
+newp() { ##D New python project
+  new_proj "p"
 }
 
+newc() { ##D New C/C++ project
+  new_proj "c"
+}
 
-##- Misc
-stopwatch() { ##D Stopwatch function
-  start=$(date +%s)
-  while true; do
-    end=$(date +%s)
-    #printf '%s\n' "$(date)"
-    dur=$((end - start))
-    durs=$((dur % 60))
-    echo ${dur} ${durs}
-    sleep 1
+##- Edit templates
+
+egig() { ##D Edit default gitignore
+  bpEdit "${GIG}" "$2"
+}
+
+epgig() { ##D Edit Python gitignore
+  bpEdit "${PGIG}" "$2"
+}
+
+ecgig() { ##D Edit C gitignore
+  bpEdit "${CGIG}" "$2"
+}
+
+egrm() { ##D Edit default README.md
+  bpEdit "${GRM}" "$2"
+}
+
+languages=(
+  "Choose language"
+  "c" "C" "C/C++"
+  "p" "Python" "Python"
+  "g" "default" "Generic project"
+)
+
+bpReturn=""
+
+bpPrintList() { ##I Print items in selection list
+  echo
+  arr=("${@}")
+  len=${#arr[@]}
+  i=1
+  while [ $i -lt "$len" ]; do
+    key=${arr[$i]}
+    ((i++))
+    val=${arr[$i]}
+    ((i++))
+    desc=${arr[$i]}
+    ((i++))
+    if [ "${desc}" == ":" ]; then
+      printf "${BP_C_ID}  %-5.24s${E_RESET} ${BP_C_DESCRIPTION}%s${E_RESET}\n" "$key" "$val"
+    else
+      printf "${BP_C_ID}  %-5.24s${E_RESET} ${BP_C_DESCRIPTION}%s${E_RESET}\n" "$key" "$desc"
+    fi
   done
 }
 
-##- Information
-info() { ##D General information
-  # bpPrintInfo
-  bpTextLine "Hardware"
-  bpPrintInfo "CPU" "$(cat /proc/cpuinfo | grep -m 1 "model name" | cut -n -b 14-)"
-  bpPrintInfo "Memory" "$(free --mega | grep Mem | awk '{ print $2 }') Mb"
-  bpPrintInfo "Graphics" "$(lspci | grep VGA | sed -r 's/.*controller: //')"
-  bpTextLine "System"
-  bpPrintInfo "Distibution" "$(lsb_release -a 2>/dev/null | grep Description | cut -b 14-)"
-  bpPrintInfo "Kernel" "$(uname -r)"
-  bpPrintVar TERM "Terminal"
-  bpPrintInfo "Uptime" "$(uptime)"
-  bpPrintVar HOSTNAME "Hostname"
-  bpPrintInfo "IP addr" "$(ip a | grep enp2s0 -m2 | grep inet | awk '{print $2}')"
-
-  bpTextLine "User"
-  bpPrintVar USER "Username"
-  bpPrintInfo "SSH public key location" ${SSH_KEY}.pub
-  bpPrintInfo "SSH public key" "$(cat ${SSH_KEY}.pub)"
-
-  bpLine
+#
+# $1 key to find
+# $2 list
+#
+bpFindInList() {
+  arrx=("${@}")
+  arr=("${arrx[@]:1}")
+  bpDebug "Array: ${arr[*]}"
+  bpDebug "Array len: ${#arr[@]}"
+  bpDebug "Key: $1"
+  i=1
+  while [ $i -lt ${#arr[@]} ]; do
+    key=${arr[$i]}
+    ((i++))
+    val=${arr[$i]}
+    ((i++))
+    ((i++))
+    bpDebug "L Key: $key"
+    if [ "$key" == "$1" ]; then
+      if [ "$val" == ":" ]; then
+        bpReturn="${key}"
+        return 0
+      else
+        bpReturn="${val}"
+        return 0
+      fi
+      return 0
+    fi
+  done
+  return 1
 }
 
-hwinfo() { ##D Print general hardware information
-  inxi --full --usb --filter
+bpSelectFromList() { ##I Select from list
+  #arr=("${@}")
+  while true; do
+    bpPrintList "${@}"
+    x=$(bpRead "$1")
+
+    if bpFindInList "${x}" "${@}"; then
+      # if bpFindInList "${@}"; then
+      return 0
+    fi
+
+    # arr=("${@}")
+    # len=${#arr[@]}
+    # i=1
+    # while [ $i -lt ${#arr[@]} ]; do
+    #   key=${arr[$i]}
+    #   ((i++))
+    #   val=${arr[$i]}
+    #   ((i++))
+    #   ((i++))
+    #   if [ "$key" == "$x" ]; then
+    #     if [ "$val" == ":" ]; then
+    #       bpReturn="${key}"
+    #     else
+    #       bpReturn="${val}"
+    #     fi
+    #     return 0
+    #   fi
+    # done
+  done
 }
 
-hwinfoe() { ##D Print general hardware information
-  sudo inxi --full --extra 3 --usb --filter --memory-modules
-}
+#---------------------------------------------------------------------
+# Bashplate modules
+#---------------------------------------------------------------------
 
-##- Project management (git)
-
-status() { ##D Show git status
-  bpCd "${BP_SELF_DIR}"
-  git status
-  bpCd -
-
-}
-
-hist() { ##D Show project history
-  bpCd "${BP_SELF_DIR}"
-  git hist
-  bpCd -
-}
-
-clean() { ##D Remove leftover files 
-  bpCd "${BP_SELF_DIR}"
-
-  find . -name "*~" -delete
-  find . -name "*.orig" -delete
-
-  # Remove untraced files
-  git clean -df -e *.log
-  bpCd -
-}
-
-commit() { ##D Commit project to repository
-  bpCd "${BP_SELF_DIR}"
-  git commit -a
-  #git push --tags -a
-  bpCd -
-}
-
-tag() { ##D Make a new tag
-  bpCd "${BP_SELF_DIR}"
-  # List existing tags
-  git tag
-
-  # read tag name/description
-  tag=$(bpRead "Tagname" "")
-  desc=$(bpRead "Description" "")
-
-  # Tag revision
-  git tag -a "$tag" -m "$desc"
-  bpCd -
-}
-
-push() { ##D Push project to GITHUB
-  bpCd "${BP_SELF_DIR}"
-  git push --progress
-  bpCd -
-}
-
-pull() { ##D Pull project from GITHUB
-  bpCd "${BP_SELF_DIR}"
-  git pull --progress
-  bpCd -
-}
-
-##- AVR
-
-avr() { ##D Read avr ATmega 328p device with avrdude and jtagice mkii programmer
-  avrdude -v -c jtag2isp -p m328p -U flash:r:flash.hex:i
-}
+#__MODULES__
 
 #---------------------------------------------------------------------
 # Bashplate settings
@@ -389,13 +279,13 @@ bpInitSettings() {
   BP_USAGE="Usage: ${BP_SELF} command [option]"
 
   ##V Description text
-  BP_DESC="Peter Malmberg's management script"
+  BP_DESC="Project creator script"
 
   ##V logfile (uncomment to use logfile)
   BP_LOGFILE=${BP_SELF_DIR}/${BP_SELF}.log
 
   ##V Lock file (uncomment to use lock file feature )
-  BP_LOCK_FILE=/tmp/${BP_SELF}.lock
+  #BP_LOCK_FILE=/tmp/${BP_SELF}.lock
 
   ##V Logging options (uncomment to activate logging parameters)
   BP_LOG_OK=1
@@ -507,6 +397,7 @@ bpExit() { ##I Function for safely exiting script
   else
     exit "$1"
   fi
+
 }
 
 bpErrorExit() { ##I Safely exit script with a error
@@ -761,7 +652,9 @@ bpColorizeUrl() { ##I Colorize string containing URL
 # $1 string to be filtered
 #
 bpFilterEscape() { ##I Filter escape characters from string
-  echo "$1" | sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[m|K]//g"
+  #echo "$1" | sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[m|K]//g"
+  #echo "$1" | sed -r "s/\e\[([0-9]{1,2}(;[0-9]{1,2})?)?[m|K]//g"
+  sed -r "s/\e\[([0-9]{1,2}(;[0-9]{1,2})?)?[m|K]//g" <<<"$1"
 }
 
 ##C- IHELP File operations
@@ -1270,6 +1163,10 @@ bpLogCritical() { ##I Log Critical message to file
   bpLog "[Crit] $1"
 }
 
+bpLogDebug() { ##I Log Critical message to file
+  bpLog "[Dbg ] $1"
+}
+
 log() { ##C BP_LOGFILE View logfile
   if [ -n "$BP_LOGFILE" ]; then
     if [ -f "${BP_LOGFILE}" ]; then # Check that logfile exists
@@ -1323,7 +1220,7 @@ bpInfo() { ##I Info message
   echo -e "[${BP_C_INFO}Info${E_RESET}] $1"
 }
 
-bpDbg() { ##I Debug message
+bpDebug() { ##I Debug message
   if [ -z "$BP_DEBUG" ]; then
     return
   fi

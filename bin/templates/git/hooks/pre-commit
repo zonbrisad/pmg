@@ -1,0 +1,194 @@
+#!/bin/bash
+#
+# Git pre commit script
+#
+
+main() { ##D Main hook
+  if [ -e "README.md" ]; then
+    bpRun "doctoc" "--github" "README.md"
+  fi
+}
+
+#---------------------------------------------------------------------
+# ANSI escape codes
+#---------------------------------------------------------------------
+
+# ANSI foreground colors codes
+#
+E_FG_BLACK=$'\e[38:5:0m'       # Black
+E_FG_RED=$'\e[38:5:1m'         # Red
+E_FG_GREEN=$'\e[38:5:2m'       # Green
+E_FG_YELLOW=$'\e[38:5:3m'      # Yellow
+E_FG_BLUE=$'\e[38:5:4m'        # Blue
+E_FG_MAGENTA=$'\e[38:5:5m'     # Magenta
+E_FG_CYAN=$'\e[38:5:6m'        # Cyan
+E_FG_GRAY=$'\e[38:5:7m'        # Gray
+E_FG_DARKGRAY=$'\e[38:5:8m'    # Dark Gray
+E_FG_BR_RED=$'\e[38:5:9m'      # Bright Red
+E_FG_BR_GREEN=$'\e[38:5:10m'   # Bright Green
+E_FG_BR_YELLOW=$'\e[38:5:11m'  # Bright Yellow
+E_FG_BR_BLUE=$'\e[38:5:12m'    # Bright Blue
+E_FG_BR_MAGENTA=$'\e[38:5:13m' # Bright Magenta
+E_FG_BR_CYAN=$'\e[38:5:14m'    # Bright Cyan
+E_FG_WHITE=$'\e[38:5:15m'      # White
+
+# ANSI background color codes
+#
+E_BG_BLACK=$'\e[48;5;0m'       # Black
+E_BG_RED=$'\e[48;5;1m'         # Red
+E_BG_GREEN=$'\e[48;5;2m'       # Green
+E_BG_YELLOW=$'\e[48;5;3m'      # Yellow
+E_BG_BLUE=$'\e[48;5;4m'        # Blue
+E_BG_MAGENTA=$'\e[48;5;5m'     # Magenta
+E_BG_CYAN=$'\e[48;5;6m'        # Cyan
+E_BG_GRAY=$'\e[48;5;7m'        # Gray
+E_BG_DARK_GRAY=$'\e[48;5;8m'   # Dark gray
+E_BG_BR_RED=$'\e[48;5;9m'      # Bright Red
+E_BG_BR_GREEN=$'\e[48;5;10m'   # Bright Green
+E_BG_BR_YELLOW=$'\e[48;5;11m'  # Bright Yellow
+E_BG_BR_BLUE=$'\e[48;5;12m'    # Bright Blue
+E_BG_BR_MAGENTA=$'\e[48;5;13m' # Bright Magenta
+E_BG_BR_CYAN=$'\e[48;5;14m'    # Bright Cyan
+E_BG_WHITE=$'\e[48;5;15m'      # White
+
+# ANSI underline color codes
+#
+# Not in standard. implemented in Kitty, VTE, mintty, etc.
+#
+E_UL_BLACK=$'\e[58;5;0m'       # Black
+E_UL_RED=$'\e[58;5;1m'         # Red
+E_UL_GREEN=$'\e[58;5;2m'       # Green
+E_UL_YELLOW=$'\e[58;5;3m'      # Yellow
+E_UL_BLUE=$'\e[58;5;4m'        # Blue
+E_UL_MAGENTA=$'\e[58;5;5m'     # Magenta
+E_UL_CYAN=$'\e[58;5;6m'        # Cyan
+E_UL_GRAY=$'\e[58;5;7m'        # Gray
+E_UL_DARKGRAY=$'\e[58;5;8m'    # Dark Gray
+E_UL_BR_RED=$'\e[58;5;9m'      # Bright Red
+E_UL_BR_GREEN=$'\e[58;5;10m'   # Bright Green
+E_UL_BR_YELLOW=$'\e[58;5;11m'  # Bright Yellow
+E_UL_BR_BLUE=$'\e[58;5;12m'    # Bright Blue
+E_UL_BR_MAGENTA=$'\e[58;5;13m' # Bright Magenta
+E_UL_BR_CYAN=$'\e[58;5;14m'    # Bright Cyan
+E_UL_WHITE=$'\e[58;5;15m'      # White
+
+# ANSI Text attributes
+E_ATTR_BOLD=$'\e[1m'               # Bold text
+E_ATTR_LOWI=$'\e[2m'               # Low intensity
+E_ATTR_ITALIC=$'\e[3m'             # Italic text
+E_ATTR_UNDERLINE=$'\e[4m'          # Underlined text
+E_ATTR_UNDERLINE_DOUBLE=$'\e[4:2m' # Double underline (limited support)
+E_ATTR_UNDERLINE_CURLY=$'\e[4:3m'  # Curly underline (limited support)
+E_ATTR_UNDERLINE_DOT=$'\e[4:4m'    # Dotted underline (limited support)
+E_ATTR_UNDERLINE_DASH=$'\e[4:5m'   # Dashed underline (limited support)
+E_ATTR_BLINK=$'\e[5m'              # Blinking text
+E_ATTR_RAPID_BLINK=$'\e[6m'        # Rapid blink (Limited support)
+E_ATTR_REVERSE=$'\e[7m'            # Reverse color
+E_ATTR_CROSSED=$'\e[9m'            # Crossed over text
+E_ATTR_FRAKTUR=$'\e[20m'           # Gothic (limited support)
+E_ATTR_FRAMED=$'\e[51m'            # Framed (limited support)
+E_ATTR_OVERLINED=$'\e[53m'         # Overlined text
+E_ATTR_SUPERSCRIPT=$'\e[73m'       # Superscript text (limited support)
+E_ATTR_SUBSCRIPT=$'\e[74m'         # Subscript text (limited support)
+
+# ANSI cursor operations
+#
+E_CUR_RETURN=$'\e[F'  # Move cursor to begining of line
+E_CUR_UP=$'\e[A'      # Move cursor one line up
+E_CUR_DOWN=$'\e[B'    # Move cursor one line down
+E_CUR_FORWARD=$'\e[C' # Move cursor forward
+E_CUR_BACK=$'\e[D'    # Move cursor backward
+E_CUR_HIDE=$'\e[?25l' # Hide cursor
+E_CUR_SHOW=$'\e[?25h' # Show cursor
+
+E_RESET=$'\e[0m' # Clear Attributes
+
+# Default Bashplate colortheme
+BP_C_OK="${E_FG_BR_GREEN}"
+BP_C_INFO="${E_FG_BR_CYAN}"
+BP_C_DEBUG="${E_BG_GREEN}${E_FG_WHITE}"
+BP_C_WARNING="${E_FG_BR_YELLOW}"
+BP_C_ERROR="${E_FG_BR_RED}"
+BP_C_CRITICAL="${E_BG_RED}${E_FG_WHITE}"
+BP_C_LINE="${E_FG_DARKGRAY}"
+BP_C_LINE_TEXT="${E_FG_YELLOW}"
+BP_C_DESCRIPTION="${E_FG_GREEN}"
+BP_C_ID="${E_FG_CYAN}"
+BP_C_FILENAME="${E_FG_BR_GREEN}"
+BP_C_PATH="${E_FG_GREEN}"
+
+# Shellscript colorize colors
+BP_C_RESERVED="${E_FG_RED}"
+BP_C_COMMENT="${E_FG_CYAN}"
+BP_C_STRING="${E_FG_GREEN}"
+BP_C_VAR="${E_FG_BR_YELLOW}"
+
+##C- IHELP Message
+
+bpOk() { ##I Success message
+  if [ -n "$BP_LOG_OK" ]; then
+    bpLogOk "$1"
+  fi
+  echo -e "[${BP_C_OK}Ok${E_RESET}] $1"
+}
+
+bpInfo() { ##I Info message
+  if [ -n "$BP_LOG_INFO" ]; then
+    bpLogInfo "$1"
+  fi
+  echo -e "[${BP_C_INFO}Info${E_RESET}] $1"
+}
+
+bpDbg() { ##I Debug message
+  if [ -z "$BP_DEBUG" ]; then
+    return
+  fi
+  if [ -n "$BP_LOG_INFO" ]; then
+    bpLogDebug "$1"
+  fi
+
+  echo -e "[${BP_C_DEBUG}Dbg${E_RESET}] $1"
+}
+
+bpWarning() { ##I Warning message
+  if [ -n "$BP_LOG_WARNING" ]; then
+    bpLogWarning "$1"
+  fi
+  echo -e "[${BP_C_WARNING}Warning${E_RESET}] $1"
+}
+
+bpError() { ##I Error message
+  if [ -n "$BP_LOG_ERROR" ]; then
+    bpLogError "$1"
+  fi
+  echo -e "[${BP_C_ERROR}Error${E_RESET}] $1"
+}
+
+bpCritical() { ##I Critical error message
+  if [ -n "$BP_LOG_CRITICAL" ]; then
+    bpLogCritical "$1"
+  fi
+  echo -e "[${BP_C_CRITICAL}Critical${E_RESET}] $1"
+  bpExit
+}
+
+#
+# $1 command to execute
+#
+bpRun() { ##I Execute command
+  if [ -x "$(command -v "${1}")" ]; then
+    "$@"
+    return 0
+  else
+    bpError "Could not execute ${1}, file does not exist!"
+    return 1
+  fi
+}
+
+##V Directory where script is located
+BP_SELF_DIR="${0%/*}"
+
+##V Name of script
+BP_SELF=$(basename "$0")
+
+main

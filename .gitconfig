@@ -19,3 +19,5 @@
   deleted = log --diff-filter=D --summary
 [init]
 	defaultBranch = master
+[pull]
+	rebase = false
