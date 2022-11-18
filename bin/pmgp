@@ -48,6 +48,11 @@ bpUserSettings() {
   GIG=${TEMPLATES}/default/.gitignore
   GRM=${TEMPLATES}/default/README.md
   GHS=${TEMPLATES}/default/HISTORY.md
+
+  PGIG=${TEMPLATES}/Python/.gitignore
+  CGIG=${TEMPLATES}/C/.gitignore
+
+  #BP_DEBUG=1
 }
 #---------------------------------------------------------------------
 # User defined functions
@@ -76,17 +81,6 @@ agh() { ##D Add project to github
   fi
 }
 
-# new_f() {
-#   #TEMPLATE=${BP_SELF_DIR}/templates
-
-#   if [ -e $(pwd)/$(basename $1) ]; then
-# 	  if ! bpReadN "File exist $1 already exist. Overwrite?" ; then
-# 		  return 1
-# 		fi
-# 	fi
-#   bpCp ${1} $(pwd)/.
-# }
-
 #
 # $1 file
 # $2 template path
@@ -94,10 +88,11 @@ agh() { ##D Add project to github
 #
 new_file() {
   F="${2}/${1}"
+  bpInfo "$F"
   if [ -e "${F}" ]; then
     if bpReadY "Create ${1} file?"; then
 
-      bpCp "${F}" "$(pwd)/${3}"
+      bpCp "${F}" "$(pwd)/${3}" -L
 
       git add "${1}"
     fi
@@ -108,7 +103,14 @@ new_proj() { ##I New project
   proj_name=$(bpRead "Project name?")
   proj_dir=$(bpRead "Project directory?" "${proj_name}")
 
-  bpSelectFromList "${languages[@]}"
+  if [ -n "$1" ]; then
+    #bpError "$1"
+    bpFindInList "$1" "${languages[@]}"
+    bpDebug "Return value: $bpReturn"
+  else
+    bpSelectFromList "${languages[@]}"
+  fi
+
   TEMPLATE="${TEMPLATES}/$bpReturn"
   HOOK_TEMPLATES="${TEMPLATES}/git/hooks"
   echo -e "${TEMPLATE}"
@@ -124,7 +126,7 @@ new_proj() { ##I New project
   new_file "README.md" "$TEMPLATE" "."
   new_file "HISTORY.md" "$TEMPLATE" "."
   new_file ".gitignore" "$TEMPLATE" "."
-  new_file "pre-commit" "$HOOK_TEMPLATES" ".git/hooks"
+  new_file "pre-commit" "$HOOK_TEMPLATES" ".git/hooks/."
 
   git commit -m "Initial commit"
   git branch -M master
@@ -132,30 +134,44 @@ new_proj() { ##I New project
   if bpReadY "Upload git repo to github?"; then
     agh "${proj_name}"
   fi
-  #git commit -m "Initial commit"
-  # git branch -M main
 
   cd - || bpExit
 }
 
-newg() { ##D New git project
+new() { ##D New project
   new_proj
+}
+
+newp() { ##D New python project
+  new_proj "p"
+}
+
+newc() { ##D New C/C++ project
+  new_proj "c"
 }
 
 ##- Edit templates
 
 egig() { ##D Edit default gitignore
-  bpEdit "${GIG}"
+  bpEdit "${GIG}" "$2"
+}
+
+epgig() { ##D Edit Python gitignore
+  bpEdit "${PGIG}" "$2"
+}
+
+ecgig() { ##D Edit C gitignore
+  bpEdit "${CGIG}" "$2"
 }
 
 egrm() { ##D Edit default README.md
-  bpEdit "${GRM}"
+  bpEdit "${GRM}" "$2"
 }
 
 languages=(
   "Choose language"
   "c" "C" "C/C++"
-  "p" "python" "Python"
+  "p" "Python" "Python"
   "g" "default" "Generic project"
 )
 
@@ -181,30 +197,67 @@ bpPrintList() { ##I Print items in selection list
   done
 }
 
-bpSelectFromList() { ##I Select from list
+#
+# $1 key to find
+# $2 list
+#
+bpFindInList() {
+  arrx=("${@}")
+  arr=("${arrx[@]:1}")
+  bpDebug "Array: ${arr[*]}"
+  bpDebug "Array len: ${#arr[@]}"
+  bpDebug "Key: $1"
+  i=1
+  while [ $i -lt ${#arr[@]} ]; do
+    key=${arr[$i]}
+    ((i++))
+    val=${arr[$i]}
+    ((i++))
+    ((i++))
+    bpDebug "L Key: $key"
+    if [ "$key" == "$1" ]; then
+      if [ "$val" == ":" ]; then
+        bpReturn="${key}"
+        return 0
+      else
+        bpReturn="${val}"
+        return 0
+      fi
+      return 0
+    fi
+  done
+  return 1
+}
 
+bpSelectFromList() { ##I Select from list
+  #arr=("${@}")
   while true; do
     bpPrintList "${@}"
     x=$(bpRead "$1")
 
-    arr=("${@}")
-    len=${#arr[@]}
-    i=1
-    while [ $i -lt "$len" ]; do
-      key=${arr[$i]}
-      ((i++))
-      val=${arr[$i]}
-      ((i++))
-      ((i++))
-      if [ "$key" == "$x" ]; then
-        if [ "$val" == ":" ]; then
-          bpReturn="${key}"
-        else
-          bpReturn="${val}"
-        fi
-        return 0
-      fi
-    done
+    if bpFindInList "${x}" "${@}"; then
+      # if bpFindInList "${@}"; then
+      return 0
+    fi
+
+    # arr=("${@}")
+    # len=${#arr[@]}
+    # i=1
+    # while [ $i -lt ${#arr[@]} ]; do
+    #   key=${arr[$i]}
+    #   ((i++))
+    #   val=${arr[$i]}
+    #   ((i++))
+    #   ((i++))
+    #   if [ "$key" == "$x" ]; then
+    #     if [ "$val" == ":" ]; then
+    #       bpReturn="${key}"
+    #     else
+    #       bpReturn="${val}"
+    #     fi
+    #     return 0
+    #   fi
+    # done
   done
 }
 
@@ -599,7 +652,9 @@ bpColorizeUrl() { ##I Colorize string containing URL
 # $1 string to be filtered
 #
 bpFilterEscape() { ##I Filter escape characters from string
-  echo "$1" | sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[m|K]//g"
+  #echo "$1" | sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[m|K]//g"
+  #echo "$1" | sed -r "s/\e\[([0-9]{1,2}(;[0-9]{1,2})?)?[m|K]//g"
+  sed -r "s/\e\[([0-9]{1,2}(;[0-9]{1,2})?)?[m|K]//g" <<<"$1"
 }
 
 ##C- IHELP File operations
@@ -1108,6 +1163,10 @@ bpLogCritical() { ##I Log Critical message to file
   bpLog "[Crit] $1"
 }
 
+bpLogDebug() { ##I Log Critical message to file
+  bpLog "[Dbg ] $1"
+}
+
 log() { ##C BP_LOGFILE View logfile
   if [ -n "$BP_LOGFILE" ]; then
     if [ -f "${BP_LOGFILE}" ]; then # Check that logfile exists
@@ -1161,7 +1220,7 @@ bpInfo() { ##I Info message
   echo -e "[${BP_C_INFO}Info${E_RESET}] $1"
 }
 
-bpDbg() { ##I Debug message
+bpDebug() { ##I Debug message
   if [ -z "$BP_DEBUG" ]; then
     return
   fi
