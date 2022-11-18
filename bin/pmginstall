@@ -501,12 +501,9 @@ python() { ##D Install python development packages
   installPkgs "${pythonDevPkgs[@]}"
 }
 
-<<<<<<< HEAD
 sci() { ##D Install science and technology packages
   installPkgs "${sciPkgs[@]}"
 }
-=======
->>>>>>> ba1ef1f226191268c0ffeb9fca2b107659eff3c4
 
 WORK=~/Downloads
 
@@ -521,7 +518,6 @@ gitClonePull() {
 
 shellcheck() { ##D download compile and install latest version shellcheck
 
-<<<<<<< HEAD
   dpkg-query -l cabal-install >/dev/null
 
   if [ "$?" -eq 1 ]; then
@@ -553,8 +549,6 @@ shellcheck() { ##D download compile and install latest version shellcheck
   fi
 }
 
-=======
->>>>>>> ba1ef1f226191268c0ffeb9fca2b107659eff3c4
 AVRSIMDIR=~/Downloads/simavr
 
 avrsim() { ##D Download compile and install avrsim
@@ -565,8 +559,6 @@ avrsim() { ##D Download compile and install avrsim
   cd - || bpExit
 }
 
-<<<<<<< HEAD
-=======
 
 ##- Development libraries
 
@@ -585,7 +577,6 @@ sci() {                  ##D Install science and technology packages
 }
 
 
->>>>>>> ba1ef1f226191268c0ffeb9fca2b107659eff3c4
 ##- Install single programs outside apt
 photivo() { ##D Photo RAW file editor
   # bpAssertRoot
@@ -648,13 +639,8 @@ bpInitSettings() {
   ##V Description text
   BP_DESC="Peter Malmberg's install script"
 
-<<<<<<< HEAD
   ##V logfile (uncomment to use logfile)
   BP_LOGFILE=${BP_SELF_DIR}/${BP_SELF}.log
-=======
-##V logfile (uncomment to use logfile)
-BP_LOGFILE=${BP_SELF_DIR}/${BP_NAME}.log
->>>>>>> ba1ef1f226191268c0ffeb9fca2b107659eff3c4
 
   ##V Lock file (uncomment to use lock file feature )
   #BP_LOCK_FILE=/tmp/${BP_SELF}.lock
