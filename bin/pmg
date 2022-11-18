@@ -382,6 +382,12 @@ pull() { ##D Pull project from GITHUB
   bpCd - 
 } 
 
+##- AVR
+
+avr() { ##D Read avr ATmega 328p device with avrdude and jtagice mkii programmer
+  avrdude -v -c jtag2isp -p m328p -U flash:r:flash.hex:i
+}
+
 #---------------------------------------------------------------------
 # Bashplate settings
 #---------------------------------------------------------------------
