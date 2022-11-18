@@ -5,7 +5,7 @@
 [core]
 	editor = jed
 [diff]
-	external = /home/lpmg/pmg/bin/bin/git_diff_meld.py
+	external = /home/lpmg/bin/bin/git_diff_meld.py
 [push]
 	default = simple
 [alias]
