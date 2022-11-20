@@ -53,6 +53,7 @@ bpUserSettings() {
     "luaconf"
     "gittest"
     "OmTerm"
+		"mpterm"
   )
 
   serverPkgs=(
@@ -87,17 +88,17 @@ bpUserSettings() {
     "apt" "gddrescue" ":"
     "apt" "tmux" ":"
     "apt" "npm" ":"
-		"apt" "snapd" "snap_unrestrict"
+    "apt" "snapd" "snap_unrestrict"
     "apt" "acpi" ":"
     "apt" "bat" ":"
     "apt" "ncdu" ":"
     "git" "https://github.com/ogham/exa" ":"
   )
 
-snap_unrestrict() {
-	#sudo bpRm /etc/apt/preferences.d/nosnap.pref
-	sudo rm -f  /etc/apt/preferences.d/nosnap.pref
-}
+  snap_unrestrict() {
+    #sudo bpRm /etc/apt/preferences.d/nosnap.pref
+    sudo rm -f /etc/apt/preferences.d/nosnap.pref
+  }
 
   desktopUtilPkgs=(
     "apt" "brasero" ":"
@@ -113,7 +114,7 @@ snap_unrestrict() {
     "apt" "guvcview" ":"
     "ppa" "inkscape" "ppa:inkscape.dev/stable"
     "ppa" "krita" "ppa:kritalime/ppa"
-		"snap" "g-assist" ":"
+    "snap" "g-assist" ":"
   )
 
   devUtilsPkgs=(
@@ -273,7 +274,6 @@ pipIsInstalled() { ##I
   fi
 }
 
-
 #
 # $1 apt package name
 #
@@ -283,11 +283,11 @@ installApt() { ##I Install a apt package
     return
   fi
 
-	# Run special script if available
-	if [ -n "$2" ]; then
-	  "$2"
-	fi
-	
+  # Run special script if available
+  if [ -n "$2" ]; then
+    "$2"
+  fi
+
   if sudo apt -y install "$1"; then
     bpOk "Installed: ${E_FG_BR_GREEN}${1}${E_RESET}"
   else
@@ -352,12 +352,12 @@ installPip() { ##I Install pip package
 installSnap() { ##I Install snap package
 
   # Run special script if available
-	if [ -n "$2" ]; then
-	  "$2"
-	fi
-	
-	sudo snap install "$1"
-	
+  if [ -n "$2" ]; then
+    "$2"
+  fi
+
+  sudo snap install "$1"
+
   #bpError "Snap install function is not developed yet"
 }
 
@@ -386,7 +386,7 @@ installGeneric() {
   fi
 
   if [ "$1" == "pip" ]; then
-    installPip "$2" "$3" 
+    installPip "$2" "$3"
   fi
 
   if [ "$1" == "snap" ]; then
@@ -560,30 +560,23 @@ avrsim() { ##D Download compile and install avrsim
 }
 
 
-##- Development libraries
+#- Development libraries
 
-libqt() { ##D Install Qt development libraries
-  installPkgs ${libqtPkgs[@]}
+
+libqt() { ## Install Qt development libraries
+  installPkgs "${libqtPkgs[@]}"
 }
 
-libgtk() { ##D Install GTK+ development libraries
-  installPkgs ${libgtkPkgs[@]}
+libgtk() { ## Install GTK+ development libraries
+  installPkgs "${libgtkPkgs[@]}"
 }
 
 ##- Science and technology
 
-sci() {                  ##D Install science and technology packages
-  installPkgs ${sciPkgs[@]}
+sci() { ##D Install science and technology packages
+  installPkgs "${sciPkgs[@]}"
 }
 
-
-##- Install single programs outside apt
-photivo() { ##D Photo RAW file editor
-  # bpAssertRoot
-  sudo add-apt-repository ppa:dhor/myway
-  sudo apt-get update
-  sudo apt-get install photivo
-}
 
 ##- Projects
 
