@@ -677,7 +677,7 @@ alias df='df -kTh'
 
 # If available use batcat instead of cat
 if type batcat ; then
-  alias cat='batcat'
+  alias cat='batcat --decorations never'
 else
   alias cat='cat'
 fi
