@@ -291,13 +291,13 @@ info() { ##D General information
   bpTextLine "System"
   bpPrintInfo "Distibution" "$(lsb_release -a 2>/dev/null | grep Description | cut -b 14-)"
   bpPrintInfo "Kernel" "$(uname -r)"
-  bpPrintVar TERM "Terminal"
+  bpPrintVar "Terminal" TERM
   bpPrintInfo "Uptime" "$(uptime)"
-  bpPrintVar HOSTNAME "Hostname"
+  bpPrintVar "Hostname" HOSTNAME
   bpPrintInfo "IP addr" "$(ip a | grep enp2s0 -m2 | grep inet | awk '{print $2}')"
 
   bpTextLine "User"
-  bpPrintVar USER "Username"
+  bpPrintVar "Username" USER
   bpPrintInfo "SSH public key location" ${SSH_KEY}.pub
   bpPrintInfo "SSH public key" "$(cat ${SSH_KEY}.pub)"
 
@@ -705,7 +705,7 @@ bpPrintInfo() { ##I Print text into two columns
 }
 
 bpPrintInfoAlt() {
-  bpPrintInfoGeneric "${E_DARKGRAY}" "${BP_C_DESCRIPTION}" "$1" "$2"
+  bpPrintInfoGeneric "${E_FG_DARKGRAY}" "${BP_C_DESCRIPTION}" "$1" "$2"
 }
 
 #
@@ -723,7 +723,7 @@ bpPrintVar() { ##I Print variable value and description
     fi
     bpPrintInfo "$1" "${X}"
   else
-    printf "${BP_C_ID}  %-24s${E_RESET} ${E_RED}N/A${E_RESET}\n" "$1"
+    printf "${BP_C_ID}  %-24s${E_RESET} ${E_FG_RED}N/A${E_RESET}\n" "$1"
   fi
 }
 
