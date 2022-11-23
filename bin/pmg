@@ -193,7 +193,7 @@ pmg2ssh() { ##D Change pmg remote git repository to ssh
   git remote -v
   git remote set-url origin git@github.com:zonbrisad/pmg.git
   git remote -v
-  cd -
+  cd - || bpExit
 }
 
 sshid() { ##D Install SSH public key on remote host
@@ -260,13 +260,11 @@ backup() { ##D Backup user data
   bpBackupDir ~/ "$2"
 }
 
-
 ##- System Management
 
 update() { ##D  Update operating system
   sudo apt update && sudo apt upgrade --assume-yes && sudo apt autoremove && sudo apt autoclean
 }
-
 
 ##- Misc
 stopwatch() { ##D Stopwatch function
@@ -327,7 +325,7 @@ hist() { ##D Show project history
   bpCd -
 }
 
-clean() { ##D Remove leftover files 
+clean() { ##D Remove leftover files
   bpCd "${BP_SELF_DIR}"
 
   find . -name "*~" -delete
