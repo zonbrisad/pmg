@@ -77,6 +77,7 @@ bpUserSettings() {
 
   utilsPkgs=(
     "apt" "jed" ":"
+		"apt" "jed-extra" ":"
     "apt" "htop" ":"
     "apt" "nmap" ":"
     "apt" "lm-sensors" ":"
@@ -93,6 +94,7 @@ bpUserSettings() {
     "apt" "bat" ":"
     "apt" "ncdu" ":"
     "git" "https://github.com/ogham/exa" ":"
+		"git" "powertop" ":"
   )
 
   snap_unrestrict() {

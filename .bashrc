@@ -160,7 +160,13 @@ flag() {
   echo -e "${FLAG_BLUE}        ${FLAG_YELLOW}  ${FLAG_BLUE}               ${E_END}"
   echo -e "${FLAG_BLUE}        ${FLAG_YELLOW}  ${FLAG_BLUE}               ${E_END}"
 }
-							
+
+
+take() { ##D Create directory and enter it
+  mkdir -p "$1"
+	cd "$1"
+}
+
 #--------------------------------------------------------------
 #  Automatic setting of $DISPLAY (if not set already).
 #  This works for me - your mileage may vary. . . .
@@ -664,6 +670,9 @@ case ${TERM} in
 
 # Personal Aliases ----------------------------------------------------------
 
+# Install aliases
+alias sui='sudo apt install'
+
 alias rm='rm -i'
 alias cp='cp -i'
 alias mv='mv -i'
@@ -714,8 +723,10 @@ alias tree='tree -Csuh'    #  Nice alternative to 'recursive ls' ...
 alias gs='git status '
 alias ga='git add '
 alias gb='git branch '
-alias gc='git commit'
+alias gc='git commit -a'
 alias gd='git diff'
+alias gl='git log --all --graph --format=oneline'
+alias gh='git hist'
 alias go='git checkout '
 alias gk='gitk --all&'
 alias gx='gitx --all'

@@ -205,6 +205,7 @@ META_CHAR	= -1;	% All chars with hi bit set will self insert
   DISPLAY_EIGHT_BIT = 160; % Other systems assume ISO Latin 1
 #endif
 
+
 #ifndef XWINDOWS
 %  COLORS: 
 %
@@ -224,7 +225,8 @@ META_CHAR	= -1;	% All chars with hi bit set will self insert
 #ifdef UNIX VMS
    TERM_BLINK_MODE = 0;
 #endif
-   $1 = "black"; $2 = "white";
+   $1 = "black";
+   $2 = "red";
    set_color("menu", "white", "blue"); 		  % menu bar    
    set_color("normal", $1, $2);	                  % default fg/bg
    set_color("status", "yellow", "blue");	  % status or mode line
@@ -239,6 +241,7 @@ META_CHAR	= -1;	% All chars with hi bit set will self insert
    set_color("preprocess", "magenta", $2);	  % #ifdef ....  
    set_color("message", "blue", $2);              % color for messages
    set_color("error", "brightred", $2);           % color for errors
+%   set_color("error", "magenta", $2);           % color for errors
    set_color("dollar", "magenta", $2);            % color dollar sign continuation
    set_color("...", "red", $2);			  % folding indicator
 
@@ -272,7 +275,7 @@ if (USE_ANSI_COLORS) call ("redraw");
 % 
 compile_parse_error_function = "gcc";           % GNU compiler
 % compile_parse_error_function = "Ultrix_cc";     % cc on Ultrix
-%compile_parse_error_function = "bcc";           % Borlands BCC
+% compile_parse_error_function = "bcc";           % Borlands BCC
 % compile_parse_error_function = "sun_acc";       % SunOS C++ and ACC
 % compile_parse_error_function = "hp_cc";         % HPUX cc
 
