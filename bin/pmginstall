@@ -95,6 +95,7 @@ bpUserSettings() {
     "apt" "ncdu" ":"
     "git" "https://github.com/ogham/exa" ":"
 		"git" "powertop" ":"
+		
   )
 
   snap_unrestrict() {
@@ -374,6 +375,9 @@ installGit() { ##I Install git package
   cd - || bpExit
 }
 
+
+
+
 #
 # $1 package system
 # $2 package name
@@ -577,6 +581,13 @@ libgtk() { ## Install GTK+ development libraries
 
 sci() { ##D Install science and technology packages
   installPkgs "${sciPkgs[@]}"
+}
+
+
+##- Single programs
+
+starship() { ##D Starship prompt manager
+  curl -sS https://starship.rs/install.sh | sh
 }
 
 
