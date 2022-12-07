@@ -1,14 +1,8 @@
-#
+#!/bin/bash
 # ---------------------------------------------------------------------------
 #
 # PERSONAL $HOME/.bashrc FILE for bash-3.0 (or later)
 # By Peter Malmberg
-#
-# Based on Emmanuel Rouat's .bashrc
-
-#  This file is normally read by interactive shells only.
-#+ Here is the place to define your aliases, functions and
-#+ other interactive features like your prompt.
 #
 
 #
@@ -37,30 +31,27 @@ OS=$(uname -s)
 
 # Paths ---------------------------------------------------------------------
 
-#export PATH=${PATH}:/home/pmg/Projekt/RaspberryPi/tools/arm-bcm2708/gcc-linaro-arm-linux-gnueabihf-raspbian-x64/bin
-#export PATH=${PATH}:"$HOME"/.cabal/bin
-#export PATH=${PATH}:"$HOME"/bin
-
 export LD_LIBRARY_PATH=/usr/local/lib
 
 # Application settings ------------------------------------------------------
 export SVN_EDITOR=jed
 
-# Force GTK2 for SWT applications (eclipse)
-export SWT_GTK3=0
-
 # Needed for gdb
 export SHELL=/bin/bash
-#Needed for eclipse
-#export TERM=gnome-terminal
-
-#source ~/Tester/pyplate/pypl_init
 
 # Host specific setting -----------------------------------------------------
 
 HOSTNAME=$(hostname)
 
 # Host: fileserver ----------------------------------------------------------
+
+host_lstation() {
+	# Starship prompt
+	if bpHasCmd starship; then
+		eval "$(starship init bash)"
+	fi
+}
+
 host_fileserver() {
 	alias lef='cd ~/Projekt/LEF'
 	#	alias mp='cd ~/Projekt/makeplates'
@@ -79,22 +70,12 @@ host_fileserver() {
 
 # Host: ustation ------------------------------------------------------------
 host_ustation() {
-	alias eclipse='~/Downloads/eclipse/eclipse'
+
 	alias lef='cd ~/Projekt/LEF'
 
 	# PyQt5 example and demos
 	alias pqe='cd /usr/share/doc/pyqt5-examples/examples'
-
 }
-
-# Host: pmg-pav  ------------------------------------------------------------
-#host_pmg-pav() {
-#if [ "${HOSTNAME}" == "pmg-pav" ]; then
-# echo "Kalle"
-# Load bashplate settings
-#  source ~/Projects/bashplates/bp_init
-#fi
-#}
 
 #---------------------------------------------------------------------
 # bashrc personal functions
@@ -102,7 +83,7 @@ host_ustation() {
 
 bpInstall() { ## Install a package
 	bpAssertRoot
-	dpkg -i $1
+	dpkg -i "$1"
 	apt-get install -f
 }
 
@@ -121,10 +102,6 @@ bpInitSettings() {
 function bpExit() { # Function to run
 	return 1
 }
-
-# SSH agent
-#eval `ssh-agent -s`
-#ssh-add ~/.ssh/id_dsa
 
 # If not running interactively, don't do anything
 [ -z "$PS1" ] && return
@@ -147,36 +124,9 @@ take() { ##D Create directory and enter it
 	cd "$1"
 }
 
-#--------------------------------------------------------------
-#  Automatic setting of $DISPLAY (if not set already).
-#  This works for me - your mileage may vary. . . .
-#  The problem is that different types of terminals give
-#+ different answers to 'who am i' (rxvt in particular can be
-#+ troublesome) - however this code seems to work in a majority
-#+ of cases.
-#--------------------------------------------------------------
-
-function get_xserver() {
-	case $TERM in
-	xterm)
-		XSERVER=$(who am i | awk '{print $NF}' |
-			tr -d ')''(')
-		# Ane-Pieter Wieringa suggests the following alternative:
-		#  I_AM=$(who am i)
-		#  SERVER=${I_AM#*(}
-		#  SERVER=${SERVER%*)}
-		XSERVER=${XSERVER%%:*}
-		;;
-
-	aterm | rxvt)
-		# Find some code that works here. ...
-		;;
-	esac
-}
-
 bpInitDisplay() { ##D Init DISPLAY variable
 
-	if [ -z ${DISPLAY:=""} ]; then
+	if [ -z "${DISPLAY:=""}" ]; then
 		get_xserver
 		if [[ -z ${XSERVER} || ${XSERVER} == $(hostname) || ${XSERVER} == "unix" ]]; then
 			DISPLAY=":0.0" # Display on local host.
@@ -758,7 +708,7 @@ function ff() { find . -type f -iname '*'"$*"'*' -ls; }
 
 # Find a file with pattern $1 in name and Execute $2 on it:
 function fe() { find . -type f -iname '*'"${1:-}"'*' \
-	-exec ${2:-file} {} \;; }
+	-exec "${2:-file}" {} \;; }
 
 #  Find a pattern in a set of files and highlight them:
 #+ (needs a recent version of egrep).
@@ -798,19 +748,19 @@ function swap() { # Swap 2 filenames around, if they exist (from Uzi's bashrc).
 }
 
 function extract() { # Handy Extract Program
-	if [ -f $1 ]; then
-		case $1 in
-		*.tar.bz2) tar xvjf $1 ;;
-		*.tar.gz) tar xvzf $1 ;;
-		*.bz2) bunzip2 $1 ;;
-		*.rar) unrar x $1 ;;
-		*.gz) gunzip $1 ;;
-		*.tar) tar xvf $1 ;;
-		*.tbz2) tar xvjf $1 ;;
-		*.tgz) tar xvzf $1 ;;
-		*.zip) unzip $1 ;;
-		*.Z) uncompress $1 ;;
-		*.7z) 7z x $1 ;;
+	if [ -f "$1" ]; then
+		case "$1" in
+		*.tar.bz2) tar xvjf "$1" ;;
+		*.tar.gz) tar xvzf "$1" ;;
+		*.bz2) bunzip2 "$1" ;;
+		*.rar) unrar x "$1" ;;
+		*.gz) gunzip "$1" ;;
+		*.tar) tar xvf "$1" ;;
+		*.tbz2) tar xvjf "$1" ;;
+		*.tgz) tar xvzf "$1" ;;
+		*.zip) unzip "$1" ;;
+		*.Z) uncompress "$1" ;;
+		*.7z) 7z x "$1" ;;
 		*) echo "'$1' cannot be extracted via >extract<" ;;
 		esac
 	else
@@ -831,8 +781,8 @@ function sanitize() { chmod -R u=rwX,g=rX,o= "$@"; }
 # Process/system related functions:
 #-------------------------------------------------------------
 
-function my_ps() { ps $@ -u $USER -o pid,%cpu,%mem,bsdtime,command; }
-function pp() { my_ps f | awk '!/awk/ && $0~var' var=${1:-".*"}; }
+function my_ps() { ps "$@" -u "$USER" -o pid,%cpu,%mem,bsdtime,command; }
+function pp() { my_ps f | awk '!/awk/ && $0~var' var="${1:-".*"}"; }
 
 function killps() {          # kill by process name
 	local pid pname sig="-TERM" # default signal
@@ -842,35 +792,10 @@ function killps() {          # kill by process name
 	fi
 	if [ $# = 2 ]; then sig=$1; fi
 	for pid in $(my_ps | awk '!/awk/ && $0~pat { print $1 }' pat=${!#}); do
-		pname=$(my_ps | awk '$1~var { print $5 }' var=$pid)
+		pname=$(my_ps | awk '$1~var { print $5 }' var="$pid")
 		if ask "Kill process $pid <$pname> with signal $sig?"; then
-			kill $sig $pid
+			kill "$sig" "$pid"
 		fi
-	done
-}
-
-function mydf() { # Pretty-print of 'df' output.
-	# Inspired by 'dfc' utility.
-	for fs; do
-
-		if [ ! -d $fs ]; then
-			echo -e $fs" :No such file or directory"
-			continue
-		fi
-
-		local info=($(command df -P $fs | awk 'END{ print $2,$3,$5 }'))
-		local free=($(command df -Pkh $fs | awk 'END{ print $4 }'))
-		local nbstars=$((20 * ${info[1]} / ${info[0]}))
-		local out="["
-		for ((j = 0; j < 20; j++)); do
-			if [ ${j} -lt ${nbstars} ]; then
-				out=$out"*"
-			else
-				out=$out"-"
-			fi
-		done
-		out=${info[2]}" "$out"] ("$free" free on "$fs")"
-		echo -e $out
 	done
 }
 
@@ -892,7 +817,7 @@ function ii() { # Get current host related info.
 	flag
 	echo
 
-	echo -e "\n${Green}Hostname:   ${BGreen}$HOSTNAME $NC "
+	echo -e "\n${E_GREEN}Hostname:   ${E_BR_GREEN}$HOSTNAME $NC "
 	bpLine
 	echo -e ""
 	bpPrintInfo "Username:" "$USER"
@@ -902,7 +827,6 @@ function ii() { # Get current host related info.
 	bpPrintInfo "Machine Type:" "$(uname -m)"
 	bpLine
 	bpPrintInfo "Disk space:" ""
-	mydf / $HOME
 	echo -e ""
 	bpLine
 }
@@ -930,8 +854,8 @@ function ask() { # See 'killps' for example of use.
 
 function corename() { # Get name of app that created a corefile.
 	for file; do
-		echo -n $file :
-		gdb --core=$file --batch | head -1
+		echo -n "$file" :
+		gdb --core="$file" --batch | head -1
 	done
 }
 
@@ -1376,11 +1300,11 @@ if [ -e "$BP_SETTINGS_DIR" ]; then
 	if [ -e "$BP_SETTINGS_PATHS" ]; then
 		for p in $(find ${BP_SETTINGS_PATHS} -type l); do
 			l=$(readlink ${p})
-			if [ -e ${l} ]; then
+			if [ -e "${l}" ]; then
 				PATH="${PATH}:${l}"
-				bpInfo "Adding path:  $l"
+				bpOk "Adding path:  $l"
 			else
-				bpError "Path  $(bpColorizeFile $l) does not exist!"
+				bpError "Path  $(bpColorizeFile "$l") does not exist!"
 			fi
 		done
 		export PATH
@@ -1389,28 +1313,20 @@ if [ -e "$BP_SETTINGS_DIR" ]; then
 	# Run bashplates module scripts
 	if [ -e "$BP_SETTINGS_MODULES" ]; then
 		for m in $(find ${BP_SETTINGS_MODULES} -type l); do
-			l=$(readlink ${m})
-			if [ -e ${l} ]; then
-				source $l
-				bpOk "Loaded module $(bpColorizeFile $l)"
+			l=$(readlink "${m}")
+			if [ -e "${l}" ]; then
+				source "$l"
+				bpOk "Loaded module $(bpColorizeFile "$l")"
 			else
-				bpError "Failed to load module $(bpColorizeFile $l)"
+				bpError "Failed to load module $(bpColorizeFile "$l")"
 			fi
 		done
 	fi
 fi
 
-bpMkdir() {
-	echo "X"
-}
-
 bpInitDisplay
 
 # Call host specific function if existing
-if [ "$(type -t host_${HOSTNAME})" == "function" ]; then
-	host_${HOSTNAME}
-fi
-
-if bpHasCmd starship; then
-	eval "$(starship init bash)"
+if [ "$(type -t host_"${HOSTNAME}")" == "function" ]; then
+	host_"${HOSTNAME}"
 fi
