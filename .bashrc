@@ -52,6 +52,15 @@ host_lstation() {
 	fi
 }
 
+
+host_lliten() {
+	# Starship prompt
+	if bpHasCmd starship; then
+		eval "$(starship init bash)"
+	fi
+}
+
+
 host_fileserver() {
 	alias lef='cd ~/Projekt/LEF'
 	#	alias mp='cd ~/Projekt/makeplates'
