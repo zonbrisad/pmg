@@ -339,7 +339,7 @@ bpPrintLineC() { ##D Print text with adjusted line after with selectable colors
 	echo -en "${2}${1}${4}${3}"
 	l=$((BPCOLUMNS - len1 - len4 - 3))
 	seq -s"${5}" "${l}" | tr -d '[:digit:]'
-	echo -en ${E_END}
+	echo -en "${E_END}"
 }
 
 # Print text with row
@@ -412,7 +412,7 @@ bpPrintVar() {
 # ret colorized string
 #
 bpColorizeFile() { ##D Colorize string with filename
-	if [ ! -z "$1" ]; then
+	if [ -n "$1" ]; then
 		echo "${BP_C_PATH}$(dirname "$1")/${BP_C_FILENAME}$(basename "$1")${E_END}"
 	fi
 }
@@ -739,8 +739,8 @@ function swap() { # Swap 2 filenames around, if they exist (from Uzi's bashrc).
 	local TMPFILE=tmp.$$
 
 	[ $# -ne 2 ] && echo "swap: 2 arguments needed" && return 1
-	[ ! -e $1 ] && echo "swap: $1 does not exist" && return 1
-	[ ! -e $2 ] && echo "swap: $2 does not exist" && return 1
+	[ ! -e "$1" ] && echo "swap: $1 does not exist" && return 1
+	[ ! -e "$2" ] && echo "swap: $2 does not exist" && return 1
 
 	mv "$1" $TMPFILE
 	mv "$2" "$1"
@@ -982,7 +982,7 @@ _tar() {
 		;;
 	esac
 
-	if [ $COMP_CWORD -eq 1 ]; then
+	if [ "$COMP_CWORD" -eq 1 ]; then
 		COMPREPLY=($(compgen -W 'c t x u r d A' -- $cur))
 		return 0
 	fi
@@ -1299,7 +1299,7 @@ if [ -e "$BP_SETTINGS_DIR" ]; then
 	# Add bashplates PATH's
 	if [ -e "$BP_SETTINGS_PATHS" ]; then
 		for p in $(find ${BP_SETTINGS_PATHS} -type l); do
-			l=$(readlink ${p})
+			l=$(readlink "${p}")
 			if [ -e "${l}" ]; then
 				PATH="${PATH}:${l}"
 				bpOk "Adding path:  $l"
