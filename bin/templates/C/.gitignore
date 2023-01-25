@@ -83,12 +83,13 @@
 *.map
 *.lss
 
-# Makefile specific
+# Makefile
 #--------------------------------------------------------------------
 *.d
 .dep
 
-# Qt-es
+# Qt 
+#--------------------------------------------------------------------
 object_script.*.Release
 object_script.*.Debug
 *_plugin_import.cpp
@@ -131,7 +132,8 @@ compile_commands.json
 
 *_qmlcache.qrc
 
-# Kernel Module Compile Results
+# Kernel 
+#--------------------------------------------------------------------
 *.mod*
 *.cmd
 .tmp_versions/
