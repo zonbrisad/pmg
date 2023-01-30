@@ -583,6 +583,8 @@ export HOSTFILE=$HOME/.hosts # Put a list of remote hosts in ~/.hosts
 
 # Personal Aliases ----------------------------------------------------------
 
+alias lsblk='lsblk --output NAME,SIZE,TYPE,FSTYPE,MOUNTPOINT,UUID'
+
 # Install aliases
 alias sui='sudo apt install'
 
