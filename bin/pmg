@@ -125,18 +125,18 @@ configFiles=(
 #
 cf() {
   eval F="${1}"
-
   if [ -h "$F" ]; then # if aldready symbolic return
+    bpInfo "File '${F}' already symbolic link"
     return
   fi
 
-  if [ -e "$F" ]; then # if file already exist make a copy
+  if [ -e "$F" ]; then # if file exist make a copy
     bpBackup "$F"
     bpRm "$F"
   fi
 
-  eval X="${BP_SELF_DIR}/../$(basename "$F")"
-  bpLn "${BP_SELF_DIR}/../$(basename "$F") $F"
+  bpLn  "${BP_SELF_DIR}/../$(basename "${F}")" "$F" -r
+  #bpLn "${HOME}/$(basename "${F}")" "$F"
 }
 
 pmg_setup() { ##D Initiates pmg infrastructure
@@ -789,7 +789,7 @@ bpCd() { ##I Safe cd function (exits on fail)
 #
 bpMkDir() { ##I Create a directory if it does not exist
   if [ ! -d "$1" ]; then
-    if mkdir -p "$1"; then
+    if mkdir --parents "$1"; then
       bpOk "Creating directory $(bpColorizeFile "${1}")."
       return 0
     else
@@ -800,13 +800,16 @@ bpMkDir() { ##I Create a directory if it does not exist
 }
 
 #
-# $1 target file/dir
+# $1 target file
 # $2 link
 #
 bpLn() { ##I Create symbolic link
-  if [ ! -L "$1" ]; then
-    if ln -sf "${1}" "${2}"; then
-      bpOk "Creating link $(bpColorizeFile "${2}")."
+  target="${1}"
+  link="${2}"
+  if [ ! -L "$target" ]; then
+#    if ln --symbolic --force "${target}" "${link}"; then
+    if ln --symbolic --force "${@}"; then
+      bpOk "Creating link $(bpColorizeFile "${1}")."
       return 0
     else
       bpError "Failed to create link $(bpColorizeFile "${2}")."
