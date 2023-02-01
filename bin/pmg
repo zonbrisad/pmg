@@ -118,6 +118,7 @@ configFiles=(
   "~/bin"
   "~/.gitconfig"
   "~/.tmux.conf"
+	"~/.ssh/config"
 )
 
 #
