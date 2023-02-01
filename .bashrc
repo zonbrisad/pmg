@@ -137,10 +137,28 @@ take() { ##D Create directory and enter it
 	cd "$1"
 }
 
+
+get_xserver() {
+  case $TERM in
+	  xterm | xterm-256color)
+		  XSERVER=$(who am i | awk '{print $NF}' | tr -d ')''(' )
+			# Ane-Pieter Wieringa suggests the following alternative:
+			#  I_AM=$(who am i)
+			#  SERVER=${I_AM#*(}
+			#  SERVER=${SERVER%*)}
+			XSERVER=${XSERVER%%:*}
+			;;
+		aterm | rxvt)
+		  # Find some code that works here. ...
+			;;
+	esac
+}
+
 bpInitDisplay() { ##D Init DISPLAY variable
 
 	if [ -z "${DISPLAY:=""}" ]; then
 		get_xserver
+		echo "XSERVER = $XSERVER"
 		if [[ -z ${XSERVER} || ${XSERVER} == $(hostname) || ${XSERVER} == "unix" ]]; then
 			DISPLAY=":0.0" # Display on local host.
 		else
@@ -613,7 +631,7 @@ alias du='du -kh' # Makes a more readable output.
 alias df='df -kTh'
 
 # If available use batcat instead of cat
-if type batcat; then
+if type batcat &>/dev/null; then
 	alias cat='batcat --decorations never'
 else
 	alias cat='cat'
@@ -1255,7 +1273,8 @@ help() { ## Print this help information
 BPSCRIPTPATH=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 
 ##V Name of script
-BPSCRIPTNAME=$(basename "$0")
+#echo $0
+#BPSCRIPTNAME=$(basename "$0")
 
 ##V Number of arguments given to script
 BPARGUMENTS=$#
