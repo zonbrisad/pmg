@@ -112,32 +112,32 @@ all_setups() { ##D All setups (except jed_setup)
 }
 
 configFiles=(
-  "~/.bashrc"
-  "~/.bash_profile"
-  "~/.jedrc"
-  "~/bin"
-  "~/.gitconfig"
-  "~/.tmux.conf"
-	"~/.ssh/config"
+  ".bashrc"
+  ".bash_profile"
+  ".jedrc"
+  "bin"
+  ".gitconfig"
+  ".tmux.conf"
+	".ssh/config"
 )
 
 #
 # $1 file to be replaced
 #
 cf() {
-  eval F="${1}"
-  if [ -h "$F" ]; then # if aldready symbolic return
-    bpInfo "File '${F}' already symbolic link"
+	TARGET="${HOME}/pmg/${1}"
+	LINK="${HOME}/${1}"
+  if [ -h "$LINK" ]; then # if aldready symbolic return
+    bpInfo "File '${LINK}' already symbolic link"
     return
   fi
 
-  if [ -e "$F" ]; then # if file exist make a copy
-    bpBackup "$F"
-    bpRm "$F"
+  if [ -e "$LINK" ]; then # if file exist make a copy
+    bpBackup "$LINK"
+    bpRm "$LINK"
   fi
 
-  bpLn  "${BP_SELF_DIR}/../$(basename "${F}")" "$F" -r
-  #bpLn "${HOME}/$(basename "${F}")" "$F"
+	bpLn "${TARGET}" "${LINK}" -r
 }
 
 pmg_setup() { ##D Initiates pmg infrastructure
