@@ -1122,9 +1122,13 @@ bpChSetting() {
   if [ "${S}" == "0" ]; then
     bpAddSettings
   fi
-  sed -i "s/^\(${SETTING}\s*=\s*\).*\$/\1$VAL/" "$1"
+  if sed -i "s/^\(${SETTING}\s*=\s*\).*\$/\1$VAL/" "$1"; then
+	  bpOk "Setting ${SETTING} to ${VAL}"
+	else
+	  bpError "Failed setting ${SETTING} to ${VAL}"
+	fi
 
-  bpInfo "Setting ${SETTING} to ${VAL}"
+
 }
 
 bpCreateSettings() {
