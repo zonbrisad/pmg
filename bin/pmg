@@ -280,6 +280,11 @@ stopwatch() { ##D Stopwatch function
   done
 }
 
+dperf() { ##D Disk performance test using dd 128M
+  DEV=$(bpRead "Enter disk device")
+  sudo dd if=/dev/zero of=${DEV}/test1.img bs=256M count=1 oflag=dsync status=progress
+}
+
 ##- Information
 info() { ##D General information
   # bpPrintInfo
