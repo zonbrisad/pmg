@@ -43,17 +43,17 @@ bpUserSettings() {
   PMG_TEMP=~/pmg/tmp
 
   projects=(
-    "bashplates"
-    "Debugsock"
-    "pyplate"
-    "makeplates"
-    "LEF"
-    "mTerm"
-    "Tester"
-    "luaconf"
-    "gittest"
-    "OmTerm"
-		"mpterm"
+    "bashplates" "bp bp_install"
+    "Debugsock" ":"
+    "pyplate" "ppl install"
+    "makeplates" "mp install"
+    "LEF" ":"
+    "mTerm" ":"
+    "Tester" ":"
+    "luaconf" ":"
+    "gittest" ":"
+    "OmTerm" ":"
+		"mpterm" ":"
   )
 
   serverPkgs=(
@@ -623,12 +623,20 @@ ghClone() { ## Github clone
 projects() { ##D Checkout all git projects
   bpTextLine "Cloning github projects"
   bpMkDir "${PROJDIR}"
+	len=${#projects[@]}
+  i=0
+	while [ $i -lt "$len" ]; do
+	  proj="${projects[$i]}"
+		((i++))
+		cmd="${projects[$i]}"
+		((i++))
+    ghClone "${proj}" 
+		
+		if [ "$cmd" != ":" ]; then
+			${PROJDIR}/${proj}/${cmd}
+		fi
 
-  for prj in "${projects[@]}"; do
-    echo "$prj"
-    ghClone "$prj"
-  done
-  return
+	done
 }
 
 #---------------------------------------------------------------------

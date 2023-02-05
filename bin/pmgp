@@ -81,6 +81,17 @@ agh() { ##D Add project to github
   fi
 }
 
+
+#
+# $1 file
+# $2 template path
+# $3 destination
+#
+cp_file() {
+	bpCp "${2}/${1}" "${3}" -L
+}
+
+
 #
 # $1 file
 # $2 template path
@@ -88,7 +99,7 @@ agh() { ##D Add project to github
 #
 new_file() {
   F="${2}/${1}"
-  bpInfo "$F"
+#  bpInfo "$F"
   if [ -e "${F}" ]; then
     if bpReadY "Create ${1} file?"; then
 
@@ -145,9 +156,20 @@ new() { ##D New project
 newp() { ##D New python project
   new_proj "p"
 }
-
+ 
 newc() { ##D New C/C++ project
   new_proj "c"
+}
+
+
+##- Gitignore
+
+newcgig() { ##D Create new C gitignore file
+  cp_file ".gitignore" "${TEMPLATES}/C" "."
+}
+
+newpgig() { ##D Create new Python gitignore file
+  cp_file ".gitignore" "${TEMPLATES}/Python" "."
 }
 
 ##- Edit templates

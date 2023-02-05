@@ -112,31 +112,32 @@ all_setups() { ##D All setups (except jed_setup)
 }
 
 configFiles=(
-  "~/.bashrc"
-  "~/.bash_profile"
-  "~/.jedrc"
-  "~/bin"
-  "~/.gitconfig"
-  "~/.tmux.conf"
+  ".bashrc"
+  ".bash_profile"
+  ".jedrc"
+  "bin"
+  ".gitconfig"
+  ".tmux.conf"
+	".ssh/config"
 )
 
 #
 # $1 file to be replaced
 #
 cf() {
-  eval F="${1}"
-
-  if [ -h "$F" ]; then # if aldready symbolic return
+	TARGET="${HOME}/pmg/${1}"
+	LINK="${HOME}/${1}"
+  if [ -h "$LINK" ]; then # if aldready symbolic return
+    bpInfo "File '${LINK}' already symbolic link"
     return
   fi
 
-  if [ -e "$F" ]; then # if file already exist make a copy
-    bpBackup "$F"
-    bpRm "$F"
+  if [ -e "$LINK" ]; then # if file exist make a copy
+    bpBackup "$LINK"
+    bpRm "$LINK"
   fi
 
-  eval X="${BP_SELF_DIR}/../$(basename "$F")"
-  bpLn "${BP_SELF_DIR}/../$(basename "$F") $F"
+	bpLn "${TARGET}" "${LINK}" -r
 }
 
 pmg_setup() { ##D Initiates pmg infrastructure
@@ -277,6 +278,11 @@ stopwatch() { ##D Stopwatch function
     echo ${dur} ${durs}
     sleep 1
   done
+}
+
+dperf() { ##D Disk performance test using dd 128M
+  DEV=$(bpRead "Enter disk device")
+  sudo dd if=/dev/zero of=${DEV}/test1.img bs=256M count=1 oflag=dsync status=progress
 }
 
 ##- Information
@@ -789,7 +795,7 @@ bpCd() { ##I Safe cd function (exits on fail)
 #
 bpMkDir() { ##I Create a directory if it does not exist
   if [ ! -d "$1" ]; then
-    if mkdir -p "$1"; then
+    if mkdir --parents "$1"; then
       bpOk "Creating directory $(bpColorizeFile "${1}")."
       return 0
     else
@@ -800,13 +806,16 @@ bpMkDir() { ##I Create a directory if it does not exist
 }
 
 #
-# $1 target file/dir
+# $1 target file
 # $2 link
 #
 bpLn() { ##I Create symbolic link
-  if [ ! -L "$1" ]; then
-    if ln -sf "${1}" "${2}"; then
-      bpOk "Creating link $(bpColorizeFile "${2}")."
+  target="${1}"
+  link="${2}"
+  if [ ! -L "$target" ]; then
+#    if ln --symbolic --force "${target}" "${link}"; then
+    if ln --symbolic --force "${@}"; then
+      bpOk "Creating link $(bpColorizeFile "${1}")."
       return 0
     else
       bpError "Failed to create link $(bpColorizeFile "${2}")."
@@ -1118,9 +1127,13 @@ bpChSetting() {
   if [ "${S}" == "0" ]; then
     bpAddSettings
   fi
-  sed -i "s/^\(${SETTING}\s*=\s*\).*\$/\1$VAL/" "$1"
+  if sed -i "s/^\(${SETTING}\s*=\s*\).*\$/\1$VAL/" "$1"; then
+	  bpOk "Setting ${SETTING} to ${VAL}"
+	else
+	  bpError "Failed setting ${SETTING} to ${VAL}"
+	fi
 
-  bpInfo "Setting ${SETTING} to ${VAL}"
+
 }
 
 bpCreateSettings() {
