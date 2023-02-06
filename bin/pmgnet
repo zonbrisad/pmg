@@ -53,6 +53,10 @@ dev() { ##D Show network devices
   nmcli device show
 }
 
+wd() { ##D Show WLAN device information
+  watch -n 1 cat /proc/net/wireless
+}
+
 ##- DHCP
 dr() { ##D Release DHCP lease
   sudo dhclient -v -r
