@@ -86,18 +86,6 @@ iso2usb() { ##D Write ISO file to USB drive
   sudo dd if="$2" of="$3" bs=4MB status=progress oflag=sync
 }
 
-##- Users & Groups
-
-bpAddUserGroup() {
-  :
-}
-
-add_groups() { ##D Add user into groups
-
-  #u=$USER
-  # Dialout group is used by serial ports
-  sudo usermod -a -G dialout lpmg
-}
 
 ##- Setup
 
