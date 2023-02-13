@@ -287,23 +287,43 @@ dperf() { ##D Disk performance test using dd 128M
 bpIp() { # Get IP adress on ethernet.
   ip addr show $(ip route | awk '/default/ { print $5 }') | grep "inet" | head -n 1 | awk '/inet/ {print $2}' | cut -d'/' -f1
 }
+
+bpIpInfo() { ##D List all default IP adresses
+	read -d "\n" -r -a INTERFACES <<< $(ip route | awk '/default/ { print $5 "\n" $7 }' )
+	IFS=$'\n' 
+	LEN=${#INTERFACES[@]}
+	i=0
+	while [ $i -lt "$LEN" ]; do
+	  INTERFACE=${INTERFACES[$i]}
+		(( i++ ))
+		LINK=${INTERFACES[$i]}
+		(( i++ ))
+		IP=$(ip addr show "${INTERFACE}" | grep "inet" | head -n 1 | awk '/inet/ {print $2}' | cut -d'/' -f1 )
+		echo "$IP $INTERFACE $LINK" 
+  done
+}
+
 ##- Information
 info() { ##D General information
-  # bpPrintInfo
+	bpTextLine "General"
+	bpPrintVar "Hostname" HOSTNAME
+	bpPrintVar "Username" USER
+	IFS=$'\n'
+	for IP in $(bpIpInfo); do
+  	bpPrintInfo "IP addr" "$IP"
+	done
   bpTextLine "Hardware"
   bpPrintInfo "CPU" "$(cat /proc/cpuinfo | grep -m 1 "model name" | cut -n -b 14-)"
   bpPrintInfo "Memory" "$(free --mega | grep Mem | awk '{ print $2 }') Mb"
-  bpPrintInfo "Graphics" "$(lspci | grep VGA | sed -r 's/.*controller: //')"
+  bpPrintInfo "Graphics" "$(lspci 2> /dev/null | grep VGA | sed -r 's/.*controller: //')"
   bpTextLine "System"
   bpPrintInfo "Distibution" "$(lsb_release -a 2>/dev/null | grep Description | cut -b 14-)"
   bpPrintInfo "Kernel" "$(uname -r)"
   bpPrintVar "Terminal" TERM
   bpPrintInfo "Uptime" "$(uptime)"
-  bpPrintVar "Hostname" HOSTNAME
-	bpPrintInfo "IP addr" "$(bpIp)"
 
-  bpTextLine "User"
-  bpPrintVar "Username" USER
+
+  bpTextLine "SSH"
   bpPrintInfo "SSH public key location" ${SSH_KEY}.pub
   bpPrintInfo "SSH public key" "$(cat ${SSH_KEY}.pub)"
 
