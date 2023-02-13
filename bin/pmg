@@ -320,8 +320,7 @@ info() { ##D General information
   bpPrintInfo "Distibution" "$(lsb_release -a 2>/dev/null | grep Description | cut -b 14-)"
   bpPrintInfo "Kernel" "$(uname -r)"
   bpPrintVar "Terminal" TERM
-  bpPrintInfo "Uptime" "$(uptime)"
-
+  bpPrintInfo "Uptime" "$(uptime -p)"
 
   bpTextLine "SSH"
   bpPrintInfo "SSH public key location" ${SSH_KEY}.pub
