@@ -836,6 +836,22 @@ function bpIp() { # Get IP adress on ethernet.
 	ip addr show $(ip route | awk '/default/ { print $5 }') | grep "inet" | head -n 1 | awk '/inet/ {print $2}' | cut -d'/' -f1
 }
 
+bpIpInfo() { ##D List all default IP adresses
+  read -d "\n" -r -a INTERFACES <<< $(ip route | awk '/default/ { print $5 "\n" $7 }' )
+  IFS=$'\n'
+	LEN=${#INTERFACES[@]}
+	i=0
+	while [ $i -lt "$LEN" ]; do
+	  INTERFACE=${INTERFACES[$i]}
+		(( i++ ))
+		LINK=${INTERFACES[$i]}
+		(( i++ ))
+		IP=$(ip addr show "${INTERFACE}" | grep "inet" | head -n 1 | awk '/inet/ {print $2}' | cut -d'/' -f1 )
+		echo "$IP $INTERFACE $LINK"
+	done
+}
+																		
+	
 function ii() { # Get current host related info.
 	echo
 	flag
@@ -844,8 +860,11 @@ function ii() { # Get current host related info.
 	bpPrintInfo "Hostname:" "$HOSTNAME $NC"
 	bpPrintInfo "Username:" "$USER"
 	bpPrintInfo "Current date:" "$(date)"
-	bpPrintInfo "Local IP Address:" "$(bpIp)"
-	bpPrintInfo "Machine Uptime:" "$(uptime -p)"
+	IFS=$'\n'
+	for IP in $(bpIpInfo); do
+	  bpPrintInfo "IP addr" "$IP"
+	done
+  bpPrintInfo "Machine Uptime:" "$(uptime -p)"
 	bpPrintInfo "Machine Type:" "$(uname -m)"
 #	bpLine
 #	bpPrintInfo "Disk space:" ""
