@@ -63,8 +63,8 @@ groupList_test=(
 userGroup=( \
   "lpmg" "dialout" \
 	"pmg"  "dialout" \
-	"pmg" "sudo" \
 	"pmg" "adm" \
+	"pmg" "sudo" \
 )
 
 RPSERVER=rpserver
