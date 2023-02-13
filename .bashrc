@@ -261,10 +261,10 @@ BP_C_ERROR=$E_BR_RED
 BP_C_CRITICAL=$E_ON_RED$E_WHITE
 BP_C_LINE=$E_DARKGRAY
 BP_C_LINE_TEXT=$E_YELLOW
-BP_C_DESCRIPTION=$E_GREEN
-BP_C_ID=$E_CYAN
-BP_C_FILENAME=$E_BR_GREEN
-BP_C_PATH=$E_GREEN
+BP_C_DESCRIPTION=$E_BR_CYAN
+BP_C_ID=$E_MAGENTA
+BP_C_FILENAME=$E_BR_CYAN
+BP_C_PATH=$E_CYAN
 
 # Shellscript colorize colors
 BP_C_RESERVED=$E_RED
@@ -833,35 +833,23 @@ function killps() {          # kill by process name
 }
 
 function bpIp() { # Get IP adress on ethernet.
-
-	ip addr | grep 'state UP' -A2 | tail -n1 | awk '{print $2}' | cut -f1 -d'/'
-	#	case ${HOSTNAME} in
-	#	  "fileserver") MY_IP=$(/sbin/ifconfig br0    | awk '/inet/ { print $2 } ' | sed -e s/addr://) ;;
-	#		"vbPmg")      MY_IP=$(/sbin/ifconfig enp0s3 | awk '/inet/ { print $2 } ' | sed -e s/addr://) ;;
-	#		"ustation")   MY_IP=$(/sbin/ifconfig enp2s0 | awk '/inet/ { print $2 } ' | sed -e s/addr://) ;;
-	#		*)            MY_IP=$(/sbin/ifconfig eth0   | awk '/inet/ { print $2 } ' | sed -e s/addr://) ;;
-	#	esac
-
-	#  echo ${MY_IP:-"Not connected"}
+	ip addr show $(ip route | awk '/default/ { print $5 }') | grep "inet" | head -n 1 | awk '/inet/ {print $2}' | cut -d'/' -f1
 }
 
 function ii() { # Get current host related info.
 	echo
 	flag
-	echo
-
-	echo -e "\n${E_GREEN}Hostname:   ${E_BR_GREEN}$HOSTNAME $NC "
-	bpLine
-	echo -e ""
+#	bpLine
+	echo 
+	bpPrintInfo "Hostname:" "$HOSTNAME $NC"
 	bpPrintInfo "Username:" "$USER"
 	bpPrintInfo "Current date:" "$(date)"
 	bpPrintInfo "Local IP Address:" "$(bpIp)"
 	bpPrintInfo "Machine Uptime:" "$(uptime -p)"
 	bpPrintInfo "Machine Type:" "$(uname -m)"
-	bpLine
-	bpPrintInfo "Disk space:" ""
-	echo -e ""
-	bpLine
+#	bpLine
+#	bpPrintInfo "Disk space:" ""
+#	bpLine
 }
 
 function loginInfo() {

@@ -73,6 +73,9 @@ bpUserSettings() {
     "apt" "qemu-kvm" ":"
     "apt" "virt-manager" ":"
     "apt" "virt-top" ":"
+		"apt" "libvirt-daemon-system" ":"
+		"apt" "libvirt-clients" ":"
+		"apt" "bridge-utils" ":"
   )
 
   utilsPkgs=(
@@ -769,7 +772,6 @@ bpExit() { ##I Function for safely exiting script
   else
     exit "$1"
   fi
-
 }
 
 bpErrorExit() { ##I Safely exit script with a error
@@ -881,8 +883,12 @@ BP_C_ERROR="${E_FG_BR_RED}"
 BP_C_CRITICAL="${E_BG_RED}${E_FG_WHITE}"
 BP_C_LINE="${E_FG_DARKGRAY}"
 BP_C_LINE_TEXT="${E_FG_YELLOW}"
-BP_C_DESCRIPTION="${E_FG_GREEN}"
+
+BP_C_DESCRIPTION="${E_FG_BR_MAGENTA}"
 BP_C_ID="${E_FG_CYAN}"
+#BP_C_DESCRIPTION="${E_FG_CYAN}"
+#BP_C_ID="${E_FG_BR_MAGENTA}"
+
 
 BP_C_FILENAME="${E_FG_BR_GREEN}"
 BP_C_PATH="${E_FG_GREEN}"
@@ -1054,7 +1060,7 @@ bpCd() { ##I Safe cd function (exits on fail)
 #
 bpMkDir() { ##I Create a directory if it does not exist
   if [ ! -d "$1" ]; then
-    if mkdir -p "$1"; then
+    if mkdir --parents "$1"; then
       bpOk "Creating directory $(bpColorizeFile "${1}")."
       return 0
     else
@@ -1065,7 +1071,7 @@ bpMkDir() { ##I Create a directory if it does not exist
 }
 
 #
-# $1 target file/dir
+# $1 target file
 # $2 link
 #
 bpLn() { ##I Create symbolic link
@@ -1383,9 +1389,11 @@ bpChSetting() {
   if [ "${S}" == "0" ]; then
     bpAddSettings
   fi
-  sed -i "s/^\(${SETTING}\s*=\s*\).*\$/\1$VAL/" "$1"
-
-  bpInfo "Setting ${SETTING} to ${VAL}"
+  if sed -i "s/^\(${SETTING}\s*=\s*\).*\$/\1$VAL/" "$1"; then
+    bpOk "Setting ${SETTING} to ${VAL}"
+  else
+    bpError "Failed setting ${SETTING} to ${VAL}"
+  fi
 }
 
 bpCreateSettings() {
@@ -1540,8 +1548,8 @@ log() { ##C BP_LOGFILE View logfile
         -e "s|\[Warn\]|\[\\${BP_C_WARNING}Warn\\${E_RESET}\]|" \
         -e "s|\[Erro\]|\[\\${BP_C_ERROR}Erro\\${E_RESET}\]|" \
         -e "s|\[ Ok \]|\[\\${BP_C_OK} Ok \\${E_RESET}\]|" \
-        -e "s/[-0-9]+/\\${E_FG_GREEN}&\\${E_RESET}/1" \
-        -e "s/[:0-9]+/\\${E_FG_BR_GREEN}&\\${E_RESET}/6" \
+        -e "s/[-0-9]+/\\${E_FG_MAGENTA}&\\${E_RESET}/1" \
+        -e "s/[:0-9]+/\\${E_FG_BR_MAGENTA}&\\${E_RESET}/6" \
         -e "s|\[Crit\]|\[\\${E_BG_RED}\\${E_FG_WHITE}Crit\\${E_RESET}\]|" <"${BP_LOGFILE}")
 
       echo -e "$D"

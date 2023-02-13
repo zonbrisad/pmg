@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 # shellcheck disable=2034
+# shellcheck disable=2317
 # shellcheck disable=1090
 #---------------------------------------------------------------------
 #
@@ -283,6 +284,9 @@ dperf() { ##D Disk performance test using dd 128M
 	sudo rm -f ${TF}
 }
 
+bpIp() { # Get IP adress on ethernet.
+  ip addr show $(ip route | awk '/default/ { print $5 }') | grep "inet" | head -n 1 | awk '/inet/ {print $2}' | cut -d'/' -f1
+}
 ##- Information
 info() { ##D General information
   # bpPrintInfo
@@ -296,7 +300,7 @@ info() { ##D General information
   bpPrintVar "Terminal" TERM
   bpPrintInfo "Uptime" "$(uptime)"
   bpPrintVar "Hostname" HOSTNAME
-  bpPrintInfo "IP addr" "$(ip a | grep enp2s0 -m2 | grep inet | awk '{print $2}')"
+	bpPrintInfo "IP addr" "$(bpIp)"
 
   bpTextLine "User"
   bpPrintVar "Username" USER
@@ -620,8 +624,12 @@ BP_C_ERROR="${E_FG_BR_RED}"
 BP_C_CRITICAL="${E_BG_RED}${E_FG_WHITE}"
 BP_C_LINE="${E_FG_DARKGRAY}"
 BP_C_LINE_TEXT="${E_FG_YELLOW}"
-BP_C_DESCRIPTION="${E_FG_GREEN}"
+
+BP_C_DESCRIPTION="${E_FG_BR_MAGENTA}"
 BP_C_ID="${E_FG_CYAN}"
+#BP_C_DESCRIPTION="${E_FG_CYAN}"
+#BP_C_ID="${E_FG_BR_MAGENTA}"
+
 
 BP_C_FILENAME="${E_FG_BR_GREEN}"
 BP_C_PATH="${E_FG_GREEN}"
@@ -1126,12 +1134,10 @@ bpChSetting() {
     bpAddSettings
   fi
   if sed -i "s/^\(${SETTING}\s*=\s*\).*\$/\1$VAL/" "$1"; then
-	  bpOk "Setting ${SETTING} to ${VAL}"
-	else
-	  bpError "Failed setting ${SETTING} to ${VAL}"
-	fi
-
-
+    bpOk "Setting ${SETTING} to ${VAL}"
+  else
+    bpError "Failed setting ${SETTING} to ${VAL}"
+  fi
 }
 
 bpCreateSettings() {
@@ -1286,8 +1292,8 @@ log() { ##C BP_LOGFILE View logfile
         -e "s|\[Warn\]|\[\\${BP_C_WARNING}Warn\\${E_RESET}\]|" \
         -e "s|\[Erro\]|\[\\${BP_C_ERROR}Erro\\${E_RESET}\]|" \
         -e "s|\[ Ok \]|\[\\${BP_C_OK} Ok \\${E_RESET}\]|" \
-        -e "s/[-0-9]+/\\${E_FG_GREEN}&\\${E_RESET}/1" \
-        -e "s/[:0-9]+/\\${E_FG_BR_GREEN}&\\${E_RESET}/6" \
+        -e "s/[-0-9]+/\\${E_FG_MAGENTA}&\\${E_RESET}/1" \
+        -e "s/[:0-9]+/\\${E_FG_BR_MAGENTA}&\\${E_RESET}/6" \
         -e "s|\[Crit\]|\[\\${E_BG_RED}\\${E_FG_WHITE}Crit\\${E_RESET}\]|" <"${BP_LOGFILE}")
 
       echo -e "$D"
