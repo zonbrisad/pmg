@@ -851,7 +851,10 @@ bpIpInfo() { ##D List all default IP adresses
 	done
 }
 																		
-	
+bpCPU() { # Print CPU info
+  lscpu | grep "Model name" | awk '{ print $3" "$4" "$5" "$6" "$7" "$8" "$9 }'
+}
+		
 function ii() { # Get current host related info.
 	echo
 	flag
@@ -865,7 +868,7 @@ function ii() { # Get current host related info.
 	  bpPrintInfo "IP addr" "$IP"
 	done
   bpPrintInfo "Machine Uptime:" "$(uptime -p)"
-	bpPrintInfo "Machine Type:" "$(uname -m)"
+	bpPrintInfo "Machine Type:" "$(bpCPU)"
 #	bpLine
 #	bpPrintInfo "Disk space:" ""
 #	bpLine

@@ -288,6 +288,10 @@ bpIp() { # Get IP adress on ethernet.
   ip addr show $(ip route | awk '/default/ { print $5 }') | grep "inet" | head -n 1 | awk '/inet/ {print $2}' | cut -d'/' -f1
 }
 
+bpCPU() { # Print CPU info
+  lscpu | grep "Model name" | awk '{ print $3" "$4" "$5" "$6" "$7" "$8" "$9 }'
+}
+
 bpIpInfo() { ##D List all default IP adresses
 	read -d "\n" -r -a INTERFACES <<< $(ip route | awk '/default/ { print $5 "\n" $7 }' )
 	IFS=$'\n' 
@@ -313,7 +317,8 @@ info() { ##D General information
   	bpPrintInfo "IP addr" "$IP"
 	done
   bpTextLine "Hardware"
-  bpPrintInfo "CPU" "$(cat /proc/cpuinfo | grep -m 1 "model name" | cut -n -b 14-)"
+#  bpPrintInfo "CPU" "$(cat /proc/cpuinfo | grep -m 1 "model name" | cut -n -b 14-)"
+  bpPrintInfo "CPU" "$(bpCPU)"
   bpPrintInfo "Memory" "$(free --mega | grep Mem | awk '{ print $2 }') Mb"
   bpPrintInfo "Graphics" "$(lspci 2> /dev/null | grep VGA | sed -r 's/.*controller: //')"
   bpTextLine "System"
