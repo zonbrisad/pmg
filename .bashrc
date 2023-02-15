@@ -847,7 +847,9 @@ bpIpInfo() { ##D List all default IP adresses
 		LINK=${INTERFACES[$i]}
 		(( i++ ))
 		IP=$(ip addr show "${INTERFACE}" | grep "inet" | head -n 1 | awk '/inet/ {print $2}' | cut -d'/' -f1 )
-		echo "$IP $INTERFACE $LINK"
+		MAC=$(ip addr show "${INTERFACE}" | grep "link/ether" | awk '{print $2}')
+		
+    echo "$IP $INTERFACE $LINK $MAC"
 	done
 }
 																		
