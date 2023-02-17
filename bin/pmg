@@ -283,6 +283,12 @@ dperf() { ##D Disk performance test using dd 128M
   sudo rm -f ${TF}
 }
 
+rperf() { ##D Read performance using hdparm
+  lsblk  --output NAME,SIZE,TYPE,VENDOR,REV,SERIAL | grep -e "disk" -e "NAME"
+	DEV=$(bpRead "Enter disk id")
+	sudo hdparm -t-direct "/dev/${DEV}"	
+}
+
 bpIp() { # Get IP adress on ethernet.
   ip addr show $(ip route | awk '/default/ { print $5 }') | grep "inet" | head -n 1 | awk '/inet/ {print $2}' | cut -d'/' -f1
 }
@@ -329,8 +335,8 @@ info() { ##D General information
   bpPrintInfo "Uptime" "$(uptime -p)"
 
   bpTextLine "SSH"
-  bpPrintInfo "SSH public key location" ${SSH_KEY}.pub
-  bpPrintInfo "SSH public key" "$(cat ${SSH_KEY}.pub)"
+  bpPrintInfo "SSH public key location" "${SSH_KEY}.pub"
+  bpPrintInfo "SSH public key" "$(cat "${SSH_KEY}.pub")"
 
   bpLine
 }
