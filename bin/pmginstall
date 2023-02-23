@@ -528,10 +528,6 @@ python() { ##D Install python development packages
   installPkgs "${pythonDevPkgs[@]}"
 }
 
-sci() { ##D Install science and technology packages
-  installPkgs "${sciPkgs[@]}"
-}
-
 WORK=~/Downloads
 
 gitClonePull() {
