@@ -40,7 +40,8 @@ bpUserSettings() {
 
 #  UID    UNAME NAME             EMAIL                     SHELL
 userList=(                      \
-  "2000" "pmg" "Peter Malmberg" "peter.malmberg@gmail.com" "/bin/bash" \
+  "2000" "pmg"  "Peter Malmberg" "peter.malmberg@gmail.com" "/bin/bash" \
+	"2001" "tpmg" "Peter Malmberg" "peter.malmberg@gmail.com" "/bin/bash" \
 )
 
 userList_test=(                      \
@@ -75,13 +76,6 @@ RPSERVER_MNT=/mnt/rpserver
 #---------------------------------------------------------------------
 # User defined functions
 #---------------------------------------------------------------------
-
-
-#
-# IP nr
-#
-#IP=`ip add show dev eth0 | grep "inet " | cut -c10-24 | cut -f1 -d'/'`
-#DATE=`date`
 
 #
 # Create dir if it does not exist

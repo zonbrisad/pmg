@@ -674,6 +674,7 @@ alias gh='git hist'
 alias go='git checkout '
 alias gk='gitk --all&'
 alias gx='gitx --all'
+alias gi='pmgp gi'
 
 alias got='git '
 alias get='git '

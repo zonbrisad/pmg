@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 # shellcheck disable=2034
+# shellcheck disable=2317
 # shellcheck disable=1090
 #---------------------------------------------------------------------
 #
@@ -81,16 +82,14 @@ agh() { ##D Add project to github
   fi
 }
 
-
 #
 # $1 file
 # $2 template path
 # $3 destination
 #
 cp_file() {
-	bpCp "${2}/${1}" "${3}" -L
+  bpCp "${2}/${1}" "${3}" -L
 }
-
 
 #
 # $1 file
@@ -99,7 +98,7 @@ cp_file() {
 #
 new_file() {
   F="${2}/${1}"
-#  bpInfo "$F"
+  #  bpInfo "$F"
   if [ -e "${F}" ]; then
     if bpReadY "Create ${1} file?"; then
 
@@ -130,8 +129,7 @@ new_proj() { ##I New project
     bpExit
   fi
 
-  cd "${proj_dir}" || bpExit "Failed to enter directory ${proj_dir}"
-
+  bpCd "${proj_dir}"
   git init
 
   new_file "README.md" "$TEMPLATE" "."
@@ -146,7 +144,7 @@ new_proj() { ##I New project
     agh "${proj_name}"
   fi
 
-  cd - || bpExit
+  bpCd -
 }
 
 new() { ##D New project
@@ -156,11 +154,10 @@ new() { ##D New project
 newp() { ##D New python project
   new_proj "p"
 }
- 
+
 newc() { ##D New C/C++ project
   new_proj "c"
 }
-
 
 ##- Gitignore
 
@@ -204,7 +201,7 @@ bpPrintList() { ##I Print items in selection list
   arr=("${@}")
   len=${#arr[@]}
   i=1
-  while [ $i -lt "$len" ]; do
+  while [ "$i" -lt "$len" ]; do
     key=${arr[$i]}
     ((i++))
     val=${arr[$i]}
@@ -230,7 +227,7 @@ bpFindInList() {
   bpDebug "Array len: ${#arr[@]}"
   bpDebug "Key: $1"
   i=1
-  while [ $i -lt ${#arr[@]} ]; do
+  while [ "$i" -lt ${#arr[@]} ]; do
     key=${arr[$i]}
     ((i++))
     val=${arr[$i]}
@@ -281,6 +278,31 @@ bpSelectFromList() { ##I Select from list
     #   fi
     # done
   done
+}
+
+#
+# $1 directory
+#
+bpIsGitRepo() { ##D Check if directory is a git repository
+  X=$(git rev-parse "$1" 2>/dev/null)
+  return $?
+}
+
+gi() { ##D Show git information
+  bpTextLine "Git config"
+  git config --list
+
+  if ! bpIsGitRepo "$PWD"; then
+    bpTextLine
+    return
+  fi
+  bpTextLine "Remote information"
+  git remote -v
+  bpLine
+}
+
+gc() { ## Show git configuration
+  :
 }
 
 #---------------------------------------------------------------------
@@ -390,7 +412,7 @@ bpCallStack() { ##I Print out BASH call stack
   bpTextLine "Call stack"
   echo
   local frame=0
-  while caller $frame | sed -r -e "s/[0-9]*/${BP_C_VALUE}&${E_RESET}/"; do
+  while caller "$frame" | sed -r -e "s/[0-9]*/${BP_C_VALUE}&${E_RESET}/"; do
     ((frame++))
   done
   echo "$*"

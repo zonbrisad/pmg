@@ -321,22 +321,22 @@ info() { ##D General information
   bpPrintVar "Username" USER
   IFS=$'\n'
   for IP in $(bpIpInfo); do
-    bpPrintDesc "IP addr" "$IP"
+    bpPrintInfo "IP addr" "$IP"
   done
   bpPrintLine "Hardware"
-  #  bpPrintDesc "CPU" "$(cat /proc/cpuinfo | grep -m 1 "model name" | cut -n -b 14-)"
-  bpPrintDesc "CPU" "$(bpCPU)"
-  bpPrintDesc "Memory" "$(free --mega | grep Mem | awk '{ print $2 }') Mb"
-  bpPrintDesc "Graphics" "$(lspci 2>/dev/null | grep VGA | sed -r 's/.*controller: //')"
+  #  bpPrintInfo "CPU" "$(cat /proc/cpuinfo | grep -m 1 "model name" | cut -n -b 14-)"
+  bpPrintInfo "CPU" "$(bpCPU)"
+  bpPrintInfo "Memory" "$(free --mega | grep Mem | awk '{ print $2 }') Mb"
+  bpPrintInfo "Graphics" "$(lspci 2>/dev/null | grep VGA | sed -r 's/.*controller: //')"
   bpPrintLine "System"
-  bpPrintDesc "Distibution" "$(lsb_release -a 2>/dev/null | grep Description | cut -b 14-)"
-  bpPrintDesc "Kernel" "$(uname -r)"
+  bpPrintInfo "Distibution" "$(lsb_release -a 2>/dev/null | grep Description | cut -b 14-)"
+  bpPrintInfo "Kernel" "$(uname -r)"
   bpPrintVar "Terminal" TERM
-  bpPrintDesc "Uptime" "$(uptime -p)"
+  bpPrintInfo "Uptime" "$(uptime -p)"
 
   bpPrintLine "SSH"
-  bpPrintDesc "SSH public key location" "${SSH_KEY}.pub"
-  bpPrintDesc "SSH public key" "$(cat "${SSH_KEY}.pub")"
+  bpPrintInfo "SSH public key location" "${SSH_KEY}.pub"
+  bpPrintInfo "SSH public key" "$(cat "${SSH_KEY}.pub")"
 
   bpPrintLine
 }
@@ -371,7 +371,7 @@ clean() { ##D Remove leftover files
   find . -name "*.orig" -delete
 
   # Remove untraced files
-  git clean -df -e *.log
+  git clean -df -e "*.log"
   bpCd -
 }
 
@@ -1360,16 +1360,14 @@ bpConfPrint() { ##I Print settings in config list
   arr=("${@:4}")
   i=1
   while [ "$i" -lt ${#arr[@]} ]; do
-    key=${arr[$i]}
+    KEY=${arr[$i]}
     ((i++))
-    def=${arr[$i]}
+    DEF=${arr[$i]}
     ((i++))
-    desc=${arr[$i]}
+    DESC=${arr[$i]}
     ((i++))
-    eval "val=\$$key"
-    #bpPrintLine "${desc}"
-    printf "%s%s\n" "${E_DARKGRAY}" "${desc}"
-    bpPrintDesc "$key" "$val"
+    printf "%s%s\n" "${E_DARKGRAY}" "${DESC}"
+    bpPrintDesc "$KEY" "${!KEY}"
   done
 }
 
@@ -1663,13 +1661,12 @@ printCondCommand() {
   read -r -a LINE <<<"$1"
   DESC="${LINE[*]:4}"
   COND=${LINE[3]}
-  eval "D=\$$COND"
 
   if [ -n "$IHELP" ] && [ "$COND" != "IHELP" ]; then
     return
   fi
 
-  if [ -n "$D" ]; then
+  if [ -n "${!COND}" ]; then
     bpPrintDesc "${LINE[0]}" "${DESC}"
     return
   fi
@@ -1691,13 +1688,12 @@ printCondNamedLine() {
   read -r -a LINE <<<"$1"
   DESC=${LINE[*]:2}
   COND=${LINE[1]}
-  eval "D=\$$COND"
 
   if [ -n "$IHELP" ] && [ "$COND" != "IHELP" ]; then
     return
   fi
 
-  if [ -n "$D" ]; then
+  if [ -n "${!COND}" ]; then
     bpPrintLine "$DESC"
   fi
 }
@@ -1807,6 +1803,7 @@ iinfo() { ##I Show information about script
   fi
 
   if [ -z "$BP_CONF" ]; then
+    bpPrintLine
     return
   fi
   bpPrintLine "Bashplate config"
@@ -1915,8 +1912,7 @@ bpRunCommand() {
     read -r -a ARR <<<"$CL"
     CV="${ARR[3]}"
     if [ -n "$CV" ]; then
-      eval "D=\$$CV"
-      if [ -n "$D" ]; then
+      if [ -n "${!CV}" ]; then
         # execute command
         "${command}" "$@"
       else
@@ -2008,7 +2004,6 @@ BP_CONFIG_LIST=(
   "BP_LICENSE" "MIT" "Default license"
   "BP_EDITOR" "vi" "Default editor"
   "BP_DIFF" "meld" "Default diff program"
-  "BP_TMP" "tmp" "Default temporary setting"
 )
 
 # Load configuration file settings
