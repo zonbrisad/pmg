@@ -98,7 +98,7 @@ bpUserSettings() {
     "apt" "ncdu" ":"
     "git" "https://github.com/ogham/exa" ":"
 		"git" "powertop" ":"
-		
+		"apt" "shellcheck" ":"
   )
 
   snap_unrestrict() {
@@ -123,7 +123,7 @@ bpUserSettings() {
     "snap" "g-assist" ":"
   )
 
-  devUtilsPkgs=(
+  devUtils=(
     "apt" "bison" ":"
     "apt" "flex" ":"
     "apt" "texinfo" ":"
@@ -132,70 +132,60 @@ bpUserSettings() {
     "apt" "subversion" ":"
     "apt" "meld" ":"
     "apt" "doxygen" ":"
-    "apt" "shellcheck" ":"
     "npm" "doctoc" ":"
   )
 
-  develCPkgs=(
+  devC=(
     "apt" "build-essential" ":"
     "apt" "gdb" ":"
     "apt" "gdbserver" ":"
     "apt" "autoconf" ":"
     "apt" "cmake" ":"
     "apt" "ccache" ":"
-    "apt" "colorgcc" ":"
     "apt" "gettext" ":"
     "apt" "libtool" ":"
-    "apt" "libexpat-dev" ":"
     "apt" "splint" ":"
     "apt" "pkg-config" ":"
     "apt" "gperf" ":"
+    "apt" "astyle" ":"
+		"lst" "devUtils" ":"
+  )
+	
+	devCLibs=(
+    "apt" "libexpat1-dev" ":"
     "apt" "libncurses5" ":"
     "apt" "libncurses5-dev" ":"
     "apt" "lua5.1" ":"
-    "apt" "liblua5.1" ":"
+    "apt" "liblua5.1-0" ":"
+		"apt" "liblua5.1-0-dev" ":"
     "apt" "libglib2.0-0" ":"
     "apt" "libglib2.0-dev" ":"
-    "apt" "qt5-default" ":"
-    "apt" "qt5-qmake" ":"
-    "apt" "libqt5core5a" ":"
-    "apt" "libqt5serialport5" ":"
-    "apt" "libqt5serialport5-dev" ":"
-    "apt" "qttools5-dev-tools" ":"
     "apt" "libsqlite3-dev" ":"
-    "apt" "astudio" ":"
-    "apt" "libgtk-3-dev" ":"
-    "apt" "libgtk-3-0-dbg" ":"
-    "apt" "glade" ":"
     "apt" "libc6-dev-amd64" ":"
-    "apt" "libgtk-3-dev" ":"
-    "apt" "astyle" ":"
     "apt" "libelf-dev" ":"
-    "apt" "freeglut3-dev" ":"
+		"apt" "freeglut3-dev" ":"
+  )
+	
+  devGTK=(
+	  "apt" "libglib2.0-0" ":"
+    "apt" "libglib2.0-dev" ":"
+    "apt" "libgtk-3-dev" ":"
+    "apt" "glade" ":"
   )
 
-  develQtPkgs=(
-    "apt" "libglib2.0-0" ":"
-    "apt" "libglib2.0-dev" ":"
+  devQt5=(
+#    "apt" "libglib2.0-0" ":"
+#    "apt" "libglib2.0-dev" ":"
     "apt" "qt5-default" ":"
     "apt" "qt5-qmake" ":"
     "apt" "libqt5core5a" ":"
     "apt" "libqt5serialport5" ":"
     "apt" "libqt5serialport5-dev" ":"
     "apt" "qttools5-dev-tools" ":"
-    "apt" "python3-pyqt5" ":"
-    "apt" "python3-pyqt5.qtserialport" ":"
-    "apt" "python3-pyqt5.qtopengl" ":"
-    "apt" "python3-guiqwt" ":"
-    "apt" "python3-guidata" ":"
-    "apt" "pyqt5-dev-tools" ":"
-    "apt" "pyqt5-examples" ":"
   )
 
-  armDevPkgs=(
-    "apt" "build-essential" ":"
-    "apt" "gdb" ":"
-    "apt" "gdbserver" ":"
+  devARM=(
+    "lst" "devC" ":"
     "apt" "binutils-arm-none-eabi" ":"
     "apt" "gcc-arm-none-eabi" ":"
     "apt" "gdb-arm-none-eabi" ":"
@@ -203,17 +193,15 @@ bpUserSettings() {
     "apt" "openocd" ":"
   )
 
-  avrDevPkgs=(
-    "apt" "build-essential" ":"
-    "apt" "gdbserver" ":"
+  devAVR=(
+		"lst" "devC" ":"
     "apt" "avrdude" ":"
     "apt" "avr-libc" ":"
     "apt" "gcc-avr" ":"
     "apt" "gdb-avr" ":"
-    "apt" "avrdude" ":"
   )
 
-  pythonDevPkgs=(
+  devPython=(
     "apt" "python3" ":"
     "apt" "python3-serial" ":"
     "apt" "python3-pip" ":"
@@ -233,11 +221,11 @@ bpUserSettings() {
     "pip" "textual" ":"
   )
 
-  rustDevPkgs=(
+  devRust=(
     "apt" "rustc" ":"
   )
 
-  sciPkgs=(
+  science=(
     "apt" "scilab" ":"
   )
 
@@ -379,8 +367,6 @@ installGit() { ##I Install git package
 }
 
 
-
-
 #
 # $1 package system
 # $2 package name
@@ -409,16 +395,21 @@ installGeneric() {
   if [ "$1" == "ppa" ]; then
     installPPA "$2" "$3"
   fi
+	
+	if [ "$1" == "lst" ]; then
+		local NAME=$2[@]
+		local LIST=("${!NAME}")
+    installPkgs "${LIST[@]}"
+  fi
 }
 
 #
 # arg 1  array of packages
 #
 installPkgs() { ##I Install array of packages
-  arr=("${@}")
-  len=${#arr[@]}
-  i=0
-  while [ $i -lt "$len" ]; do
+  local arr=("${@}")
+  local i=0
+  while [ $i -lt "${#arr[@]}" ]; do
     pkgt=${arr[$i]}
     ((i++))
     pkg=${arr[$i]}
@@ -484,19 +475,38 @@ samba() { ##D Install samba server and tools
 ##- Development tools
 
 devutils() { ##D Install development utls like git, svn, flex, doxygen
-  installPkgs "${devUtilsPkgs[@]}"
+  installPkgs "${devUtils[@]}"
 }
 
-cdevelop() { ##D Install packages for native C development
-  installPkgs "${develCPkgs[@]}"
+cdev() { ##D Install packages for native C/C++ development
+	gtk3=1
+	qt5=1
+	if bpReadBoolDN "Do you want to install GTK3 dev tools?"; then
+	  gtk3=0
+	fi 
+	if bpReadBoolDN "Do you want to install QT5 dev tools?"; then
+	  qt5=0
+	fi 
+	
+  installPkgs "${devC[@]}"
+	installPkgs "${devCLibs[@]}"
+
+  if [ $gtk3 -eq 0 ]; then
+	    installPkgs "${devGTK[@]}"
+	fi
+	
+	  if [ $qt5 -eq 0 ]; then
+	    installPkgs "${devQt5[@]}"
+	fi
+
 }
 
-ARMDevelop() { ##D Install ARM C development packages
-  installPkgs "${armDevPkgs[@]}"
+armdev() { ##D Install ARM C development packages
+  installPkgs "${devARM[@]}"
 }
 
-avrDevelop() { ##D Install AVR C development packages
-  installPkgs "${avrDevPkgs[@]}"
+avrdev() { ##D Install AVR C development packages
+  installPkgs "${devAVR[@]}"
 }
 
 java() { ##D Install Java development packages
@@ -507,11 +517,11 @@ java() { ##D Install Java development packages
 }
 
 python() { ##D Install python development packages
-  installPkgs "${pythonDevPkgs[@]}"
+  installPkgs "${devPython[@]}"
 }
 
 sci() { ##D Install science and technology packages
-  installPkgs "${sciPkgs[@]}"
+  installPkgs "${science[@]}"
 }
 
 WORK=~/Downloads
