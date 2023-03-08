@@ -255,7 +255,7 @@ update() { ##D  Update operating system
   sudo apt update && sudo apt upgrade --assume-yes && sudo apt autoremove && sudo apt autoclean
 }
 
-##- Misc
+##- Performance test
 stopwatch() { ##D Stopwatch function
   start=$(date +%s)
   while true; do
@@ -312,6 +312,19 @@ bpIpInfo() { ##D List all default IP adresses
 
     echo "$IP $INTERFACE $LINK $MAC"
   done
+}
+
+batd() { ##D Battery discharge test
+	bpReadBoolDY "Press enter to start battery discharge test"
+  
+	declare -g BP_LOGFILE=${PWD}/batterytest.log	
+	rm -rf $BP_LOGFILE
+	
+	bpInfo "Battery discharge test commence"
+	while true; do
+	  bpInfo "Time lasted: $SECONDS s"
+		sleep 10
+	done
 }
 
 ##- Information
