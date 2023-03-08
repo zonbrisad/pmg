@@ -1,17 +1,11 @@
 #!/bin/bash
+# shellcheck disable=2034
 # ---------------------------------------------------------------------------
 #
-# PERSONAL $HOME/.bashrc FILE for bash-3.0 (or later)
+# PERSONAL .bashrc file for bash-3.0 (or later)
 # By Peter Malmberg
 #
-
-#
-#  See for instance:
-#  http://tldp.org/LDP/abs/html/index.html
-#  http://www.caliban.org/bash
-#  http://www.shelldorado.com/scripts/categories.html
-#  http://www.dotfiles.org
-#
+# Based on https://tldp.org/LDP/abs/html/sample-bashrc.html
 # ---------------------------------------------------------------------------
 
 # Display commands as they are executed
@@ -40,8 +34,6 @@ export SVN_EDITOR=jed
 export SHELL=/bin/bash
 
 # Host specific setting -----------------------------------------------------
-
-HOSTNAME=$(hostname)
 
 # Host: fileserver ----------------------------------------------------------
 
@@ -74,9 +66,6 @@ host_fileserver() {
 	alias b3='cd /storage/backup/fileserver/daily_3/storage/home/pmg'
 	alias b4='cd /storage/backup/fileserver/daily_4/storage/home/pmg'
 	alias b5='cd /storage/backup/fileserver/daily_5/storage/home/pmg'
-
-	# Load bashplate settings
-	#  source ~/Tester/bashplates/bp_init
 }
 
 # Host: ustation ------------------------------------------------------------
@@ -121,13 +110,13 @@ FLAG_BLUE="\x1b[48;5;20m"
 FLAG_YELLOW="\x1b[48;5;226m"
 
 flag() {
-	echo -e "${FLAG_BLUE}        ${FLAG_YELLOW}  ${FLAG_BLUE}               ${E_END}"
-	echo -e "${FLAG_BLUE}        ${FLAG_YELLOW}  ${FLAG_BLUE}               ${E_END}"
-	echo -e "${FLAG_BLUE}        ${FLAG_YELLOW}  ${FLAG_BLUE}               ${E_END}"
-	echo -e "${FLAG_YELLOW}                         ${E_END}"
-	echo -e "${FLAG_BLUE}        ${FLAG_YELLOW}  ${FLAG_BLUE}               ${E_END}"
-	echo -e "${FLAG_BLUE}        ${FLAG_YELLOW}  ${FLAG_BLUE}               ${E_END}"
-	echo -e "${FLAG_BLUE}        ${FLAG_YELLOW}  ${FLAG_BLUE}               ${E_END}"
+	echo -e "${FLAG_BLUE}        ${FLAG_YELLOW}  ${FLAG_BLUE}               ${E_RESET}"
+	echo -e "${FLAG_BLUE}        ${FLAG_YELLOW}  ${FLAG_BLUE}               ${E_RESET}"
+	echo -e "${FLAG_BLUE}        ${FLAG_YELLOW}  ${FLAG_BLUE}               ${E_RESET}"
+	echo -e "${FLAG_YELLOW}                         ${E_RESET}"
+	echo -e "${FLAG_BLUE}        ${FLAG_YELLOW}  ${FLAG_BLUE}               ${E_RESET}"
+	echo -e "${FLAG_BLUE}        ${FLAG_YELLOW}  ${FLAG_BLUE}               ${E_RESET}"
+	echo -e "${FLAG_BLUE}        ${FLAG_YELLOW}  ${FLAG_BLUE}               ${E_RESET}"
 }
 
 take() { ##D Create directory and enter it
@@ -321,11 +310,13 @@ BP_C_VAR="${E_BR_YELLOW}"
 #
 BP_OK=0 # successful termination
 
-# Exit codes
-#
-BP_E_OK=0 # successful termination
+ALERT=${E_WHITE}${E_BG_RED} # Bold White on red background
 
-ALERT=${BWhite}${On_Red} # Bold White on red background
+# Formating
+#
+BP_KEY_LENGTH=24
+BP_LEFT_MARGIN=3
+BP_RIGHT_MARGIN=3
 
 # Logging ---------------------------------------------------------
 
@@ -374,45 +365,39 @@ bpOk() { ##D Success message
 	if [ -n "$LOG_OK" ]; then
 		bpLogOk "$1"
 	fi
-	echo -e "[${BP_C_OK}Ok${E_END}] $1"
+	echo -e "[${BP_C_OK}Ok${E_RESET}] $1"
 }
 
 bpInfo() { ##D Info message
 	if [ -n "$LOG_INFO" ]; then
 		bpLogInfo "$1"
 	fi
-	echo -e "[${BP_C_INFO}Info${E_END}]  $1"
+	echo -e "[${BP_C_INFO}Info${E_RESET}]  $1"
 }
 
 bpWarning() { ##D Warning message
 	if [ -n "$LOG_WARNING" ]; then
 		bpLogWarning "$1"
 	fi
-	echo -e "[${BP_C_WARNING}Warning${E_END}] $1"
+	echo -e "[${BP_C_WARNING}Warning${E_RESET}] $1"
 }
 
 bpError() { ##D Error message
 	if [ -n "$LOG_ERROR" ]; then
 		bpLogError "$1"
 	fi
-	echo -e "[${BP_C_ERROR}Error${E_END}] $1"
+	echo -e "[${BP_C_ERROR}Error${E_RESET}] $1"
 }
 
 bpCritical() { ##D Critical error message
 	if [ -n "$LOG_CRITICAL" ]; then
 		bpLogCritical "$1"
 	fi
-	echo -e "[${BP_C_CRITICAL}Critical${E_END}] $1"
+	echo -e "[${BP_C_CRITICAL}Critical${E_RESET}] $1"
 	bpExit
 }
 
 ##-
-
-# Formating
-#
-BP_KEY_LENGTH=24
-BP_LEFT_MARGIN=3
-BP_RIGHT_MARGIN=3
 
 #---------------------------------------------------------------------
 # Bashplate internal functions
@@ -544,7 +529,7 @@ bpPrintVar() { ##I Print variable value and description
 #
 bpColorizeFile() { ##D Colorize string with filename
 	if [ -n "$1" ]; then
-		echo "${BP_C_PATH}$(dirname "$1")/${BP_C_FILENAME}$(basename "$1")${E_END}"
+		echo "${BP_C_PATH}$(dirname "$1")/${BP_C_FILENAME}$(basename "$1")${E_RESET}"
 	fi
 }
 
@@ -600,11 +585,11 @@ bpReload() { ## Reload .bashrc
 
 # Test connection type:
 if [ -n "${SSH_CONNECTION}" ]; then
-	CNX=${Green} # Connected on remote machine, via ssh (good).
+	CNX=${E_GREEN} # Connected on remote machine, via ssh (good).
 elif [[ "${DISPLAY%%:0*}" != "" ]]; then
 	CNX=${ALERT} # Connected on remote machine, not via ssh (bad).
 else
-	CNX=${BCyan} # Connected on local machine.
+	CNX=${E_BR_CYAN} # Connected on local machine.
 fi
 
 # Test user type:
@@ -621,32 +606,32 @@ function load_color() {
 	local SYSLOAD=$(load)
 	if [ ${SYSLOAD} -gt ${XLOAD} ]; then
 		echo -en ${ALERT}
-	elif [ ${SYSLOAD} -gt ${MLOAD} ]; then
+	elif [ "${SYSLOAD}" -gt "${MLOAD}" ]; then
 		echo -en ${Red}
-	elif [ ${SYSLOAD} -gt ${SLOAD} ]; then
-		echo -en ${BRed}
+	elif [ "${SYSLOAD}" -gt "${SLOAD}" ]; then
+		echo -en "${E_BR_RED}"
 	else
-		echo -en ${Green}
+		echo -en "${E_BR_GREEN}"
 	fi
 }
 
 # Returns a color according to free disk space in $PWD.
 function disk_color() {
 	if [ ! -w "${PWD}" ]; then
-		echo -en ${Red}
+		echo -en "${E_RED}"
 		# No 'write' privilege in the current directory.
 	elif [ -s "${PWD}" ]; then
 		local used=$(command df -P "$PWD" |
 			awk 'END {print $5} {sub(/%/,"")}')
-		if [ ${used} -gt 95 ]; then
-			echo -en ${ALERT} # Disk almost full (>95%).
-		elif [ ${used} -gt 90 ]; then
-			echo -en ${BRed} # Free disk space almost gone.
+		if [ "${used}" -gt 95 ]; then
+			echo -en "${ALERT}" # Disk almost full (>95%).
+		elif [ "${used}" -gt 90 ]; then
+			echo -en "${E_BR_RED}" # Free disk space almost gone.
 		else
-			echo -en ${Green} # Free disk space is ok.
+			echo -en "${E_GREEN}" # Free disk space is ok.
 		fi
 	else
-		echo -en ${Cyan}
+		echo -en "${E_CYAN}"
 	# Current directory is size '0' (like /proc, /sys etc).
 	fi
 }
@@ -654,9 +639,9 @@ function disk_color() {
 # Returns a color according to running/suspended jobs.
 function job_color() {
 	if [ $(jobs -s | wc -l) -gt "0" ]; then
-		echo -en ${BRed}
+		echo -en "${E_BR_RED}"
 	elif [ $(jobs -r | wc -l) -gt "0" ]; then
-		echo -en ${BCyan}
+		echo -en "${E_BR_CYAN}"
 	fi
 }
 
@@ -695,12 +680,6 @@ case ${TERM} in
 	# --> Shows full pathname of current dir.
 	;;
 esac
-
-export TIMEFORMAT=$'\nreal %3R\tuser %3U\tsys %3S\tpcpu %P\n'
-export HISTIGNORE="&:bg:fg:ll:h"
-export HISTTIMEFORMAT="$(echo -e ${BCyan})[%d/%m%H:%M:%S]$(echo -e ${NC}) "
-export HISTCONTROL=ignoredups
-export HOSTFILE=$HOME/.hosts # Put a list of remote hosts in ~/.hosts
 
 #============================================================
 #
@@ -872,16 +851,16 @@ function fstr() {
 function swap() { # Swap 2 filenames around, if they exist (from Uzi's bashrc).
 	local TMPFILE=tmp.$$
 
-	[ $# -ne 2 ] && echo "swap: 2 arguments needed" && return 1
-	[ ! -e "$1" ] && echo "swap: $1 does not exist" && return 1
-	[ ! -e "$2" ] && echo "swap: $2 does not exist" && return 1
+	[ $# -ne 2 ] && bpError "swap: 2 arguments needed" && return 1
+	[ ! -e "$1" ] && bpError "swap: $1 does not exist" && return 1
+	[ ! -e "$2" ] && bpError "swap: $2 does not exist" && return 1
 
 	mv "$1" $TMPFILE
 	mv "$2" "$1"
 	mv $TMPFILE "$2"
 }
 
-function extract() { # Handy Extract Program
+extract() { # Handy Extract Program
 	if [ -f "$1" ]; then
 		case "$1" in
 		*.tar.bz2) tar xvjf "$1" ;;
@@ -895,21 +874,23 @@ function extract() { # Handy Extract Program
 		*.zip) unzip "$1" ;;
 		*.Z) uncompress "$1" ;;
 		*.7z) 7z x "$1" ;;
-		*) echo "'$1' cannot be extracted via >extract<" ;;
+		*) bpError "'$1' cannot be extracted via >extract<" ;;
 		esac
 	else
-		echo "'$1' is not a valid file!"
+		bpError "'$1' is not a valid file!"
 	fi
 }
 
 # Creates an archive (*.tar.gz) from given directory.
-function maketar() { tar cvzf "${1%%/}.tar.gz" "${1%%/}/"; }
+maketar() {
+	tar cvzf "${1%%/}.tar.gz" "${1%%/}/"
+}
 
 # Create a ZIP archive of a file or folder.
-function makezip() { zip -r "${1%%/}.zip" "$1"; }
+makezip() { zip -r "${1%%/}.zip" "$1"; }
 
 # Make your directories and files access rights sane.
-function sanitize() { chmod -R u=rwX,g=rX,o= "$@"; }
+sanitize() { chmod -R u=rwX,g=rX,o= "$@"; }
 
 #-------------------------------------------------------------
 # Process/system related functions:
@@ -931,10 +912,6 @@ function killps() {          # kill by process name
 			kill "$sig" "$pid"
 		fi
 	done
-}
-
-function bpIp() { # Get IP adress on ethernet.
-	ip addr show $(ip route | awk '/default/ { print $5 }') | grep "inet" | head -n 1 | awk '/inet/ {print $2}' | cut -d'/' -f1
 }
 
 bpIpInfo() { ##D List all default IP adresses
@@ -961,31 +938,19 @@ bpCPU() { # Print CPU info
 function ii() { # Get current host related info.
 	echo
 	flag
-	#	bpLine
 	echo
-	bpPrintInfo "Hostname:" "$HOSTNAME $NC"
-	bpPrintInfo "Username:" "$USER"
-	bpPrintInfo "Current date:" "$(date)"
+	bpPrintDesc "Hostname:" "$HOSTNAME $NC"
+	bpPrintDesc "Username:" "$USER"
+	bpPrintDesc "Current date:" "$(date)"
 	IFS=$'\n'
-	for IP in $(bpIpInfo); do
-		bpPrintInfo "IP addr" "$IP"
-	done
-	bpPrintInfo "Machine Uptime:" "$(uptime -p)"
-	bpPrintInfo "Machine Type:" "$(bpCPU)"
-	#	bpLine
-	#	bpPrintInfo "Disk space:" ""
-	#	bpLine
+	bpPrintDesc "IP addr" "$(bpIpInfo)"
+	bpPrintDesc "Machine Uptime:" "$(uptime -p)"
+	bpPrintDesc "Machine Type:" "$(bpCPU)"
 }
 
 function loginInfo() {
 
-	#  echo -e "${BCyan}This is BASH ${BRed}${BASH_VERSION%.*}${BCyan} - DISPLAY on ${BRed}$DISPLAY${NC}\n"
 	ii
-
-	if [ -x /usr/games/fortune ]; then
-		/usr/games/fortune -s # Makes our day a bit more fun.... :-)
-		bpLine
-	fi
 
 }
 
@@ -1264,8 +1229,6 @@ _killall() {
 
 complete -F _killall killall killps
 
-loginInfo
-
 #
 # $1 command to check
 #
@@ -1275,6 +1238,23 @@ bpHasCmd() { ##I Check if command is available
 	else
 		return 1
 	fi
+}
+
+bpIsFunction() { ##I Check if and identifier is declared as a function
+	if [ "$(type -t "$1")" == "function" ]; then
+		return 0
+	fi
+	return 1
+}
+
+#
+# Filter out function from script file
+#
+# $1 file
+# $2 function
+#
+bpGetFunction() {
+	grep --no-filename -A 60 "$1" -e "${2}()" | grep -B 60 -m 1 -x "}"
 }
 
 #
@@ -1312,7 +1292,7 @@ printCommand() {
 	help_line=$1
 	help_command=$(echo "$help_line" | sed -s 's/(.*//')
 	help_info=$(echo "$help_line" | sed -s 's/^.*'"$2"'//')
-	bpPrintInfo "$help_command" "$help_info"
+	bpPrintDesc "$help_command" "$help_info"
 }
 
 printCondCommand() {
@@ -1322,7 +1302,7 @@ printCondCommand() {
 	if [ -n "$D" ]; then
 		help_command=$(echo "$help_line" | sed -s 's/(.*//')
 		help_info=$(echo "$help_line" | sed -s 's/^.*'"$C"'//')
-		bpPrintInfo "$help_command" "$help_info"
+		bpPrintDesc "$help_command" "$help_info"
 	fi
 }
 
@@ -1336,9 +1316,9 @@ printCondCommandV() {
 	help_info=$(echo "$help_line" | sed -s 's/^.*'"$C"'//')
 
 	if [ -n "$D" ]; then
-		bpPrintInfo "$help_command" "$help_info"
+		bpPrintDesc "$help_command" "$help_info"
 	else
-		bpPrintInfoAlt "$help_command" "$help_info"
+		bpPrintDescAlt "$help_command" "$help_info"
 	fi
 }
 
@@ -1347,13 +1327,13 @@ printCondLine() {
 	C=$(echo "$1" | sed -s 's/^.*##C-//' | awk '{print $1}')
 	eval "D=\$$C"
 	if [ -n "$D" ]; then
-		bpLine
+		bpPrintLine
 	fi
 }
 
 printNamedLine() {
 	name=$(echo "$1" | sed -e 's/^.*##N-//' -e 's/^[ \t]*//')
-	bpTextLine "$name"
+	bpPrintLine "$name"
 }
 
 help() { ## Print this help information
@@ -1366,7 +1346,7 @@ help() { ## Print this help information
 	help_lines=$(grep -h '##' "${F}" | grep -v -e 'grep' -e '##D' -e '##V' -e '\*##C' -e '\*##C-' -e '\"##' -e '##N-//' -e 'help_line' -e 'printLine')
 	for help_line in ${help_lines}; do
 		case "$help_line" in
-		*"##-"*) bpLine ;;
+		*"##-"*) bpPrintLine ;;
 			#    *"##C-"*)  printCondLine       "$help_line" ;;
 			#		*"##N-"*)  printNamedLine      "$help_line" ;;
 			#		*"##CN-"*) printCondNamedLine  "$help_line" ;;
@@ -1383,38 +1363,37 @@ help() { ## Print this help information
 #---------------------------------------------------------------------
 
 ##V Directory where script is located
-BPSCRIPTPATH=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
+BP_SELF_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 
 ##V Name of script
-#echo $0
-#BPSCRIPTNAME=$(basename "$0")
+BP_SELF=$(basename "$0")
 
 ##V Number of arguments given to script
-BPARGUMENTS=$#
+BP_ARGUMENTS=$#
 
 ##V Current date
-BPDATE=$(date +"%Y-%m-%d")
+BP_DATE=$(date +"%Y-%m-%d")
 
 ##V Current time
-BPTIME=$(date +"%H:%M:%S")
+BP_TIME=$(date +"%H:%M:%S")
 
 ##V Number of columns in terminal
-BPCOLUMNS=$(tput cols)
+BP_COLUMNS=$(tput cols)
 
 ##V Number of lines in terminal
-BPLINES=$(tput lines)
+BP_LINES=$(tput lines)
 
 ##V Settings directory
-BP_SETTINGS_DIR=~/.config/bashplates
+BP_CONFIG_DIR=~/.config/bashplates
 
 ##V Settings file
-BP_SETTINGS_FILE=${BP_SETTINGS_DIR}/bashplates.conf
+BP_CONFIG_FILE="${BP_CONFIG_DIR}/bashplates.conf"
 
 ##V System Path's
-BP_SETTINGS_PATHS="${BP_SETTINGS_DIR}/path"
+BP_CONFIG_PATHS="${BP_CONFIG_DIR}/path"
 
 ##V Links to modules
-BP_SETTINGS_MODULES="${BP_SETTINGS_DIR}/modules"
+BP_CONFIG_MODULES="${BP_CONFIG_DIR}/modules"
 
 #---------------------------------------------------------------------
 # Setup signal traps
@@ -1435,17 +1414,24 @@ fi
 # Initiate bashplate settings
 bpInitSettings
 
-# If bashplates settings directory exist load settings/paths/modules
-if [ -e "$BP_SETTINGS_DIR" ]; then
+bpInitDisplay
 
-	# Load bashplate settings
-	if [ -f "$BP_SETTINGS_FILE" ]; then
-		source ${BP_SETTINGS_FILE}
+loginInfo
+
+bpSource() { ##I Load
+	if [ -f "$1" ]; then
+		source "$1"
+		return 0
+	else
+		bpError "Could not load file: $1"
+		return 1
 	fi
+}
 
+bpLoadPaths() { ##I Load k
 	# Add bashplates PATH's
-	if [ -e "$BP_SETTINGS_PATHS" ]; then
-		for p in $(find ${BP_SETTINGS_PATHS} -type l); do
+	if [ -e "$BP_CONFIG_PATHS" ]; then
+		for p in $(find ${BP_CONFIG_PATHS} -type l); do
 			l=$(readlink "${p}")
 			if [ -e "${l}" ]; then
 				PATH="${PATH}:${l}"
@@ -1456,24 +1442,38 @@ if [ -e "$BP_SETTINGS_DIR" ]; then
 		done
 		export PATH
 	fi
+}
 
+bpLoadModules() { ##I Load moduls
 	# Run bashplates module scripts
-	if [ -e "$BP_SETTINGS_MODULES" ]; then
-		for m in $(find ${BP_SETTINGS_MODULES} -type l); do
+	if [ -e "$BP_CONFIG_MODULES" ]; then
+		for m in $(find ${BP_CONFIG_MODULES} -type l); do
 			l=$(readlink "${m}")
 			if [ -e "${l}" ]; then
-				source "$l"
+				bpSource "$l"
 				bpOk "Loaded module $(bpColorizeFile "$l")"
 			else
 				bpError "Failed to load module $(bpColorizeFile "$l")"
 			fi
 		done
 	fi
+}
+
+# If bashplates settings directory exist load settings/paths/modules
+if [ -e "$BP_CONFIG_DIR" ]; then
+
+	# Load bashplate settings
+	if [ -f "$BP_CONFIG_FILE" ]; then
+		bpSource "${BP_CONFIG_FILE}"
+	fi
+
+	echo
+	bpLoadPaths
+	echo
+	bpLoadModules
 fi
 
-bpInitDisplay
-
 # Call host specific function if existing
-if [ "$(type -t host_"${HOSTNAME}")" == "function" ]; then
+if bpIsFunction "host_${HOSTNAME}"; then
 	host_"${HOSTNAME}"
 fi
