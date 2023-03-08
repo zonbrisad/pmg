@@ -99,6 +99,7 @@ bpUserSettings() {
     "git" "https://github.com/ogham/exa" ":"
 		"git" "powertop" ":"
 		"apt" "shellcheck" ":"
+		"apt" "tree" ":"
   )
 
   snap_unrestrict() {

@@ -59,11 +59,9 @@ host_lliten() {
 	fi
 }
 
-
 host_rpexp() {
-  :
+	:
 }
-
 
 host_fileserver() {
 	alias lef='cd ~/Projekt/LEF'
@@ -137,20 +135,19 @@ take() { ##D Create directory and enter it
 	cd "$1"
 }
 
-
 get_xserver() {
-  case $TERM in
-	  xterm | xterm-256color)
-		  XSERVER=$(who am i | awk '{print $NF}' | tr -d ')''(' )
-			# Ane-Pieter Wieringa suggests the following alternative:
-			#  I_AM=$(who am i)
-			#  SERVER=${I_AM#*(}
-			#  SERVER=${SERVER%*)}
-			XSERVER=${XSERVER%%:*}
-			;;
-		aterm | rxvt)
-		  # Find some code that works here. ...
-			;;
+	case $TERM in
+	xterm | xterm-256color)
+		XSERVER=$(who am i | awk '{print $NF}' | tr -d ')''(')
+		# Ane-Pieter Wieringa suggests the following alternative:
+		#  I_AM=$(who am i)
+		#  SERVER=${I_AM#*(}
+		#  SERVER=${SERVER%*)}
+		XSERVER=${XSERVER%%:*}
+		;;
+	aterm | rxvt)
+		# Find some code that works here. ...
+		;;
 	esac
 }
 
@@ -201,45 +198,86 @@ unset MAILCHECK # Don't want my shell to warn me of incoming mail.
 #---------------------------------------------------------------------
 
 #---------------------------------------------------------------------
-# Terminal codes
+# ANSI escape codes
 #---------------------------------------------------------------------
 
 # ANSI foreground colors codes
 #
-E_BLACK=$'\e[0;30m'      # Black
-E_RED=$'\e[0;31m'        # Red
-E_GREEN=$'\e[0;32m'      # Green
-E_YELLOW=$'\e[0;33m'     # Yellow
-E_BLUE=$'\e[0;34m'       # Blue
-E_MAGENTA=$'\e[0;35m'    # Magenta
-E_CYAN=$'\e[0;36m'       # Cyan
-E_GRAY=$'\e[0;37m'       # Gray
-E_DARKGRAY=$'\e[1;30m'   # Dark Gray
-E_BR_RED=$'\e[1;31m'     # Bright Red
-E_BR_GREEN=$'\e[1;32m'   # Bright Green
-E_BR_YELLOW=$'\e[1;33m'  # Bright Yellow
-E_BR_BLUE=$'\e[1;34m'    # Bright Blue
-E_BR_MAGENTA=$'\e[1;35m' # Bright Magenta
-E_BR_CYAN=$'\e[1;36m'    # Bright Cyan
-E_WHITE=$'\e[1;37m'      # White
+E_BLACK=$'\e[38:5:0m'       # Black
+E_RED=$'\e[38:5:1m'         # Red
+E_GREEN=$'\e[38:5:2m'       # Green
+E_YELLOW=$'\e[38:5:3m'      # Yellow
+E_BLUE=$'\e[38:5:4m'        # Blue
+E_MAGENTA=$'\e[38:5:5m'     # Magenta
+E_CYAN=$'\e[38:5:6m'        # Cyan
+E_GRAY=$'\e[38:5:7m'        # Gray
+E_DARKGRAY=$'\e[38:5:8m'    # Dark Gray
+E_BR_RED=$'\e[38:5:9m'      # Bright Red
+E_BR_GREEN=$'\e[38:5:10m'   # Bright Green
+E_BR_YELLOW=$'\e[38:5:11m'  # Bright Yellow
+E_BR_BLUE=$'\e[38:5:12m'    # Bright Blue
+E_BR_MAGENTA=$'\e[38:5:13m' # Bright Magenta
+E_BR_CYAN=$'\e[38:5:14m'    # Bright Cyan
+E_WHITE=$'\e[38:5:15m'      # White
 
 # ANSI background color codes
 #
-E_ON_BLACK=$'\e[40m'   # Black
-E_ON_RED=$'\e[41m'     # Red
-E_ON_GREEN=$'\e[42m'   # Green
-E_ON_YELLOW=$'\e[43m'  # Yellow
-E_ON_BLUE=$'\e[44m'    # Blue
-E_ON_MAGENTA=$'\e[45m' # Magenta
-E_ON_CYAN=$'\e[46m'    # Cyan
-E_ON_WHITE=$'\e[47m'   # White
+E_BG_BLACK=$'\e[48;5;0m'       # Black
+E_BG_RED=$'\e[48;5;1m'         # Red
+E_BG_GREEN=$'\e[48;5;2m'       # Green
+E_BG_YELLOW=$'\e[48;5;3m'      # Yellow
+E_BG_BLUE=$'\e[48;5;4m'        # Blue
+E_BG_MAGENTA=$'\e[48;5;5m'     # Magenta
+E_BG_CYAN=$'\e[48;5;6m'        # Cyan
+E_BG_GRAY=$'\e[48;5;7m'        # Gray
+E_BG_DARK_GRAY=$'\e[48;5;8m'   # Dark gray
+E_BG_BR_RED=$'\e[48;5;9m'      # Bright Red
+E_BG_BR_GREEN=$'\e[48;5;10m'   # Bright Green
+E_BG_BR_YELLOW=$'\e[48;5;11m'  # Bright Yellow
+E_BG_BR_BLUE=$'\e[48;5;12m'    # Bright Blue
+E_BG_BR_MAGENTA=$'\e[48;5;13m' # Bright Magenta
+E_BG_BR_CYAN=$'\e[48;5;14m'    # Bright Cyan
+E_BG_WHITE=$'\e[48;5;15m'      # White
+
+# ANSI underline color codes
+#
+# Not in standard. implemented in Kitty, VTE, mintty, etc.
+#
+E_UL_BLACK=$'\e[58;5;0m'       # Black
+E_UL_RED=$'\e[58;5;1m'         # Red
+E_UL_GREEN=$'\e[58;5;2m'       # Green
+E_UL_YELLOW=$'\e[58;5;3m'      # Yellow
+E_UL_BLUE=$'\e[58;5;4m'        # Blue
+E_UL_MAGENTA=$'\e[58;5;5m'     # Magenta
+E_UL_CYAN=$'\e[58;5;6m'        # Cyan
+E_UL_GRAY=$'\e[58;5;7m'        # Gray
+E_UL_DARKGRAY=$'\e[58;5;8m'    # Dark Gray
+E_UL_BR_RED=$'\e[58;5;9m'      # Bright Red
+E_UL_BR_GREEN=$'\e[58;5;10m'   # Bright Green
+E_UL_BR_YELLOW=$'\e[58;5;11m'  # Bright Yellow
+E_UL_BR_BLUE=$'\e[58;5;12m'    # Bright Blue
+E_UL_BR_MAGENTA=$'\e[58;5;13m' # Bright Magenta
+E_UL_BR_CYAN=$'\e[58;5;14m'    # Bright Cyan
+E_UL_WHITE=$'\e[58;5;15m'      # White
 
 # ANSI Text attributes
-E_ATTR_BOLD=$'\e[1m'
-E_ATTR_LOWI=$'\e[2m'
-E_ATTR_UNDERLINE=$'\e[4m'
-E_ATTR_BLINK=$'\e[5m'
-E_ATTR_REVERSE=$'\e[7m'
+E_BOLD=$'\e[1m'               # Bold text
+E_DIM=$'\e[2m'                # Dim(low intensity) text
+E_ITALIC=$'\e[3m'             # Italic text
+E_UNDERLINE=$'\e[4m'          # Underlined text
+E_UNDERLINE_DOUBLE=$'\e[4:2m' # Double underline (limited support)
+E_UNDERLINE_CURLY=$'\e[4:3m'  # Curly underline (limited support)
+E_UNDERLINE_DOT=$'\e[4:4m'    # Dotted underline (limited support)
+E_UNDERLINE_DASH=$'\e[4:5m'   # Dashed underline (limited support)
+E_BLINK=$'\e[5m'              # Blinking text
+E_RAPID_BLINK=$'\e[6m'        # Rapid blink (Limited support)
+E_REVERSE=$'\e[7m'            # Reverse color
+E_CROSSED=$'\e[9m'            # Crossed over text
+E_FRAKTUR=$'\e[20m'           # Gothic (limited support)
+E_FRAMED=$'\e[51m'            # Framed (limited support)
+E_OVERLINED=$'\e[53m'         # Overlined text
+E_SUPERSCRIPT=$'\e[73m'       # Superscript text (limited support)
+E_SUBSCRIPT=$'\e[74m'         # Subscript text (limited support)
 
 # ANSI cursor operations
 #
@@ -251,26 +289,37 @@ E_BACK=$'\e[D'    # Move cursor backward
 E_HIDE=$'\e[?25l' # Hide cursor
 E_SHOW=$'\e[?25h' # Show cursor
 
-E_END=$'\e[m' # Clear Attributes
+E_RESET=$'\e[0m' # Clear Attributes
 
 # Default Bashplate colortheme
-BP_C_OK=$E_BR_GREEN
-BP_C_INFO=$E_BR_CYAN
-BP_C_WARNING=$E_BR_YELLOW
-BP_C_ERROR=$E_BR_RED
-BP_C_CRITICAL=$E_ON_RED$E_WHITE
-BP_C_LINE=$E_DARKGRAY
-BP_C_LINE_TEXT=$E_YELLOW
-BP_C_DESCRIPTION=$E_BR_CYAN
-BP_C_ID=$E_MAGENTA
-BP_C_FILENAME=$E_BR_CYAN
-BP_C_PATH=$E_CYAN
+BP_C_OK="${E_BR_GREEN}"
+BP_C_INFO="${E_BR_CYAN}"
+BP_C_DEBUG="${E_BG_GREEN}${E_WHITE}"
+BP_C_WARNING="${E_BR_YELLOW}"
+BP_C_ERROR="${E_BR_RED}"
+BP_C_CRITICAL="${E_BG_RED}${E_WHITE}"
+BP_C_LINE="${E_DARKGRAY}"
+BP_C_LINETEXT="${E_YELLOW}"
+BP_C_DESCRIPTION="${E_CYAN}"
+BP_C_KEY="${E_BR_MAGENTA}"
+
+BP_C_FILENAME="${E_BR_CYAN}"
+BP_C_PATH="${E_CYAN}"
+BP_C_URL_SCHEME="${E_DARKGRAY}"
+# BP_C_URL_USER=""
+# BP_C_URL_HOST=""
+BP_C_TIME="${E_BR_MAGENTA}"
+BP_C_DATE="${E_MAGENTA}"
 
 # Shellscript colorize colors
-BP_C_RESERVED=$E_RED
-BP_C_COMMENT=$E_CYAN
-BP_C_STRING=$E_GREEN
-BP_C_VAR=$E_BR_YELLOW
+BP_C_RESERVED="${E_RED}"
+BP_C_COMMENT="${E_CYAN}"
+BP_C_STRING="${E_GREEN}"
+BP_C_VAR="${E_BR_YELLOW}"
+
+# Exit codes
+#
+BP_OK=0 # successful termination
 
 # Exit codes
 #
@@ -301,6 +350,10 @@ bpLogOk() { ##D Log Ok message to file
 
 bpLogInfo() { ##D Log Info message to file
 	bpLog "[Info] $1"
+}
+
+bpLogDebug() { ##I Log Info message to file
+	bpLog "[Debg] $1"
 }
 
 bpLogWarning() { ##D Log Warning message to file
@@ -355,85 +408,132 @@ bpCritical() { ##D Critical error message
 
 ##-
 
-# Print text with row
+# Formating
 #
-# arg1 text to be printed
-# arg2 text color
-# arg3 line color
-# arg4 middle character
-# arg5 line character
+BP_KEY_LENGTH=24
+BP_LEFT_MARGIN=3
+BP_RIGHT_MARGIN=3
+
+#---------------------------------------------------------------------
+# Bashplate internal functions
+#---------------------------------------------------------------------
+
+##C- IHELP Printing functions
+
 #
-bpPrintLineC() { ##D Print text with adjusted line after with selectable colors
+# $1 text to be printed
+# $2 text color
+# $3 line color
+# $4 middle character
+# $5 line character
+#
+bpPrintLineGeneric() { ##I Print text with adjusted line after with selectable colors
 	len1="${#1}"
 	len4="${#4}"
 
 	echo -en "${2}${1}${4}${3}"
-	l=$((BPCOLUMNS - len1 - len4 - 3))
+	l=$((BP_COLUMNS - len1 - len4))
 	seq -s"${5}" "${l}" | tr -d '[:digit:]'
-	echo -en "${E_END}"
+	echo -en "${E_RESET}"
 }
 
-# Print text with row
 #
-# arg1 text to be printed
-# arg2 text color
-# arg3 line color
+# $1 text to be printed
+# $2 text color
+# $3 line color
 #
-bpTextLineC() { ##D Print text with adjusted line after with selectable colors
-	bpPrintLineC "$1" "$2" "$3" " " "-"
+bpTextLineC() { ##I Print text with adjusted line after with selectable colors
+	bpPrintLineGeneric "$1" "$2" "$3" " " "-"
 }
 
-bpTextLine() { ##D Print text with line after
-	bpTextLineC "$1" "${BP_C_LINE_TEXT}" "${BP_C_LINE}"
-}
-
-# Print a divider row
-#
-bpLine() { ##D Print a line
-	bpPrintLineC "" "${BP_C_LINE}" "${BP_C_LINE}" "" "-"
-}
-
-# Generic command/description printout function
-#
-# $1 command color
-# $2 description color
-# $3 command text
-# $4 desccription text
-#
-bpPrintInfoGeneric() {
-	printf "${1}  %-24.24s${E_END} ${2}%s${E_END}\n" "$3" "$4"
-}
-
-# Print text into two columns
-#
-# arg1 text for column 1
-# arg2 text for column 2
-#
-bpPrintInfo() {
-	bpPrintInfoGeneric "${BP_C_ID}" "${BP_C_DESCRIPTION}" "$1" "$2"
-}
-
-bpPrintInfoAlt() {
-	bpPrintInfoGeneric "${E_DARKGRAY}" "${BP_C_DESCRIPTION}" "$1" "$2"
-}
-
-# Print a variable + text into two columns
-#
-# $1 variable for column 1
-# $2 text for column 2
-# $3 optional text form column 1
-#
-bpPrintVar() {
-	var="$1"
-	if [ "${!var}" ]; then
-		if [ ! -z "$3" ]; then
-			X=${3}
-		else
-			X="${!var}"
-		fi
-		bpPrintInfo "$2" "${X}"
+bpPrintLine() { ##I Print text with line
+	if [ "${#1}" -eq 0 ]; then
+		bpPrintLineGeneric "" "" "${BP_C_LINE}" "" "-"
 	else
-		printf "${BP_C_ID}  %-24s${E_END} ${E_RED}N/A${E_END}\n" "$2"
+		bpPrintLineGeneric "$1" "${BP_C_LINETEXT}" "${BP_C_LINE}" " " "-"
+	fi
+}
+
+#
+# $1 key color
+# $2 description color
+# $3 key
+# $4 description
+# $5 key length override (optional)
+#
+bpPrintDescGeneric() { # Generic key/description printout function
+	KEY_COLOR="$1"
+	DESC_COLOR="$2"
+	KEY="$3"
+	DESC="$4"
+	if [ -n "$5" ]; then
+		KL="$5"
+	else
+		KL=${BP_KEY_LENGTH}
+	fi
+
+	if ((${#4} == 0)); then
+		printf "${1}  %-${KL}.${KL}s${E_RESET} ${2}%s${E_RESET}\n" "$3" ""
+	fi
+
+	len=${#}
+	a=$(("${BP_COLUMNS}" - "$KL" - "$BP_RIGHT_MARGIN"))
+	#LINES=$(fmt -s -w"${a}" <<<"$4")
+	LINES=$(fold -w"${a}" <<<"$DESC")
+	IFS=$'\n'
+	L1=0
+	for line in ${LINES}; do
+		if [ "${L1}" -eq 0 ]; then               # First line
+			if ((${#KEY} > "$BP_KEY_LENGTH")); then # Oversized key
+				printf "${KEY_COLOR}  %-${KL}s${E_RESET}\n" "$KEY"
+				printf "${KEY_COLOR}  %-${KL}.${KL}s${E_RESET} ${DESC_COLOR}%s${E_RESET}\n" "" "$line"
+			else # Normal key
+				printf "${KEY_COLOR}  %-${KL}.${KL}s${E_RESET} ${DESC_COLOR}%s${E_RESET}\n" "$KEY" "$line"
+			fi
+			L1=1
+		else # Rest of the lines
+			printf "${KEY_COLOR}  %-${KL}.${KL}s${E_RESET} ${DESC_COLOR}%s${E_RESET}\n" "" "$line"
+		fi
+	done
+}
+
+#
+# $1 key
+# $2 description
+# $3 (optional) left alignment
+#
+bpPrintDesc() { ##I Print key description
+	bpPrintDescGeneric "${BP_C_KEY}" "${BP_C_DESCRIPTION}" "$1" "$2" "$3"
+}
+
+bpPrintDescAlt() {
+	bpPrintDescGeneric "${E_DARKGRAY}" "${BP_C_DESCRIPTION}" "$1" "$2"
+}
+
+#
+# $1 variablename
+# $2 alternative key text (optional)
+# $3 alternative value text (optional)
+#
+bpPrintVar() { ##I Print variable value and description
+	VAR="$1"
+
+	if [ -n "$2" ]; then
+		KEY=${2}
+	else
+		KEY="${VAR}"
+	fi
+
+	if [ "${!VAR}" ]; then
+		if [ -n "$3" ]; then
+			VAL=${3}
+		else
+			VAL="${!VAR}"
+		fi
+
+		bpPrintDesc "${KEY}" "${VAL}"
+	else
+		bpPrintDesc "${KEY}" "${BP_C_ERROR}N/A"
 	fi
 }
 
@@ -838,43 +938,43 @@ function bpIp() { # Get IP adress on ethernet.
 }
 
 bpIpInfo() { ##D List all default IP adresses
-  read -d "\n" -r -a INTERFACES <<< $(ip route | awk '/default/ { print $5 "\n" $7 }' )
-  IFS=$'\n'
+	read -d "\n" -r -a INTERFACES <<<$(ip route | awk '/default/ { print $5 "\n" $7 }')
+	IFS=$'\n'
 	LEN=${#INTERFACES[@]}
 	i=0
 	while [ $i -lt "$LEN" ]; do
-	  INTERFACE=${INTERFACES[$i]}
-		(( i++ ))
+		INTERFACE=${INTERFACES[$i]}
+		((i++))
 		LINK=${INTERFACES[$i]}
-		(( i++ ))
-		IP=$(ip addr show "${INTERFACE}" | grep "inet" | head -n 1 | awk '/inet/ {print $2}' | cut -d'/' -f1 )
+		((i++))
+		IP=$(ip addr show "${INTERFACE}" | grep "inet" | head -n 1 | awk '/inet/ {print $2}' | cut -d'/' -f1)
 		MAC=$(ip addr show "${INTERFACE}" | grep "link/ether" | awk '{print $2}')
-		
-    echo "$IP $INTERFACE $LINK $MAC"
+
+		echo "$IP $INTERFACE $LINK $MAC"
 	done
 }
-																		
+
 bpCPU() { # Print CPU info
-  lscpu | grep "Model name" | awk '{ print $3" "$4" "$5" "$6" "$7" "$8" "$9 }'
+	lscpu | grep "Model name" | awk '{ print $3" "$4" "$5" "$6" "$7" "$8" "$9 }'
 }
-		
+
 function ii() { # Get current host related info.
 	echo
 	flag
-#	bpLine
-	echo 
+	#	bpLine
+	echo
 	bpPrintInfo "Hostname:" "$HOSTNAME $NC"
 	bpPrintInfo "Username:" "$USER"
 	bpPrintInfo "Current date:" "$(date)"
 	IFS=$'\n'
 	for IP in $(bpIpInfo); do
-	  bpPrintInfo "IP addr" "$IP"
+		bpPrintInfo "IP addr" "$IP"
 	done
-  bpPrintInfo "Machine Uptime:" "$(uptime -p)"
+	bpPrintInfo "Machine Uptime:" "$(uptime -p)"
 	bpPrintInfo "Machine Type:" "$(bpCPU)"
-#	bpLine
-#	bpPrintInfo "Disk space:" ""
-#	bpLine
+	#	bpLine
+	#	bpPrintInfo "Disk space:" ""
+	#	bpLine
 }
 
 function loginInfo() {
