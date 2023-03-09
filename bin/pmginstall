@@ -102,6 +102,10 @@ bpUserSettings() {
 		"apt" "tree" ":"
   )
 
+testing=(
+  "apt" "stress-ng" ":"
+)
+
   snap_unrestrict() {
     #sudo bpRm /etc/apt/preferences.d/nosnap.pref
     sudo rm -f /etc/apt/preferences.d/nosnap.pref
@@ -451,6 +455,10 @@ terminalutils() { ##D Install terminal utility programs
 
 desktoputils() { ##D Install desktop utility programs
   installPkgs "${desktopUtilPkgs[@]}"
+}
+
+perf() { ##D System and performance testprograms
+  installPkgs "${testing[@]}"
 }
 
 ##- Server systems
