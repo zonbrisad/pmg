@@ -81,7 +81,7 @@ host_ustation() {
 # bashrc personal functions
 #---------------------------------------------------------------------
 
-bpInstall() { ## Install a package
+bpInstall() { ##I Install a package
 	bpAssertRoot
 	dpkg -i "$1"
 	apt-get install -f
@@ -109,7 +109,7 @@ function bpExit() { # Function to run
 FLAG_BLUE="\x1b[48;5;20m"
 FLAG_YELLOW="\x1b[48;5;226m"
 
-flag() {
+flag() { ##D
 	echo -e "${FLAG_BLUE}        ${FLAG_YELLOW}  ${FLAG_BLUE}               ${E_RESET}"
 	echo -e "${FLAG_BLUE}        ${FLAG_YELLOW}  ${FLAG_BLUE}               ${E_RESET}"
 	echo -e "${FLAG_BLUE}        ${FLAG_YELLOW}  ${FLAG_BLUE}               ${E_RESET}"
@@ -140,7 +140,7 @@ get_xserver() {
 	esac
 }
 
-bpInitDisplay() { ##D Init DISPLAY variable
+bpInitDisplay() { ##I Init DISPLAY variable
 
 	if [ -z "${DISPLAY:=""}" ]; then
 		get_xserver
@@ -327,7 +327,7 @@ BP_RIGHT_MARGIN=3
 #
 # Arg1 String to log to file
 #
-bpLog() { ##D Log to file command
+bpLog() { ##I Log to file command
 	# check for LOGFILE variable
 	if [ -n "$LOGFILE" ]; then
 		ts=$(date +"%Y-%m-%d %H:%M:%S")
@@ -335,11 +335,11 @@ bpLog() { ##D Log to file command
 	fi
 }
 
-bpLogOk() { ##D Log Ok message to file
+bpLogOk() { ##I Log Ok message to file
 	bpLog "[ Ok ] $1"
 }
 
-bpLogInfo() { ##D Log Info message to file
+bpLogInfo() { ##I Log Info message to file
 	bpLog "[Info] $1"
 }
 
@@ -347,49 +347,49 @@ bpLogDebug() { ##I Log Info message to file
 	bpLog "[Debg] $1"
 }
 
-bpLogWarning() { ##D Log Warning message to file
+bpLogWarning() { ##I Log Warning message to file
 	bpLog "[Warn] $1"
 }
 
-bpLogError() { ##D Log Error message to file
+bpLogError() { ##I Log Error message to file
 	bpLog "[Erro] $1"
 }
 
-bpLogCritical() { ##D Log Critical message to file
+bpLogCritical() { ##I Log Critical message to file
 	bpLog "[Crit] $1"
 }
 
 ##CN- IHELP Message
 
-bpOk() { ##D Success message
+bpOk() { ##I Success message
 	if [ -n "$LOG_OK" ]; then
 		bpLogOk "$1"
 	fi
 	echo -e "[${BP_C_OK}Ok${E_RESET}] $1"
 }
 
-bpInfo() { ##D Info message
+bpInfo() { ##I Info message
 	if [ -n "$LOG_INFO" ]; then
 		bpLogInfo "$1"
 	fi
 	echo -e "[${BP_C_INFO}Info${E_RESET}]  $1"
 }
 
-bpWarning() { ##D Warning message
+bpWarning() { ##I Warning message
 	if [ -n "$LOG_WARNING" ]; then
 		bpLogWarning "$1"
 	fi
 	echo -e "[${BP_C_WARNING}Warning${E_RESET}] $1"
 }
 
-bpError() { ##D Error message
+bpError() { ##I Error message
 	if [ -n "$LOG_ERROR" ]; then
 		bpLogError "$1"
 	fi
 	echo -e "[${BP_C_ERROR}Error${E_RESET}] $1"
 }
 
-bpCritical() { ##D Critical error message
+bpCritical() { ##I Critical error message
 	if [ -n "$LOG_CRITICAL" ]; then
 		bpLogCritical "$1"
 	fi
@@ -527,7 +527,7 @@ bpPrintVar() { ##I Print variable value and description
 # $1 string with filename to colorize
 # ret colorized string
 #
-bpColorizeFile() { ##D Colorize string with filename
+bpColorizeFile() { ##I Colorize string with filename
 	if [ -n "$1" ]; then
 		echo "${BP_C_PATH}$(dirname "$1")/${BP_C_FILENAME}$(basename "$1")${E_RESET}"
 	fi
@@ -537,14 +537,14 @@ bpColorizeFile() { ##D Colorize string with filename
 
 ##CN- IHELP Assert
 
-bpAssertRoot() { ##D Assert that user is root
+bpAssertRoot() { ##I Assert that user is root
 	if [ "$(whoami)" != root ]; then
 		bpError "Must be root to use this command."
 		bpExit "1"
 	fi
 }
 
-bpReload() { ## Reload .bashrc
+reload() { ##D Reload .bashrc
 	source ${HOME}/.bashrc
 }
 
@@ -816,16 +816,16 @@ function man() {
 
 # File & strings related functions: -----------------------------------------
 
-# Find a file with a pattern in name:
-function ff() { find . -type f -iname '*'"$*"'*' -ls; }
+ff() { ##D Find a file with a pattern in name:
+	find . -type f -iname '*'"$*"'*' -ls
+}
 
-# Find a file with pattern $1 in name and Execute $2 on it:
-function fe() { find . -type f -iname '*'"${1:-}"'*' \
-	-exec "${2:-file}" {} \;; }
+fe() { ##D Find a file with pattern $1 in name and Execute $2 on it:
+	find . -type f -iname '*'"${1:-}"'*' \
+		-exec "${2:-file}" {} \;
+}
 
-#  Find a pattern in a set of files and highlight them:
-#+ (needs a recent version of egrep).
-function fstr() {
+fstr() { ##D Find a pattern in a set of files and highlight them:
 	OPTIND=1
 	local mycase=""
 	local usage="fstr: find string in files. Usage: fstr [-i] \"pattern\" [\"filename pattern\"] "
@@ -848,7 +848,7 @@ function fstr() {
 
 }
 
-function swap() { # Swap 2 filenames around, if they exist (from Uzi's bashrc).
+swap() { ##D Swap 2 filenames around, if they exist (from Uzi's bashrc).
 	local TMPFILE=tmp.$$
 
 	[ $# -ne 2 ] && bpError "swap: 2 arguments needed" && return 1
@@ -860,7 +860,7 @@ function swap() { # Swap 2 filenames around, if they exist (from Uzi's bashrc).
 	mv $TMPFILE "$2"
 }
 
-extract() { # Handy Extract Program
+extract() { ##D Handy Extract Program
 	if [ -f "$1" ]; then
 		case "$1" in
 		*.tar.bz2) tar xvjf "$1" ;;
@@ -881,23 +881,24 @@ extract() { # Handy Extract Program
 	fi
 }
 
-# Creates an archive (*.tar.gz) from given directory.
-maketar() {
+maketar() { ##D Creates an archive (*.tar.gz) from given directory.
 	tar cvzf "${1%%/}.tar.gz" "${1%%/}/"
 }
 
-# Create a ZIP archive of a file or folder.
-makezip() { zip -r "${1%%/}.zip" "$1"; }
+makezip() { ##D Create a ZIP archive of a file or folder.
+	zip -r "${1%%/}.zip" "$1"
+}
 
-# Make your directories and files access rights sane.
-sanitize() { chmod -R u=rwX,g=rX,o= "$@"; }
+sanitize() { ##D  Make your directories and files access rights sane.
+	chmod -R u=rwX,g=rX,o= "$@"
+}
 
 ped() { ##D Open file in path with editor
 	if L=$("which" "$1"); then
 		bpInfo "Opening $L"
 		bpEdit "$L" "$2"
 	else
-		bpError "File $1 not found in path"
+		bpError "File \"$1\" not found in path"
 	fi
 }
 
@@ -908,7 +909,7 @@ ped() { ##D Open file in path with editor
 function my_ps() { ps "$@" -u "$USER" -o pid,%cpu,%mem,bsdtime,command; }
 function pp() { my_ps f | awk '!/awk/ && $0~var' var="${1:-".*"}"; }
 
-function killps() {          # kill by process name
+killps() {                   ##D kill by process name
 	local pid pname sig="-TERM" # default signal
 	if [ "$#" -lt 1 ] || [ "$#" -gt 2 ]; then
 		echo "Usage: killps [-SIGNAL] pattern"
@@ -923,7 +924,7 @@ function killps() {          # kill by process name
 	done
 }
 
-bpIpInfo() { ##D List all default IP adresses
+bpIpInfo() { ##I List all default IP adresses
 	read -d "\n" -r -a INTERFACES <<<$(ip route | awk '/default/ { print $5 "\n" $7 }')
 	IFS=$'\n'
 	LEN=${#INTERFACES[@]}
@@ -944,10 +945,9 @@ bpCPU() { # Print CPU info
 	lscpu | grep "Model name" | awk '{ print $3" "$4" "$5" "$6" "$7" "$8" "$9 }'
 }
 
-function ii() { # Get current host related info.
-	echo
-	flag
-	echo
+##-
+
+ii() { ##D Print general system information
 	bpPrintDesc "Hostname:" "$HOSTNAME $NC"
 	bpPrintDesc "Username:" "$USER"
 	bpPrintDesc "Current date:" "$(date)"
@@ -958,9 +958,10 @@ function ii() { # Get current host related info.
 }
 
 function loginInfo() {
-
+	echo
+	flag
+	echo
 	ii
-
 }
 
 function ask() { # See 'killps' for example of use.
@@ -1298,73 +1299,90 @@ bpEdit() { ##I Open file in editor set by BP_EDIT variable
 }
 
 printCommand() {
-	help_line=$1
-	help_command=$(echo "$help_line" | sed -s 's/(.*//')
-	help_info=$(echo "$help_line" | sed -s 's/^.*'"$2"'//')
-	bpPrintDesc "$help_command" "$help_info"
+	IFS=$' '
+	read -r -a LINE <<<"$1"
+	DESC="${LINE[*]:3}"
+	bpPrintDesc "${LINE[0]}" "${DESC}"
 }
 
 printCondCommand() {
-	help_line="$1"
-	C=$(echo "$1" | sed -s 's/^.*##C//' | awk '{print $1}')
-	eval "D=\$$C"
-	if [ -n "$D" ]; then
-		help_command=$(echo "$help_line" | sed -s 's/(.*//')
-		help_info=$(echo "$help_line" | sed -s 's/^.*'"$C"'//')
-		bpPrintDesc "$help_command" "$help_info"
+	IFS=$' '
+	read -r -a LINE <<<"$1"
+	DESC="${LINE[*]:4}"
+	COND=${LINE[3]}
+
+	if [ -n "$IHELP" ] && [ "$COND" != "IHELP" ]; then
+		return
 	fi
-}
 
-printCondCommandV() {
-	help_line="$1"
-	C=$(echo "$1" | sed -s 's/^.*##CV//' | awk '{print $1}')
-
-	eval "D=\$$C"
-
-	help_command=$(echo "$help_line" | sed -s 's/(.*//')
-	help_info=$(echo "$help_line" | sed -s 's/^.*'"$C"'//')
-
-	if [ -n "$D" ]; then
-		bpPrintDesc "$help_command" "$help_info"
-	else
-		bpPrintDescAlt "$help_command" "$help_info"
+	if [ -n "${!COND}" ]; then
+		bpPrintDesc "${LINE[0]}" "${DESC}"
+		return
 	fi
-}
 
-printCondLine() {
-	help_line="$1"
-	C=$(echo "$1" | sed -s 's/^.*##C-//' | awk '{print $1}')
-	eval "D=\$$C"
-	if [ -n "$D" ]; then
-		bpPrintLine
+	if [ "$2" -eq 1 ]; then
+		bpPrintDescAlt "${LINE[0]}" "${DESC}"
 	fi
+
 }
 
 printNamedLine() {
-	name=$(echo "$1" | sed -e 's/^.*##N-//' -e 's/^[ \t]*//')
-	bpPrintLine "$name"
+	IFS=$' '
+	read -r -a LINE <<<"$1"
+	bpPrintLine "${LINE[*]:1}"
 }
 
-help() { ## Print this help information
-	echo "$USAGE"
-	echo -e "$DESC"
+printCondNamedLine() {
+	IFS=$' '
+	read -r -a LINE <<<"$1"
+	DESC=${LINE[*]:2}
+	COND=${LINE[1]}
+
+	if [ -n "$IHELP" ] && [ "$COND" != "IHELP" ]; then
+		return
+	fi
+
+	if [ -n "${!COND}" ]; then
+		bpPrintLine "$DESC"
+	fi
+}
+
+bhelp() { ##D Print help information
+	echo "$BP_USAGE"
+	echo -e "$BP_DESC"
 	echo
+
+	BP_HELP=1
+
+	if [ ! -e "${BP_CONFIG_DIR}" ] && [ -n "${BP_CONFIG}" ]; then
+		BPINIT=1
+	fi
+
+	# bpExecHook "PRE_HELP_HOOK"
+	if [ -n "$PRE_HELP_HOOK" ]; then
+		"${PRE_HELP_HOOK}"
+	fi
+
+	F=~/.bashrc
 	IFS=$'\n'
 	SC="$1"
-	F=~/.bashrc
-	help_lines=$(grep -h '##' "${F}" | grep -v -e 'grep' -e '##D' -e '##V' -e '\*##C' -e '\*##C-' -e '\"##' -e '##N-//' -e 'help_line' -e 'printLine')
-	for help_line in ${help_lines}; do
-		case "$help_line" in
-		*"##-"*) bpPrintLine ;;
-			#    *"##C-"*)  printCondLine       "$help_line" ;;
-			#		*"##N-"*)  printNamedLine      "$help_line" ;;
-			#		*"##CN-"*) printCondNamedLine  "$help_line" ;;
-			#		*"##CV"*)  printCondCommandV    "$help_line" ;;
-			#		*"##C"*)   printCondCommand    "$help_line" ;;
-		*"##"*) printCommand "$help_line" '##' ;;
+	LINES=$(grep -h '##' ~/.bashrc | grep -v -e 'grep' -e '##I' -e '##V' -e '\*##C' -e '\*##C-' -e '\"##' -e '##-//' -e 'LINE' -e 'printLine')
+	LINES="${LINES//()/}"
+
+	for LINE in ${LINES}; do
+		case "$LINE" in
+		*"##-"*) printNamedLine "$LINE" ;;
+		#		*"##C-"*) printCondNamedLine "$LINE" ;;
+		#		*"##CV"*) printCondCommand "$LINE" 1 ;;
+		#		*"##C"*) printCondCommand "$LINE" 0 ;;
+		*"##D"*) printCommand "$LINE" '##D' ;;
 		*) ;;
+
 		esac
 	done
+	if [ -n "$POST_HELP_HOOK" ]; then
+		"${POST_HELP_HOOK}"
+	fi
 }
 
 #---------------------------------------------------------------------
