@@ -892,6 +892,15 @@ makezip() { zip -r "${1%%/}.zip" "$1"; }
 # Make your directories and files access rights sane.
 sanitize() { chmod -R u=rwX,g=rX,o= "$@"; }
 
+ped() { ##D Open file in path with editor
+	if L=$("which" "$1"); then
+		bpInfo "Opening $L"
+		bpEdit "$L" "$2"
+	else
+		bpError "File $1 not found in path"
+	fi
+}
+
 #-------------------------------------------------------------
 # Process/system related functions:
 #-------------------------------------------------------------
