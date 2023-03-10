@@ -607,7 +607,7 @@ function load_color() {
 	if [ ${SYSLOAD} -gt ${XLOAD} ]; then
 		echo -en ${ALERT}
 	elif [ "${SYSLOAD}" -gt "${MLOAD}" ]; then
-		echo -en ${Red}
+		echo -en ${E_RED}
 	elif [ "${SYSLOAD}" -gt "${SLOAD}" ]; then
 		echo -en "${E_BR_RED}"
 	else
@@ -809,7 +809,7 @@ alias make='xtitle Making $(basename $PWD) ; make'
 # .. and functions
 function man() {
 	for i; do
-		xtitle The $(basename $1 | tr -d .[:digit:]) manual
+		xtitle "The "$(basename "$1" | tr -d .[:digit:])" manual"
 		command man -a "$i"
 	done
 }
@@ -951,14 +951,12 @@ ii() { ##D Print general system information
 	bpPrintDesc "Hostname:" "$HOSTNAME $NC"
 	bpPrintDesc "Username:" "$USER"
 	bpPrintDesc "Current date:" "$(date)"
-	IFS=$'\n'
 	bpPrintDesc "IP addr" "$(bpIpInfo)"
 	bpPrintDesc "Machine Uptime:" "$(uptime -p)"
 	bpPrintDesc "Machine Type:" "$(bpCPU)"
 }
 
-function loginInfo() {
-	echo
+function loginInfo() { ##I Login info
 	flag
 	echo
 	ii
@@ -973,7 +971,7 @@ function ask() { # See 'killps' for example of use.
 	esac
 }
 
-function corename() { # Get name of app that created a corefile.
+function corename() { ##D Get name of app that created a corefile.
 	for file; do
 		echo -n "$file" :
 		gdb --core="$file" --batch | head -1
@@ -991,70 +989,77 @@ function corename() { # Get name of app that created a corefile.
 # 'out of the box' - however, you might need to make your own one day,
 #  so I kept those here as examples.
 #=========================================================================
+bpCompletion() { ##I Initiate command completions
+	# enable programmable completion features (you don't need to enable
+	# this, if it's already enabled in /etc/bash.bashrc and /etc/profile
+	# sources /etc/bash.bashrc).
+	if ! shopt -oq posix; then
 
-if [ "${BASH_VERSION%.*}" \< "3.0" ]; then
-	echo "You will need to upgrade to version 3.0 for full \
-	programmable completion features"
-	return
-fi
+		if [ -f /usr/share/bash-completion/bash_completion ]; then
+			bpSource /usr/share/bash-completion/bash_completion
 
-shopt -s extglob # Necessary.
+		elif [ -f /etc/bash_completion ]; then
+			bpSource /etc/bash_completion
+		fi
+	fi
 
-complete -A hostname rsh rcp telnet rlogin ftp ping disk
-complete -A export printenv
-complete -A variable export local readonly unset
-complete -A enabled builtin
-complete -A alias alias unalias
-complete -A function function
-complete -A user su mail finger
+	shopt -s extglob # Necessary.
 
-complete -A helptopic help # Currently same as builtins.
-complete -A shopt shopt
-complete -A stopped -P '%' bg
-complete -A job -P '%' fg jobs disown
+	complete -A hostname rsh rcp telnet rlogin ftp ping disk ssh
+	complete -A export printenv
+	complete -A variable export local readonly unset
+	complete -A enabled builtin
+	complete -A alias alias unalias
+	complete -A function function
+	complete -A user su mail finger
 
-complete -A directory mkdir rmdir
-complete -A directory -o default cd
+	complete -A helptopic help # Currently same as builtins.
+	complete -A shopt shopt
+	complete -A stopped -P '%' bg
+	complete -A job -P '%' fg jobs disown
 
-# Compression
-complete -f -o default -X '*.+(zip|ZIP)' zip
-complete -f -o default -X '!*.+(zip|ZIP)' unzip
-complete -f -o default -X '*.+(z|Z)' compress
-complete -f -o default -X '!*.+(z|Z)' uncompress
-complete -f -o default -X '*.+(gz|GZ)' gzip
-complete -f -o default -X '!*.+(gz|GZ)' gunzip
-complete -f -o default -X '*.+(bz2|BZ2)' bzip2
-complete -f -o default -X '!*.+(bz2|BZ2)' bunzip2
-complete -f -o default -X '!*.+(zip|ZIP|z|Z|gz|GZ|bz2|BZ2)' extract
+	complete -A directory mkdir rmdir
+	complete -A directory -o default cd
 
-# Documents - Postscript,pdf,dvi.....
-complete -f -o default -X '!*.+(ps|PS)' gs ghostview ps2pdf ps2ascii
-complete -f -o default -X \
-	'!*.+(dvi|DVI)' dvips dvipdf xdvi dviselect dvitype
-complete -f -o default -X '!*.+(pdf|PDF)' acroread pdf2ps
-complete -f -o default -X '!*.@(@(?(e)ps|?(E)PS|pdf|PDF)?\
+	# Compression
+	complete -f -o default -X '*.+(zip|ZIP)' zip
+	complete -f -o default -X '!*.+(zip|ZIP)' unzip
+	complete -f -o default -X '*.+(z|Z)' compress
+	complete -f -o default -X '!*.+(z|Z)' uncompress
+	complete -f -o default -X '*.+(gz|GZ)' gzip
+	complete -f -o default -X '!*.+(gz|GZ)' gunzip
+	complete -f -o default -X '*.+(bz2|BZ2)' bzip2
+	complete -f -o default -X '!*.+(bz2|BZ2)' bunzip2
+	complete -f -o default -X '!*.+(zip|ZIP|z|Z|gz|GZ|bz2|BZ2)' extract
+
+	# Documents - Postscript,pdf,dvi.....
+	complete -f -o default -X '!*.+(ps|PS)' gs ghostview ps2pdf ps2ascii
+	complete -f -o default -X \
+		'!*.+(dvi|DVI)' dvips dvipdf xdvi dviselect dvitype
+	complete -f -o default -X '!*.+(pdf|PDF)' acroread pdf2ps
+	complete -f -o default -X '!*.@(@(?(e)ps|?(E)PS|pdf|PDF)?\
 (.gz|.GZ|.bz2|.BZ2|.Z))' gv ggv
-complete -f -o default -X '!*.texi*' makeinfo texi2dvi texi2html texi2pdf
-complete -f -o default -X '!*.tex' tex latex slitex
-complete -f -o default -X '!*.lyx' lyx
-complete -f -o default -X '!*.+(htm*|HTM*)' lynx html2ps
-complete -f -o default -X \
-	'!*.+(doc|DOC|xls|XLS|ppt|PPT|sx?|SX?|csv|CSV|od?|OD?|ott|OTT)' soffice
+	complete -f -o default -X '!*.texi*' makeinfo texi2dvi texi2html texi2pdf
+	complete -f -o default -X '!*.tex' tex latex slitex
+	complete -f -o default -X '!*.lyx' lyx
+	complete -f -o default -X '!*.+(htm*|HTM*)' lynx html2ps
+	complete -f -o default -X \
+		'!*.+(doc|DOC|xls|XLS|ppt|PPT|sx?|SX?|csv|CSV|od?|OD?|ott|OTT)' soffice
 
-# Multimedia
-complete -f -o default -X \
-	'!*.+(gif|GIF|jp*g|JP*G|bmp|BMP|xpm|XPM|png|PNG)' xv gimp ee gqview
-complete -f -o default -X '!*.+(mp3|MP3)' mpg123 mpg321
-complete -f -o default -X '!*.+(ogg|OGG)' ogg123
-complete -f -o default -X \
-	'!*.@(mp[23]|MP[23]|ogg|OGG|wav|WAV|pls|\
+	# Multimedia
+	complete -f -o default -X \
+		'!*.+(gif|GIF|jp*g|JP*G|bmp|BMP|xpm|XPM|png|PNG)' xv gimp ee gqview
+	complete -f -o default -X '!*.+(mp3|MP3)' mpg123 mpg321
+	complete -f -o default -X '!*.+(ogg|OGG)' ogg123
+	complete -f -o default -X \
+		'!*.@(mp[23]|MP[23]|ogg|OGG|wav|WAV|pls|\
 m3u|xm|mod|s[3t]m|it|mtm|ult|flac)' xmms
-complete -f -o default -X '!*.@(mp?(e)g|MP?(E)G|wma|avi|AVI|\
+	complete -f -o default -X '!*.@(mp?(e)g|MP?(E)G|wma|avi|AVI|\
 asf|vob|VOB|bin|dat|vcd|ps|pes|fli|viv|rm|ram|yuv|mov|MOV|qt|\
 QT|wmv|mp3|MP3|ogg|OGG|ogm|OGM|mp4|MP4|wav|WAV|asx|ASX)' xine
 
-complete -f -o default -X '!*.pl' perl perl5
-
+	complete -f -o default -X '!*.pl' perl perl5
+}
 #  This is a 'universal' completion function - it works when commands have
 #+ a so-called 'long options' mode , ie: 'ls --all' instead of 'ls -a'
 #  Needs the '-o' option of grep
@@ -1298,6 +1303,16 @@ bpEdit() { ##I Open file in editor set by BP_EDIT variable
 	fi
 }
 
+bpSource() { ##I Load
+	if [ -f "$1" ]; then
+		source "$1"
+		return 0
+	else
+		#bpError "Could not load file: $1"
+		return 1
+	fi
+}
+
 printCommand() {
 	IFS=$' '
 	read -r -a LINE <<<"$1"
@@ -1441,19 +1456,11 @@ fi
 # Initiate bashplate settings
 bpInitSettings
 
+bpCompletion
+
 bpInitDisplay
 
 loginInfo
-
-bpSource() { ##I Load
-	if [ -f "$1" ]; then
-		source "$1"
-		return 0
-	else
-		bpError "Could not load file: $1"
-		return 1
-	fi
-}
 
 bpLoadPaths() { ##I Load k
 	# Add bashplates PATH's
