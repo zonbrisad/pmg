@@ -54,6 +54,7 @@ bpUserSettings() {
     "gittest" ":"
     "OmTerm" ":"
 		"mpterm" ":"
+		"def" ":"
   )
 
   serverPkgs=(

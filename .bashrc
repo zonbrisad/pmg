@@ -110,13 +110,13 @@ FLAG_BLUE="\x1b[48;5;20m"
 FLAG_YELLOW="\x1b[48;5;226m"
 
 flag() { ##D
-	echo -e "${FLAG_BLUE}        ${FLAG_YELLOW}  ${FLAG_BLUE}               ${E_RESET}"
-	echo -e "${FLAG_BLUE}        ${FLAG_YELLOW}  ${FLAG_BLUE}               ${E_RESET}"
-	echo -e "${FLAG_BLUE}        ${FLAG_YELLOW}  ${FLAG_BLUE}               ${E_RESET}"
-	echo -e "${FLAG_YELLOW}                         ${E_RESET}"
-	echo -e "${FLAG_BLUE}        ${FLAG_YELLOW}  ${FLAG_BLUE}               ${E_RESET}"
-	echo -e "${FLAG_BLUE}        ${FLAG_YELLOW}  ${FLAG_BLUE}               ${E_RESET}"
-	echo -e "${FLAG_BLUE}        ${FLAG_YELLOW}  ${FLAG_BLUE}               ${E_RESET}"
+	echo -e "  ${FLAG_BLUE}        ${FLAG_YELLOW}  ${FLAG_BLUE}               ${E_RESET}"
+	echo -e "  ${FLAG_BLUE}        ${FLAG_YELLOW}  ${FLAG_BLUE}               ${E_RESET}"
+	echo -e "  ${FLAG_BLUE}        ${FLAG_YELLOW}  ${FLAG_BLUE}               ${E_RESET}"
+	echo -e "  ${FLAG_YELLOW}                         ${E_RESET}"
+	echo -e "  ${FLAG_BLUE}        ${FLAG_YELLOW}  ${FLAG_BLUE}               ${E_RESET}"
+	echo -e "  ${FLAG_BLUE}        ${FLAG_YELLOW}  ${FLAG_BLUE}               ${E_RESET}"
+	echo -e "  ${FLAG_BLUE}        ${FLAG_YELLOW}  ${FLAG_BLUE}               ${E_RESET}"
 }
 
 take() { ##D Create directory and enter it
@@ -990,6 +990,8 @@ function corename() { ##D Get name of app that created a corefile.
 #  so I kept those here as examples.
 #=========================================================================
 bpCompletion() { ##I Initiate command completions
+
+	IFS=' '
 	# enable programmable completion features (you don't need to enable
 	# this, if it's already enabled in /etc/bash.bashrc and /etc/profile
 	# sources /etc/bash.bashrc).
@@ -1158,91 +1160,90 @@ _tar() {
 
 	return 0
 
-}
+	complete -F _tar -o default tar
 
-complete -F _tar -o default tar
+	_make() {
+		local mdef makef makef_dir="." makef_inc gcmd cur prev i
+		COMPREPLY=()
+		cur=${COMP_WORDS[COMP_CWORD]}
+		prev=${COMP_WORDS[COMP_CWORD - 1]}
+		case "$prev" in
+		-*f)
+			COMPREPLY=($(compgen -f $cur))
+			return 0
+			;;
+		esac
+		case "$cur" in
+		-*)
+			COMPREPLY=($(_get_longopts $1 $cur))
+			return 0
+			;;
+		esac
 
-_make() {
-	local mdef makef makef_dir="." makef_inc gcmd cur prev i
-	COMPREPLY=()
-	cur=${COMP_WORDS[COMP_CWORD]}
-	prev=${COMP_WORDS[COMP_CWORD - 1]}
-	case "$prev" in
-	-*f)
-		COMPREPLY=($(compgen -f $cur))
-		return 0
-		;;
-	esac
-	case "$cur" in
-	-*)
-		COMPREPLY=($(_get_longopts $1 $cur))
-		return 0
-		;;
-	esac
-
-	# ... make reads
-	#          GNUmakefile,
-	#     then makefile
-	#     then Makefile ...
-	if [ -f ${makef_dir}/GNUmakefile ]; then
-		makef=${makef_dir}/GNUmakefile
-	elif [ -f ${makef_dir}/makefile ]; then
-		makef=${makef_dir}/makefile
-	elif [ -f ${makef_dir}/Makefile ]; then
-		makef=${makef_dir}/Makefile
-	else
-		makef=${makef_dir}/*.mk
-		# Local convention.
-	fi
-
-	#  Before we scan for targets, see if a Makefile name was
-	#+ specified with -f.
-	for ((i = 0; i < ${#COMP_WORDS[@]}; i++)); do
-		if [[ ${COMP_WORDS[i]} == -f ]]; then
-			# eval for tilde expansion
-			eval makef=${COMP_WORDS[i + 1]}
-			break
-
+		# ... make reads
+		#          GNUmakefile,
+		#     then makefile
+		#     then Makefile ...
+		if [ -f ${makef_dir}/GNUmakefile ]; then
+			makef=${makef_dir}/GNUmakefile
+		elif [ -f ${makef_dir}/makefile ]; then
+			makef=${makef_dir}/makefile
+		elif [ -f ${makef_dir}/Makefile ]; then
+			makef=${makef_dir}/Makefile
+		else
+			makef=${makef_dir}/*.mk
+			# Local convention.
 		fi
-	done
-	[ ! -f $makef ] && return 0
 
-	# Deal with included Makefiles.
-	makef_inc=$(grep -E '^-?include' $makef |
-		sed -e "s,^.* ,"$makef_dir"/,")
-	for file in $makef_inc; do
-		[ -f $file ] && makef="$makef $file"
-	done
+		#  Before we scan for targets, see if a Makefile name was
+		#+ specified with -f.
+		for ((i = 0; i < ${#COMP_WORDS[@]}; i++)); do
+			if [[ ${COMP_WORDS[i]} == -f ]]; then
+				# eval for tilde expansion
+				eval makef=${COMP_WORDS[i + 1]}
+				break
 
-	#  If we have a partial word to complete, restrict completions
-	#+ to matches of that word.
-	if [ -n "$cur" ]; then gcmd='grep "^$cur"'; else gcmd=cat; fi
+			fi
+		done
+		[ ! -f $makef ] && return 0
 
-	COMPREPLY=($(awk -F':' '/^[a-zA-Z0-9][^$#\/\t=]*:([^=]|$)/ \
+		# Deal with included Makefiles.
+		makef_inc=$(grep -E '^-?include' $makef |
+			sed -e "s,^.* ,"$makef_dir"/,")
+		for file in $makef_inc; do
+			[ -f $file ] && makef="$makef $file"
+		done
+
+		#  If we have a partial word to complete, restrict completions
+		#+ to matches of that word.
+		if [ -n "$cur" ]; then gcmd='grep "^$cur"'; else gcmd=cat; fi
+
+		COMPREPLY=($(awk -F':' '/^[a-zA-Z0-9][^$#\/\t=]*:([^=]|$)/ \
 	  {split($1,A,/ /);for(i in A)print A[i]}' \
-		$makef 2>/dev/null | eval $gcmd))
+			$makef 2>/dev/null | eval $gcmd))
 
+	}
+
+	complete -F _make -X '+($*|*.[cho])' make gmake pmake
+
+	_killall() {
+		local cur prev
+		COMPREPLY=()
+		cur=${COMP_WORDS[COMP_CWORD]}
+
+		#  Get a list of processes
+		#+ (the first sed evaluation
+		#+ takes care of swapped out processes, the second
+		#+ takes care of getting the basename of the process).
+		COMPREPLY=($(ps -u $USER -o comm |
+			sed -e '1,1d' -e 's#[]\[]##g' -e 's#^.*/##' |
+			awk '{if ($0 ~ /^'$cur'/) print $0}'))
+
+		return 0
+	}
+
+	complete -F _killall killall killps
 }
-
-complete -F _make -X '+($*|*.[cho])' make gmake pmake
-
-_killall() {
-	local cur prev
-	COMPREPLY=()
-	cur=${COMP_WORDS[COMP_CWORD]}
-
-	#  Get a list of processes
-	#+ (the first sed evaluation
-	#+ takes care of swapped out processes, the second
-	#+ takes care of getting the basename of the process).
-	COMPREPLY=($(ps -u $USER -o comm |
-		sed -e '1,1d' -e 's#[]\[]##g' -e 's#^.*/##' |
-		awk '{if ($0 ~ /^'$cur'/) print $0}'))
-
-	return 0
-}
-
-complete -F _killall killall killps
 
 #
 # $1 command to check
