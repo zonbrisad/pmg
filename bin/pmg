@@ -158,6 +158,16 @@ jed_setup() { ##D Setup jed editor (requires root access)
   bpCp "${BP_SELF_DIR}"/setupfiles/make.sl /usr/share/jed/lib/.
 }
 
+clear() { ##D Clear all settings
+  bpWarning "This command will remove all settings and installed projects!"
+  if ! bpReadBoolDN "Are you sure you want to proceed?"; then
+    bpExit
+  fi
+  if ! bpReadBoolDN "Are you ${E_BOLD}REALY${E_RESET} sure you want to proceed?"; then
+    bpExit
+  fi
+}
+
 ##- SSH
 
 ssh() { ##D Generate SSH key
@@ -315,41 +325,38 @@ bpIpInfo() { ##D List all default IP adresses
 }
 
 batd() { ##D Battery discharge test
-	bpReadBoolDY "Press enter to start battery discharge test"
-  
-	declare -g BP_LOGFILE=${PWD}/batterytest.log	
-	rm -rf $BP_LOGFILE
-	
-	bpInfo "Battery discharge test commence"
-	while true; do
-	  bpInfo "Time lasted: $SECONDS s"
-		sleep 10
-	done
+  bpReadBoolDY "Press enter to start battery discharge test"
+
+  declare -g BP_LOGFILE=${PWD}/batterytest.log
+  rm -rf "$BP_LOGFILE"
+
+  bpInfo "Battery discharge test commence"
+  while true; do
+    bpInfo "Time lasted: $SECONDS s"
+    sleep 10
+  done
 }
 
 ##- Information
 info() { ##D General information
   bpPrintLine "General"
-  bpPrintVar "Hostname" HOSTNAME
-  bpPrintVar "Username" USER
+  bpPrintVar HOSTNAME "Hostname"
+  bpPrintVar USER "Username"
   IFS=$'\n'
-  for IP in $(bpIpInfo); do
-    bpPrintInfo "IP addr" "$IP"
-  done
+  bpPrintDesc "IP addr" "$(bpIpInfo)"
   bpPrintLine "Hardware"
-  #  bpPrintInfo "CPU" "$(cat /proc/cpuinfo | grep -m 1 "model name" | cut -n -b 14-)"
-  bpPrintInfo "CPU" "$(bpCPU)"
-  bpPrintInfo "Memory" "$(free --mega | grep Mem | awk '{ print $2 }') Mb"
-  bpPrintInfo "Graphics" "$(lspci 2>/dev/null | grep VGA | sed -r 's/.*controller: //')"
+  bpPrintDesc "CPU" "$(bpCPU)"
+  bpPrintDesc "Memory" "$(free --mega | grep Mem | awk '{ print $2 }') Mb"
+  bpPrintDesc "Graphics" "$(lspci 2>/dev/null | grep VGA | sed -r 's/.*controller: //')"
   bpPrintLine "System"
-  bpPrintInfo "Distibution" "$(lsb_release -a 2>/dev/null | grep Description | cut -b 14-)"
-  bpPrintInfo "Kernel" "$(uname -r)"
-  bpPrintVar "Terminal" TERM
-  bpPrintInfo "Uptime" "$(uptime -p)"
+  bpPrintDesc "Distibution" "$(lsb_release -d | cut -b 14-)"
+  bpPrintDesc "Kernel" "$(uname -r)"
+  bpPrintVar TERM "Terminal"
+  bpPrintDesc "Uptime" "$(uptime -p)"
 
   bpPrintLine "SSH"
-  bpPrintInfo "SSH public key location" "${SSH_KEY}.pub"
-  bpPrintInfo "SSH public key" "$(cat "${SSH_KEY}.pub")"
+  bpPrintDesc "SSH public key location" "${SSH_KEY}.pub"
+  bpPrintDesc "SSH public key" "$(cat "${SSH_KEY}.pub")"
 
   bpPrintLine
 }

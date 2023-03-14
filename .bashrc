@@ -954,6 +954,7 @@ ii() { ##D Print general system information
 	bpPrintDesc "IP addr" "$(bpIpInfo)"
 	bpPrintDesc "Machine Uptime:" "$(uptime -p)"
 	bpPrintDesc "Machine Type:" "$(bpCPU)"
+	bpPrintDesc "Distibution" "$(lsb_release -d | cut -b 14-)"
 }
 
 function loginInfo() { ##I Login info

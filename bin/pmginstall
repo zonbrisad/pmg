@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 # shellcheck disable=2034
+# shellcheck disable=2317
 # shellcheck disable=1090
 #---------------------------------------------------------------------
 #
@@ -53,10 +54,21 @@ bpUserSettings() {
     "luaconf" ":"
     "gittest" ":"
     "OmTerm" ":"
-		"mpterm" ":"
-		"def" ":"
+    "mpterm" ":"
+    "def" "def install"
   )
 
+  #
+  # Package list fields:
+  #
+  # Fields
+  # =================================================
+  # Package type: [apt|npm|pip|snap|ppa|git]
+  # Name:         Package type
+  # Param:        Extra parameter
+  #
+  # Examples:
+  #
   serverPkgs=(
     "apt" "rdiff-backup" ":"
     "apt" "nfs-common" ":"
@@ -74,14 +86,14 @@ bpUserSettings() {
     "apt" "qemu-kvm" ":"
     "apt" "virt-manager" ":"
     "apt" "virt-top" ":"
-		"apt" "libvirt-daemon-system" ":"
-		"apt" "libvirt-clients" ":"
-		"apt" "bridge-utils" ":"
+    "apt" "libvirt-daemon-system" ":"
+    "apt" "libvirt-clients" ":"
+    "apt" "bridge-utils" ":"
   )
 
   utilsPkgs=(
     "apt" "jed" ":"
-		"apt" "jed-extra" ":"
+    "apt" "jed-extra" ":"
     "apt" "htop" ":"
     "apt" "nmap" ":"
     "apt" "lm-sensors" ":"
@@ -98,14 +110,14 @@ bpUserSettings() {
     "apt" "bat" ":"
     "apt" "ncdu" ":"
     "git" "https://github.com/ogham/exa" ":"
-		"git" "powertop" ":"
-		"apt" "shellcheck" ":"
-		"apt" "tree" ":"
+    "git" "powertop" ":"
+    "apt" "shellcheck" ":"
+    "apt" "tree" ":"
   )
 
-testing=(
-  "apt" "stress-ng" ":"
-)
+  testing=(
+    "apt" "stress-ng" ":"
+  )
 
   snap_unrestrict() {
     #sudo bpRm /etc/apt/preferences.d/nosnap.pref
@@ -154,34 +166,34 @@ testing=(
     "apt" "pkg-config" ":"
     "apt" "gperf" ":"
     "apt" "astyle" ":"
-		"lst" "devUtils" ":"
+    "lst" "devUtils" ":"
   )
-	
-	devCLibs=(
+
+  devCLibs=(
     "apt" "libexpat1-dev" ":"
     "apt" "libncurses5" ":"
     "apt" "libncurses5-dev" ":"
     "apt" "lua5.1" ":"
     "apt" "liblua5.1-0" ":"
-		"apt" "liblua5.1-0-dev" ":"
+    "apt" "liblua5.1-0-dev" ":"
     "apt" "libglib2.0-0" ":"
     "apt" "libglib2.0-dev" ":"
     "apt" "libsqlite3-dev" ":"
     "apt" "libc6-dev-amd64" ":"
     "apt" "libelf-dev" ":"
-		"apt" "freeglut3-dev" ":"
+    "apt" "freeglut3-dev" ":"
   )
-	
+
   devGTK=(
-	  "apt" "libglib2.0-0" ":"
+    "apt" "libglib2.0-0" ":"
     "apt" "libglib2.0-dev" ":"
     "apt" "libgtk-3-dev" ":"
     "apt" "glade" ":"
   )
 
   devQt5=(
-#    "apt" "libglib2.0-0" ":"
-#    "apt" "libglib2.0-dev" ":"
+    #    "apt" "libglib2.0-0" ":"
+    #    "apt" "libglib2.0-dev" ":"
     "apt" "qt5-default" ":"
     "apt" "qt5-qmake" ":"
     "apt" "libqt5core5a" ":"
@@ -200,7 +212,7 @@ testing=(
   )
 
   devAVR=(
-		"lst" "devC" ":"
+    "lst" "devC" ":"
     "apt" "avrdude" ":"
     "apt" "avr-libc" ":"
     "apt" "gcc-avr" ":"
@@ -364,14 +376,13 @@ installSnap() { ##I Install snap package
 installGit() { ##I Install git package
   bpError "Git install function is not developed yes"
   return
-  git -C ${PMG_TEMP} clone "$1"
+  git -C "${PMG_TEMP}" clone "$1"
   d=~/pmg/tmp/$(basename "$1")
-  cd "$d" || bpExit
+  bpCd "$d"
   # do stuff
   ls
-  cd - || bpExit
+  bpCd "-"
 }
-
 
 #
 # $1 package system
@@ -401,10 +412,10 @@ installGeneric() {
   if [ "$1" == "ppa" ]; then
     installPPA "$2" "$3"
   fi
-	
-	if [ "$1" == "lst" ]; then
-		local NAME=$2[@]
-		local LIST=("${!NAME}")
+
+  if [ "$1" == "lst" ]; then
+    local NAME="$2[@]"
+    local LIST=("${!NAME}")
     installPkgs "${LIST[@]}"
   fi
 }
@@ -415,7 +426,7 @@ installGeneric() {
 installPkgs() { ##I Install array of packages
   local arr=("${@}")
   local i=0
-  while [ $i -lt "${#arr[@]}" ]; do
+  while [ "$i" -lt "${#arr[@]}" ]; do
     pkgt=${arr[$i]}
     ((i++))
     pkg=${arr[$i]}
@@ -489,25 +500,25 @@ devutils() { ##D Install development utls like git, svn, flex, doxygen
 }
 
 cdev() { ##D Install packages for native C/C++ development
-	gtk3=1
-	qt5=1
-	if bpReadBoolDN "Do you want to install GTK3 dev tools?"; then
-	  gtk3=0
-	fi 
-	if bpReadBoolDN "Do you want to install QT5 dev tools?"; then
-	  qt5=0
-	fi 
-	
-  installPkgs "${devC[@]}"
-	installPkgs "${devCLibs[@]}"
+  gtk3=1
+  qt5=1
+  if bpReadBoolDN "Do you want to install GTK3 dev tools?"; then
+    gtk3=0
+  fi
+  if bpReadBoolDN "Do you want to install QT5 dev tools?"; then
+    qt5=0
+  fi
 
-  if [ $gtk3 -eq 0 ]; then
-	    installPkgs "${devGTK[@]}"
-	fi
-	
-	  if [ $qt5 -eq 0 ]; then
-	    installPkgs "${devQt5[@]}"
-	fi
+  installPkgs "${devC[@]}"
+  installPkgs "${devCLibs[@]}"
+
+  if [ "$gtk3" -eq 0 ]; then
+    installPkgs "${devGTK[@]}"
+  fi
+
+  if [ "$qt5" -eq 0 ]; then
+    installPkgs "${devQt5[@]}"
+  fi
 
 }
 
@@ -555,16 +566,16 @@ shellcheck() { ##D download compile and install latest version shellcheck
 
   cabal update
 
-  cd "$WORK" || bpExit
+  bpCd "$WORK"
 
   if [ ! -d "$WORK"/shellcheck ]; then
     git clone https://github.com/koalaman/shellcheck.git
   else
-    cd "$WORK"/shellcheck || bpExit
+    bpCd "$WORK"/shellcheck
     git pull
   fi
 
-  cd "$WORK"/shellcheck || bpExit
+  bpCd "$WORK"/shellcheck
 
   cabal install
 
@@ -582,15 +593,13 @@ AVRSIMDIR=~/Downloads/simavr
 
 avrsim() { ##D Download compile and install avrsim
   #git clone https://github.com/buserror/simavr  ${AVRSIMDIR}
-  cd ${AVRSIMDIR} || bpÉxit
+  bpCd "${AVRSIMDIR}"
   ls
   make
-  cd - || bpExit
+  bpCd "-"
 }
 
-
 #- Development libraries
-
 
 libqt() { ## Install Qt development libraries
   installPkgs "${libqtPkgs[@]}"
@@ -606,13 +615,11 @@ sci() { ##D Install science and technology packages
   installPkgs "${sciPkgs[@]}"
 }
 
-
 ##- Single programs
 
 starship() { ##D Starship prompt manager
   curl -sS https://starship.rs/install.sh | sh
 }
-
 
 ##- Projects
 
@@ -640,26 +647,31 @@ gclone() {
 }
 
 ghClone() { ## Github clone
-  gclone "ssh://git@${ghURL}:/${ghUser}/${1}.git" "${PROJDIR}"
+  #  gclone "ssh://git@${ghURL}:/${ghUser}/${1}.git" "${PROJDIR}"
+  gclone "${1}" "${PROJDIR}"
 }
 
 projects() { ##D Checkout all git projects
   bpPrintLine "Cloning github projects"
   bpMkDir "${PROJDIR}"
-	len=${#projects[@]}
+  len=${#projects[@]}
   i=0
-	while [ $i -lt "$len" ]; do
-	  proj="${projects[$i]}"
-		((i++))
-		cmd="${projects[$i]}"
-		((i++))
-    ghClone "${proj}" 
-		
-		if [ "$cmd" != ":" ]; then
-			${PROJDIR}/${proj}/${cmd}
-		fi
+  while [ "$i" -lt "$len" ]; do
+    proj="${projects[$i]}"
+    ((i++))
+    cmd="${projects[$i]}"
+    ((i++))
+    ghClone "${proj}"
 
-	done
+    if [ "$cmd" != ":" ]; then
+      ${PROJDIR}/${proj}/${cmd}
+    fi
+
+  done
+}
+
+rmprojects() { ##D Remove all projects
+  :
 }
 
 #---------------------------------------------------------------------
@@ -909,7 +921,6 @@ BP_C_ID="${E_CYAN}"
 #BP_C_DESCRIPTION="${E_CYAN}"
 #BP_C_ID="${E_BR_MAGENTA}"
 
-
 BP_C_FILENAME="${E_BR_CYAN}"
 BP_C_PATH="${E_CYAN}"
 BP_C_URL_SCHEME="${E_DARKGRAY}"
@@ -971,7 +982,7 @@ bpPrintLine() { ##I Print text with line after
   fi
 }
 
-bpPrintLine_deprecated()  { ##I Print a divider row
+bpPrintLine_deprecated() { ##I Print a divider row
   bpPrintLineGeneric "" "${BP_C_LINE}" "${BP_C_LINE}" "" "-"
 }
 
