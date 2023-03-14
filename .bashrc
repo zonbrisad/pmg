@@ -62,24 +62,27 @@ flag() { ##D Print Swedish flag
 
 # Host specific setting -----------------------------------------------------
 
-# Host: fileserver ----------------------------------------------------------
-
-host_lstation() {
+init_starship() {
 	# Starship prompt
 	if bpHasCmd starship; then
 		eval "$(starship init bash)"
 	fi
 }
 
+host_lstation() {
+  init_starship
+}
+
 host_lliten() {
-	# Starship prompt
-	if bpHasCmd starship; then
-		eval "$(starship init bash)"
-	fi
+  init_starship
 }
 
 host_rpexp() {
 	:
+}
+
+host_extra() {
+  init_starship
 }
 
 host_fileserver() {
