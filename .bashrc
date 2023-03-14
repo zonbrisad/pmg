@@ -25,6 +25,7 @@ OS=$(uname -s)
 
 # Paths ---------------------------------------------------------------------
 
+
 export LD_LIBRARY_PATH=/usr/local/lib
 
 # Application settings ------------------------------------------------------
@@ -32,6 +33,32 @@ export SVN_EDITOR=jed
 
 # Needed for gdb
 export SHELL=/bin/bash
+
+
+##- User specific
+FLAG_BLUE="\x1b[48;5;20m"
+FLAG_YELLOW="\x1b[48;5;226m"
+
+ii() { ##D Print general system information
+	bpPrintDesc "Hostname:" "$HOSTNAME $NC"
+	bpPrintDesc "Username:" "$USER"
+	bpPrintDesc "Current date:" "$(date)"
+	bpPrintDesc "IP addr" "$(bpIpInfo)"
+	bpPrintDesc "Machine Uptime:" "$(uptime -p)"
+	bpPrintDesc "Machine Type:" "$(bpCPU)"
+	bpPrintDesc "Distibution" "$(lsb_release -d | cut -b 14-)"
+}
+
+
+flag() { ##D Print Swedish flag
+	echo -e "  ${FLAG_BLUE}        ${FLAG_YELLOW}  ${FLAG_BLUE}               ${E_RESET}"
+	echo -e "  ${FLAG_BLUE}        ${FLAG_YELLOW}  ${FLAG_BLUE}               ${E_RESET}"
+	echo -e "  ${FLAG_BLUE}        ${FLAG_YELLOW}  ${FLAG_BLUE}               ${E_RESET}"
+	echo -e "  ${FLAG_YELLOW}                         ${E_RESET}"
+	echo -e "  ${FLAG_BLUE}        ${FLAG_YELLOW}  ${FLAG_BLUE}               ${E_RESET}"
+	echo -e "  ${FLAG_BLUE}        ${FLAG_YELLOW}  ${FLAG_BLUE}               ${E_RESET}"
+	echo -e "  ${FLAG_BLUE}        ${FLAG_YELLOW}  ${FLAG_BLUE}               ${E_RESET}"
+}
 
 # Host specific setting -----------------------------------------------------
 
@@ -106,23 +133,6 @@ function bpExit() { # Function to run
 # If not running interactively, don't do anything
 [ -z "$PS1" ] && return
 
-FLAG_BLUE="\x1b[48;5;20m"
-FLAG_YELLOW="\x1b[48;5;226m"
-
-flag() { ##D
-	echo -e "  ${FLAG_BLUE}        ${FLAG_YELLOW}  ${FLAG_BLUE}               ${E_RESET}"
-	echo -e "  ${FLAG_BLUE}        ${FLAG_YELLOW}  ${FLAG_BLUE}               ${E_RESET}"
-	echo -e "  ${FLAG_BLUE}        ${FLAG_YELLOW}  ${FLAG_BLUE}               ${E_RESET}"
-	echo -e "  ${FLAG_YELLOW}                         ${E_RESET}"
-	echo -e "  ${FLAG_BLUE}        ${FLAG_YELLOW}  ${FLAG_BLUE}               ${E_RESET}"
-	echo -e "  ${FLAG_BLUE}        ${FLAG_YELLOW}  ${FLAG_BLUE}               ${E_RESET}"
-	echo -e "  ${FLAG_BLUE}        ${FLAG_YELLOW}  ${FLAG_BLUE}               ${E_RESET}"
-}
-
-take() { ##D Create directory and enter it
-	mkdir -p "$1"
-	cd "$1"
-}
 
 get_xserver() {
 	case $TERM in
@@ -397,7 +407,7 @@ bpCritical() { ##I Critical error message
 	bpExit
 }
 
-##-
+
 
 #---------------------------------------------------------------------
 # Bashplate internal functions
@@ -544,9 +554,6 @@ bpAssertRoot() { ##I Assert that user is root
 	fi
 }
 
-reload() { ##D Reload .bashrc
-	source ${HOME}/.bashrc
-}
 
 #-------------------------------------------------------------
 # Shell Prompt - for many examples, see:
@@ -723,7 +730,6 @@ alias libpath='echo -e ${LD_LIBRARY_PATH//:/\\n}'
 alias ..='cd ..'
 alias j='jobs -l'
 alias h='history'
-alias eb='bpEdit ~/.bashrc'
 
 # The 'ls' family -----------------------------------------------------------
 
@@ -816,6 +822,8 @@ function man() {
 
 # File & strings related functions: -----------------------------------------
 
+##- Find 
+
 ff() { ##D Find a file with a pattern in name:
 	find . -type f -iname '*'"$*"'*' -ls
 }
@@ -846,6 +854,36 @@ fstr() { ##D Find a pattern in a set of files and highlight them:
 	find . -type f -name "${2:-*}" -print0 |
 		xargs -0 egrep --color=always -sn ${case} "$1" 2>&- | more
 
+}
+
+
+##- Create
+maketar() { ##D Creates an archive (*.tar.gz) from given directory.
+	tar cvzf "${1%%/}.tar.gz" "${1%%/}/"
+}
+
+makezip() { ##D Create a ZIP archive of a file or folder.
+	zip -r "${1%%/}.zip" "$1"
+}
+
+sanitize() { ##D  Make your directories and files access rights sane.
+	chmod -R u=rwX,g=rX,o= "$@"
+}
+
+take() { ##D Create directory and enter it
+	mkdir -p "$1"
+	bpCd "$1"
+}
+
+##- Util
+
+ped() { ##D Open file in path with editor
+	if L=$("which" "$1"); then
+		bpInfo "Opening $L"
+		bpEdit "$L" "$2"
+	else
+		bpError "File \"$1\" not found in path"
+	fi
 }
 
 swap() { ##D Swap 2 filenames around, if they exist (from Uzi's bashrc).
@@ -881,26 +919,6 @@ extract() { ##D Handy Extract Program
 	fi
 }
 
-maketar() { ##D Creates an archive (*.tar.gz) from given directory.
-	tar cvzf "${1%%/}.tar.gz" "${1%%/}/"
-}
-
-makezip() { ##D Create a ZIP archive of a file or folder.
-	zip -r "${1%%/}.zip" "$1"
-}
-
-sanitize() { ##D  Make your directories and files access rights sane.
-	chmod -R u=rwX,g=rX,o= "$@"
-}
-
-ped() { ##D Open file in path with editor
-	if L=$("which" "$1"); then
-		bpInfo "Opening $L"
-		bpEdit "$L" "$2"
-	else
-		bpError "File \"$1\" not found in path"
-	fi
-}
 
 #-------------------------------------------------------------
 # Process/system related functions:
@@ -945,25 +963,13 @@ bpCPU() { # Print CPU info
 	lscpu | grep "Model name" | awk '{ print $3" "$4" "$5" "$6" "$7" "$8" "$9 }'
 }
 
-##-
-
-ii() { ##D Print general system information
-	bpPrintDesc "Hostname:" "$HOSTNAME $NC"
-	bpPrintDesc "Username:" "$USER"
-	bpPrintDesc "Current date:" "$(date)"
-	bpPrintDesc "IP addr" "$(bpIpInfo)"
-	bpPrintDesc "Machine Uptime:" "$(uptime -p)"
-	bpPrintDesc "Machine Type:" "$(bpCPU)"
-	bpPrintDesc "Distibution" "$(lsb_release -d | cut -b 14-)"
-}
-
 function loginInfo() { ##I Login info
 	flag
 	echo
 	ii
 }
 
-function ask() { # See 'killps' for example of use.
+ask() { ## See 'killps' for example of use.
 	echo -n "$@" '[y/n] '
 	read ans
 	case "$ans" in
@@ -972,11 +978,24 @@ function ask() { # See 'killps' for example of use.
 	esac
 }
 
-function corename() { ##D Get name of app that created a corefile.
+##- Development
+
+corename() { ##D Get name of app that created a corefile.
 	for file; do
 		echo -n "$file" :
 		gdb --core="$file" --batch | head -1
 	done
+}
+
+
+##- Bashrc
+
+reload() { ##D Reload .bashrc
+	source ${HOME}/.bashrc
+}
+
+eb() { ##D Open .bashrc in default editor
+  bpEdit ~/.bashrc "$1"
 }
 
 #=========================================================================
@@ -1401,6 +1420,8 @@ bhelp() { ##D Print help information
 		"${POST_HELP_HOOK}"
 	fi
 }
+
+##-
 
 #---------------------------------------------------------------------
 # Initiate internal variables
