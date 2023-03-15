@@ -41,7 +41,7 @@ FLAG_YELLOW="\x1b[48;5;226m"
 
 ii() { ##D Print general system information
 	bpPrintDesc "Hostname:" "$HOSTNAME $NC"
-	bpPrintDesc "Username:" "$USER"
+	bpPrintDesc "Username:" "$USER ($UID)"
 	bpPrintDesc "Current date:" "$(date)"
 	bpPrintDesc "IP addr" "$(bpIpInfo)"
 	bpPrintDesc "Machine Uptime:" "$(uptime -p)"

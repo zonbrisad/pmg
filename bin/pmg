@@ -332,7 +332,7 @@ batd() { ##D Battery discharge test
 
   bpInfo "Battery discharge test commence"
   while true; do
-    bpInfo "Time lasted: $SECONDS s"
+    bpInfo "Time lasted: ${SECONDS} s"
     sleep 10
   done
 }
@@ -341,7 +341,7 @@ batd() { ##D Battery discharge test
 info() { ##D General information
   bpPrintLine "General"
   bpPrintVar HOSTNAME "Hostname"
-  bpPrintVar USER "Username"
+  bpPrintDesc "Username" "$USER ($UID)"
   IFS=$'\n'
   bpPrintDesc "IP addr" "$(bpIpInfo)"
   bpPrintLine "Hardware"
