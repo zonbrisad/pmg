@@ -434,6 +434,14 @@ avr() { ##D Read avr ATmega 328p device with avrdude and jtagice mkii programmer
   avrdude -v -c jtag2isp -p m328p -U flash:r:flash.hex:i
 }
 
+ard() { ##D Read arduino 
+  bpPrintLine "Serial ports"
+	ls /dev/ttyUSB*
+	bpPrintLine
+	PORT=$(bpReadStr "Enter serial port" "/dev/ttyUSB0")
+  avrdude -v -c arduino -P "$PORT" -p m328p -U flash:r:flash.hex:i
+}
+
 #---------------------------------------------------------------------
 # Bashplate settings
 #---------------------------------------------------------------------
