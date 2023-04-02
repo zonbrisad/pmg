@@ -906,6 +906,7 @@ extract() { ##D Handy Extract Program
 		case "$1" in
 		*.tar.bz2) tar xvjf "$1" ;;
 		*.tar.gz) tar xvzf "$1" ;;
+		*.tar.xz) tar xvf "$1" ;;
 		*.bz2) bunzip2 "$1" ;;
 		*.rar) unrar x "$1" ;;
 		*.gz) gunzip "$1" ;;
@@ -1055,7 +1056,7 @@ bpCompletion() { ##I Initiate command completions
 	complete -f -o default -X '!*.+(gz|GZ)' gunzip
 	complete -f -o default -X '*.+(bz2|BZ2)' bzip2
 	complete -f -o default -X '!*.+(bz2|BZ2)' bunzip2
-	complete -f -o default -X '!*.+(zip|ZIP|z|Z|gz|GZ|bz2|BZ2)' extract
+	complete -f -o default -X '!*.+(zip|ZIP|z|Z|gz|GZ|bz2|BZ2|xz)' extract
 
 	# Documents - Postscript,pdf,dvi.....
 	complete -f -o default -X '!*.+(ps|PS)' gs ghostview ps2pdf ps2ascii

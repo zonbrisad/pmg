@@ -601,15 +601,20 @@ avrsim() { ##D Download compile and install avrsim
   bpCd "-"
 }
 
-#- Development libraries
+#- C/C++ libraries
 
-libqt() { ## Install Qt development libraries
+libqt() { ##D Install Qt development libraries
   installPkgs "${libqtPkgs[@]}"
 }
 
-libgtk() { ## Install GTK+ development libraries
+libgtk() { ##D Install GTK+/glib development libraries
   installPkgs "${libgtkPkgs[@]}"
 }
+
+libmisc() { ##D Install various C development libraries (ncurses/lua/
+  installPkgs "${devCLibs[@]}"
+}
+  
 
 ##- Science and technology
 
