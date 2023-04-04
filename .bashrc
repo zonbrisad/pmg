@@ -59,11 +59,13 @@ host_lliten() {
 	fi
 }
 
-
 host_rpexp() {
-  :
+	SYSTEMP=$(( $(cat /sys/class/thermal/thermal_zone0/temp) / 1000))
 }
 
+host_rpserver() {
+	SYSTEMP=$(( $(cat /sys/class/thermal/thermal_zone0/temp) / 1000))
+}
 
 host_fileserver() {
 	alias lef='cd ~/Projekt/LEF'
@@ -871,6 +873,7 @@ function ii() { # Get current host related info.
 	done
   bpPrintInfo "Machine Uptime:" "$(uptime -p)"
 	bpPrintInfo "Machine Type:" "$(bpCPU)"
+	bpPrintInfo "Temperature:"  "${SYSTEMP}"
 #	bpLine
 #	bpPrintInfo "Disk space:" ""
 #	bpLine
@@ -1163,7 +1166,6 @@ _killall() {
 
 complete -F _killall killall killps
 
-loginInfo
 
 #
 # $1 command to check
@@ -1334,6 +1336,15 @@ fi
 # Initiate bashplate settings
 bpInitSettings
 
+bpInitDisplay
+
+# Call host specific function if existing
+if [ "$(type -t host_"${HOSTNAME}")" == "function" ]; then
+	host_"${HOSTNAME}"
+fi
+
+loginInfo
+
 # If bashplates settings directory exist load settings/paths/modules
 if [ -e "$BP_SETTINGS_DIR" ]; then
 
@@ -1370,9 +1381,6 @@ if [ -e "$BP_SETTINGS_DIR" ]; then
 	fi
 fi
 
-bpInitDisplay
 
-# Call host specific function if existing
-if [ "$(type -t host_"${HOSTNAME}")" == "function" ]; then
-	host_"${HOSTNAME}"
-fi
+
+
