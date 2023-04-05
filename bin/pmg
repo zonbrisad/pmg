@@ -430,8 +430,34 @@ pull() { ##D Pull project from GITHUB
 
 ##- AVR
 
-avr() { ##D Read avr ATmega 328p device with avrdude and jtagice mkii programmer
+avr() { ##D Read avr ATmega328p device with avrdude and jtagice mkii programmer
   avrdude -v -c jtag2isp -p m328p -U flash:r:flash.hex:i
+}
+
+
+write_arduino_bootloader() {
+  MCU=$1
+  BOOTLOADER=$2
+  avrdude  -c jtag2isp -p ${MCU} -U flash:w:${BOOTLOADER}:i -U hfuse:w:0xD6:m -U lfuse:w:0xFF:m
+}
+
+
+wab328() { ##D Write Arduino bootloader to ATMega328P
+  #write_arduino_bootloader "m328p" "${BP_SELF_DIR}/arduino/optiboot/optiboot_atmega328.hex"
+  write_arduino_bootloader "m328p" "/usr/share/arduino/hardware/arduino/avr/bootloaders/atmega/ATmegaBOOT_168_atmega328_notp.hex"
+}
+
+wavr() { ##D Write Arduino bootloader to ATMega328P
+  avrdude -v -c jtag2isp -p m328p -U flash:w:${BP_SELF_DIR}/arduino/optiboot/optiboot_atmega328.hex:i
+}
+
+
+ard() { ##D Read arduino ATMega328P
+  bpPrintLine "Serial ports"
+	ls /dev/ttyUSB*
+	bpPrintLine
+	PORT=$(bpReadStr "Enter serial port" "/dev/ttyUSB0")
+  avrdude -v -c arduino -P "$PORT" -p m328p -U flash:r:flash.hex:i
 }
 
 #---------------------------------------------------------------------

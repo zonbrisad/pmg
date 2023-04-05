@@ -39,17 +39,6 @@ export SHELL=/bin/bash
 FLAG_BLUE="\x1b[48;5;20m"
 FLAG_YELLOW="\x1b[48;5;226m"
 
-ii() { ##D Print general system information
-	bpPrintDesc "Hostname:" "$HOSTNAME $NC"
-	bpPrintDesc "Username:" "$USER ($UID)"
-	bpPrintDesc "Current date:" "$(date)"
-	bpPrintDesc "IP addr" "$(bpIpInfo)"
-	bpPrintDesc "Machine Uptime:" "$(uptime -p)"
-	bpPrintDesc "Machine Type:" "$(bpCPU)"
-	bpPrintDesc "Distibution" "$(lsb_release -d | cut -b 14-)"
-}
-
-
 flag() { ##D Print Swedish flag
 	echo -e "  ${FLAG_BLUE}        ${FLAG_YELLOW}  ${FLAG_BLUE}               ${E_RESET}"
 	echo -e "  ${FLAG_BLUE}        ${FLAG_YELLOW}  ${FLAG_BLUE}               ${E_RESET}"
@@ -58,6 +47,18 @@ flag() { ##D Print Swedish flag
 	echo -e "  ${FLAG_BLUE}        ${FLAG_YELLOW}  ${FLAG_BLUE}               ${E_RESET}"
 	echo -e "  ${FLAG_BLUE}        ${FLAG_YELLOW}  ${FLAG_BLUE}               ${E_RESET}"
 	echo -e "  ${FLAG_BLUE}        ${FLAG_YELLOW}  ${FLAG_BLUE}               ${E_RESET}"
+}
+
+ii() { ##D Print general system information
+	bpPrintDesc "Hostname:" "$HOSTNAME $NC"
+	bpPrintDesc "Username:" "$USER ($UID)"
+	bpPrintDesc "Current date:" "$(date)"
+	bpPrintDesc "IP addr" "$(bpIpInfo)"
+	bpPrintDesc "Machine Uptime:" "$(uptime -p)"
+	bpPrintDesc "Machine Type:" "$(bpCPU)"
+	bpPrintDesc "Distibution" "$(lsb_release -d | cut -b 14-)"
+#	bpPrintDesc "Temperature:"  "${SYSTEMP} C"
+	bpPrintDesc "Temperature:"  "$(($(cat ${SYSTEMP}) / 1000)) °C"
 }
 
 # Host specific setting -----------------------------------------------------
@@ -69,16 +70,23 @@ init_starship() {
 	fi
 }
 
+host_rpexp() {
+#	SYSTEMP=$(( $(cat /sys/class/thermal/thermal_zone0/temp) / 1000))
+	SYSTEMP=/sys/class/thermal/thermal_zone0/temp
+}
+
+host_rpserver() {
+#	SYSTEMP=$(( $(cat /sys/class/thermal/thermal_zone0/temp) / 1000))
+	SYSTEMP=/sys/class/thermal/thermal_zone0/temp
+}
+
 host_lstation() {
   init_starship
 }
 
 host_lliten() {
+	SYSTEMP=/sys/class/thermal/thermal_zone1/temp
   init_starship
-}
-
-host_rpexp() {
-	:
 }
 
 host_extra() {
@@ -86,25 +94,7 @@ host_extra() {
 }
 
 host_fileserver() {
-	alias lef='cd ~/Projekt/LEF'
-	#	alias mp='cd ~/Projekt/makeplates'
-	#	alias bp='cd ~/Projekt/bashplates'
-	alias b='cd /storage/backup/fileserver'
-	alias b0='cd /storage/backup/fileserver/daily_0/storage/home/pmg'
-	alias b1='cd /storage/backup/fileserver/daily_1/storage/home/pmg'
-	alias b2='cd /storage/backup/fileserver/daily_2/storage/home/pmg'
-	alias b3='cd /storage/backup/fileserver/daily_3/storage/home/pmg'
-	alias b4='cd /storage/backup/fileserver/daily_4/storage/home/pmg'
-	alias b5='cd /storage/backup/fileserver/daily_5/storage/home/pmg'
-}
-
-# Host: ustation ------------------------------------------------------------
-host_ustation() {
-
-	alias lef='cd ~/Projekt/LEF'
-
-	# PyQt5 example and demos
-	alias pqe='cd /usr/share/doc/pyqt5-examples/examples'
+  :
 }
 
 #---------------------------------------------------------------------
@@ -906,6 +896,7 @@ extract() { ##D Handy Extract Program
 		case "$1" in
 		*.tar.bz2) tar xvjf "$1" ;;
 		*.tar.gz) tar xvzf "$1" ;;
+		*.tar.xz) tar xvf "$1" ;;
 		*.bz2) bunzip2 "$1" ;;
 		*.rar) unrar x "$1" ;;
 		*.gz) gunzip "$1" ;;
@@ -1055,7 +1046,7 @@ bpCompletion() { ##I Initiate command completions
 	complete -f -o default -X '!*.+(gz|GZ)' gunzip
 	complete -f -o default -X '*.+(bz2|BZ2)' bzip2
 	complete -f -o default -X '!*.+(bz2|BZ2)' bunzip2
-	complete -f -o default -X '!*.+(zip|ZIP|z|Z|gz|GZ|bz2|BZ2)' extract
+	complete -f -o default -X '!*.+(zip|ZIP|z|Z|gz|GZ|bz2|BZ2|xz)' extract
 
 	# Documents - Postscript,pdf,dvi.....
 	complete -f -o default -X '!*.+(ps|PS)' gs ghostview ps2pdf ps2ascii
@@ -1485,6 +1476,11 @@ bpInitSettings
 bpCompletion
 
 bpInitDisplay
+
+# Call host specific function if existing
+if [ "$(type -t host_"${HOSTNAME}")" == "function" ]; then
+	host_"${HOSTNAME}"
+fi
 
 loginInfo
 
