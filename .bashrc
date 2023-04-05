@@ -71,7 +71,8 @@ init_starship() {
 }
 
 host_rpexp() {
-	SYSTEMP=$(( $(cat /sys/class/thermal/thermal_zone0/temp) / 1000))
+#	SYSTEMP=$(( $(cat /sys/class/thermal/thermal_zone0/temp) / 1000))
+	SYSTEMP=/sys/class/thermal/thermal_zone0/temp
 }
 
 host_rpserver() {
