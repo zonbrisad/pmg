@@ -218,7 +218,7 @@ bpUserSettings() {
     "apt" "avr-libc" ":"
     "apt" "gcc-avr" ":"
     "apt" "gdb-avr" ":"
-		"apt" "qemu-system-avr" ":" 
+		"apt" "qemu-system-avr" ":"
   )
 
   devPython=(

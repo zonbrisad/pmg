@@ -57,8 +57,22 @@ ii() { ##D Print general system information
 	bpPrintDesc "Machine Uptime:" "$(uptime -p)"
 	bpPrintDesc "Machine Type:" "$(bpCPU)"
 	bpPrintDesc "Distibution" "$(lsb_release -d | cut -b 14-)"
-#	bpPrintDesc "Temperature:"  "${SYSTEMP} C"
-	bpPrintDesc "Temperature:"  "$(($(cat ${SYSTEMP}) / 1000)) °C"
+	
+	if [ -n "${SYSTEMP}" ]; then
+	  T=$(bc <<< "scale=1; $(cat ${SYSTEMP}) / 1000")
+	  bpPrintDesc "Temperature:"  "$T °C"
+	fi
+	
+	if [ -n "${SYSVOLT}" ]; then
+	  V=$(bc <<< "scale=1; $(cat ${SYSVOLT}) / 1000000")
+		bpPrintDesc "Battery voltage:"  "$V V"
+	fi
+	 
+	if [ -n "${SYSCUR}" ]; then
+	  C=$(bc <<< "scale=1; $(cat ${SYSCUR}) / 1000000")
+		bpPrintDesc "Battery current:"  "$C A"
+	fi
+
 }
 
 # Host specific setting -----------------------------------------------------
@@ -71,12 +85,10 @@ init_starship() {
 }
 
 host_rpexp() {
-#	SYSTEMP=$(( $(cat /sys/class/thermal/thermal_zone0/temp) / 1000))
 	SYSTEMP=/sys/class/thermal/thermal_zone0/temp
 }
 
 host_rpserver() {
-#	SYSTEMP=$(( $(cat /sys/class/thermal/thermal_zone0/temp) / 1000))
 	SYSTEMP=/sys/class/thermal/thermal_zone0/temp
 }
 
@@ -86,6 +98,9 @@ host_lstation() {
 }
 
 host_lliten() {
+  SYSVOLT=/sys/class/power_supply/C1B6/voltage_now
+	SYSCUR=/sys/class/power_supply/C1B6/current_now
+	SYSTEMP=/sys/class/thermal/thermal_zone1/temp
   init_starship
 }
 
