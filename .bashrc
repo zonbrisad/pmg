@@ -81,6 +81,7 @@ host_rpserver() {
 }
 
 host_lstation() {
+  SYSTEMP=/sys/class/thermal/thermal_zone2/temp
   init_starship
 }
 
