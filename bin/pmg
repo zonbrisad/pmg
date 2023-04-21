@@ -370,7 +370,8 @@ hwinfoe() { ##D Print general hardware information
 }
 
 batinfo() { ##D Print battery information
-  for bat in /sys/class/power_supply/* ; do
+  for bat in "/sys/class/power_supply"/*; do
+	  echo "X: $bat"
 	  if [ $(cat ${bat}/type) == "Battery" ]; then
 		  bpPrintLine "Battery $bat"
 			bpPrintDesc "Manufacturer:" "$(cat ${bat}/manufacturer)"
@@ -452,21 +453,47 @@ avr() { ##D Read avr ATmega328p device with avrdude and jtagice mkii programmer
   avrdude -v -c jtag2isp -p m328p -U flash:r:flash.hex:i
 }
 
-
 write_arduino_bootloader() {
   MCU=$1
-  BOOTLOADER=$2
-  avrdude  -c jtag2isp -p ${MCU} -U flash:w:${BOOTLOADER}:i -U hfuse:w:0xD6:m -U lfuse:w:0xFF:m
+  BOOTLOADER=$2 
+  avrdude -c jtag2isp -p ${MCU} -v -e -U hfuse:w:0xDA:m -U lfuse:w:0xFF:m -U flash:w:${BOOTLOADER}:i -U lock:w:0x0F:m #-U efuse:w:0x05:m
 }
 
+write_arduino_usb-serial_firmware() {
+  MCU=$1
+  BOOTLOADER=$2
+  avrdude -v -F -c jtag2isp -p ${MCU} -U flash:w:${BOOTLOADER} -U lfuse:w:0xFF:m -U hfuse:w:0xD9:m -U efuse:w:0xF4:m -U lock:w:0x0F:m
+}
 
-wab328() { ##D Write Arduino bootloader to ATMega328P
+wab328() { ## Write Arduino bootloader to ATMega168P
   #write_arduino_bootloader "m328p" "${BP_SELF_DIR}/arduino/optiboot/optiboot_atmega328.hex"
   write_arduino_bootloader "m328p" "/usr/share/arduino/hardware/arduino/avr/bootloaders/atmega/ATmegaBOOT_168_atmega328_notp.hex"
 }
 
-wavr() { ##D Write Arduino bootloader to ATMega328P
-  avrdude -v -c jtag2isp -p m328p -U flash:w:${BP_SELF_DIR}/arduino/optiboot/optiboot_atmega328.hex:i
+wardp() { ## Write Arduino optiboot_168_328.ex to ATMega328p
+  write_arduino_bootloader "m328p" "${BP_SELF_DIR}/arduino/optiboot/optiboot_atmega328.hex"
+}
+
+ward() { ## Write Arduino optiboot_168_328.ex to ATMega328
+  write_arduino_bootloader "m328" "${BP_SELF_DIR}/arduino/optiboot/optiboot_atmega328.hex"
+}
+
+watbp() { ##D Write Arduino ATmegaBOOT_168_atmega328.hex bootloader to ATMega328P 
+  write_arduino_bootloader "m328p" "${BP_SELF_DIR}/arduino/ATmegaBOOT_168_atmega328.hex"
+}
+
+watb() { ##D Write Arduino ATmegaBOOT_168_atmega328.hex bootloader to ATMega328 (working)
+  write_arduino_bootloader "m328" "${BP_SELF_DIR}/arduino/ATmegaBOOT_168_atmega328.hex"
+}
+
+
+dfu8() { ##D Write Arduino usb-serial firmware ATmega8u2 via dfu 
+  dfu-programmer atmega8u2 erase
+	dfu-programmer atmega8u2 flash "${BP_SELF_DIR}/arduino/ArduinoCore-avr/firmwares/atmegaxxu2/UNO-dfu_and_usbserial_combined.hex"
+}
+
+aus8() { ##D Write Arduino usb-serial firmware to ATmega8u2 JTAG2ICE mkii
+  write_arduino_usb-serial_firmware at90usb82 "${BP_SELF_DIR}/arduino/ArduinoCore-avr/firmwares/atmegaxxu2/UNO-dfu_and_usbserial_combined.hex"
 }
 
 
