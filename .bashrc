@@ -927,7 +927,9 @@ extract() { ##D Handy Extract Program
 	fi
 }
 
-
+lam() { ##D List all available kernel modules
+  find /lib/modules/$(uname -r) -type f -name '*.ko'
+}
 #-------------------------------------------------------------
 # Process/system related functions:
 #-------------------------------------------------------------
