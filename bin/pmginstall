@@ -242,8 +242,21 @@ bpUserSettings() {
   )
 
   devRust=(
-    "apt" "rustc" ":"
-  )
+    "apt" "rust-all" ":"
+		"apt" "cargo" ":"
+		"apt" "rust-markdown" ":"
+		"apt" "librust-ansi-colours-dev" ":"
+		"apt" "librust-ansi-term-dev" ":"
+		"apt" "librust-argparse-dev" ":"
+		"apt" "librust-async-io-dev" ":"
+		"apt" "librust-configparser-dev" ":"
+		"apt" "librust-lua52-sys-dev" ":"
+		"apt" "librust-serial-dev" ":"
+		"apt" "librust-signal-hook-dev" ":"
+		"apt" "librust-time-dev" ":"
+		"apt" "librust-tokio-dev" ":"
+		"apt" "librust-toml-dev" ":"
+)
 
   science=(
     "apt" "scilab" ":"
@@ -546,6 +559,12 @@ python() { ##D Install python development packages
 sci() { ##D Install science and technology packages
   installPkgs "${science[@]}"
 }
+
+
+rust() { ##D Install Rust development packages
+  installPkgs "${devRust[@]}"
+}
+
 
 WORK=~/Downloads
 
