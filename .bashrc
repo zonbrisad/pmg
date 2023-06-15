@@ -25,7 +25,6 @@ OS=$(uname -s)
 
 # Paths ---------------------------------------------------------------------
 
-
 export LD_LIBRARY_PATH=/usr/local/lib
 
 # Application settings ------------------------------------------------------
@@ -33,7 +32,6 @@ export SVN_EDITOR=jed
 
 # Needed for gdb
 export SHELL=/bin/bash
-
 
 ##- User specific
 FLAG_BLUE="\x1b[48;5;20m"
@@ -57,20 +55,20 @@ ii() { ##D Print general system information
 	bpPrintDesc "Machine Uptime:" "$(uptime -p)"
 	bpPrintDesc "Machine Type:" "$(bpCPU)"
 	bpPrintDesc "Distibution" "$(lsb_release -d | cut -b 14-)"
-	
+
 	if [ -n "${SYSTEMP}" ]; then
-	  T=$(bc <<< "scale=1; $(cat ${SYSTEMP}) / 1000")
-	  bpPrintDesc "Temperature:"  "$T °C"
+		T=$(bc <<<"scale=1; $(cat ${SYSTEMP}) / 1000")
+		bpPrintDesc "Temperature:" "$T °C"
 	fi
-	
+
 	if [ -n "${SYSVOLT}" ]; then
-	  V=$(bc <<< "scale=1; $(cat ${SYSVOLT}) / 1000000")
-		bpPrintDesc "Battery voltage:"  "$V V"
+		V=$(bc <<<"scale=1; $(cat ${SYSVOLT}) / 1000000")
+		bpPrintDesc "Battery voltage:" "$V V"
 	fi
-	 
+
 	if [ -n "${SYSCUR}" ]; then
-	  C=$(bc <<< "scale=1; $(cat ${SYSCUR}) / 1000000")
-		bpPrintDesc "Battery current:"  "$C A"
+		C=$(bc <<<"scale=1; $(cat ${SYSCUR}) / 1000000")
+		bpPrintDesc "Battery current:" "$C A"
 	fi
 
 }
@@ -93,23 +91,23 @@ host_rpserver() {
 }
 
 host_lstation() {
-  SYSTEMP=/sys/class/thermal/thermal_zone2/temp
-  init_starship
+	SYSTEMP=/sys/class/thermal/thermal_zone2/temp
+	init_starship
 }
 
 host_lliten() {
-  SYSVOLT=/sys/class/power_supply/C1B6/voltage_now
+	SYSVOLT=/sys/class/power_supply/C1B6/voltage_now
 	SYSCUR=/sys/class/power_supply/C1B6/current_now
 	SYSTEMP=/sys/class/thermal/thermal_zone1/temp
-  init_starship
+	init_starship
 }
 
 host_extra() {
-  init_starship
+	init_starship
 }
 
 host_fileserver() {
-  :
+	:
 }
 
 #---------------------------------------------------------------------
@@ -140,7 +138,6 @@ function bpExit() { # Function to run
 
 # If not running interactively, don't do anything
 [ -z "$PS1" ] && return
-
 
 get_xserver() {
 	case $TERM in
@@ -415,8 +412,6 @@ bpCritical() { ##I Critical error message
 	bpExit
 }
 
-
-
 #---------------------------------------------------------------------
 # Bashplate internal functions
 #---------------------------------------------------------------------
@@ -561,7 +556,6 @@ bpAssertRoot() { ##I Assert that user is root
 		bpExit "1"
 	fi
 }
-
 
 #-------------------------------------------------------------
 # Shell Prompt - for many examples, see:
@@ -830,7 +824,7 @@ function man() {
 
 # File & strings related functions: -----------------------------------------
 
-##- Find 
+##- Find
 
 ff() { ##D Find a file with a pattern in name:
 	find . -type f -iname '*'"$*"'*' -ls
@@ -863,7 +857,6 @@ fstr() { ##D Find a pattern in a set of files and highlight them:
 		xargs -0 egrep --color=always -sn ${case} "$1" 2>&- | more
 
 }
-
 
 ##- Create
 maketar() { ##D Creates an archive (*.tar.gz) from given directory.
@@ -929,7 +922,7 @@ extract() { ##D Handy Extract Program
 }
 
 lam() { ##D List all available kernel modules
-  find /lib/modules/$(uname -r) -type f -name '*.ko'
+	find /lib/modules/$(uname -r) -type f -name '*.ko'
 }
 #-------------------------------------------------------------
 # Process/system related functions:
@@ -998,6 +991,9 @@ corename() { ##D Get name of app that created a corefile.
 	done
 }
 
+clean() { ##D Clean directory from old stuff
+	find . -name "*~" -delete
+}
 
 ##- Bashrc
 
@@ -1006,7 +1002,7 @@ reload() { ##D Reload .bashrc
 }
 
 eb() { ##D Open .bashrc in default editor
-  bpEdit ~/.bashrc "$1"
+	bpEdit ~/.bashrc "$1"
 }
 
 #=========================================================================

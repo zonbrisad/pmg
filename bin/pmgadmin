@@ -340,6 +340,12 @@ cg() { ##D Create groups
   done
 }
 
+##-
+
+addpath() { ##D Add path to PATH
+  bpAddPath $2
+}
+
 
 #---------------------------------------------------------------------
 # Bashplate settings
