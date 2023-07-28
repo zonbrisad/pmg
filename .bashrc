@@ -542,6 +542,11 @@ bpPrintVar() { ##I Print variable value and description
 #
 bpColorizeFile() { ##I Colorize string with filename
 	if [ -n "$1" ]; then
+	
+	  if [ -d  "$1" ]; then
+		  echo "${BP_C_PATH}${1}${E_RESET}"
+			return
+		fi
 		echo "${BP_C_PATH}$(dirname "$1")/${BP_C_FILENAME}$(basename "$1")${E_RESET}"
 	fi
 }
@@ -1504,7 +1509,7 @@ bpLoadPaths() { ##I Load k
 			l=$(readlink "${p}")
 			if [ -e "${l}" ]; then
 				PATH="${PATH}:${l}"
-				bpOk "Adding path:  $l"
+				bpOk "Adding path:  $(bpColorizeFile "$l")"
 			else
 				bpError "Path  $(bpColorizeFile "$l") does not exist!"
 			fi
