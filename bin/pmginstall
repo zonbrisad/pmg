@@ -263,7 +263,7 @@ bpUserSettings() {
   )
 
   inkscapePkgs=(
-    "git" "github.com/upb-lea/Inkscape_electric_Symbols.git"  "~/pmg/media/inkscape/symbols"
+    "git" "https://github.com/upb-lea/Inkscape_electric_Symbols.git"  "${HOME}/pmg/media/inkscape/symbols"
   )
 
 
@@ -396,20 +396,22 @@ installSnap() { ##I Install snap package
 
 installGit() { ##I Install git package
   bpError "Git install function is not developed yes"
-	echo $1 $2
-	
+
+	REPO=$1
 	if [ "$2" != ":" ]; then
 	  bpMkDir "$2"
 	fi
 	bpCd "$2"
-	pwd
-	bpCd "-"
-  return
-  git -C "${PMG_TEMP}" clone "$1"
-  d=~/pmg/tmp/$(basename "$1")
+	#pwd
+	
+#  return
+#  git -C "${PMG_TEMP}" clone "$1"
+	git clone "$REPO"
+  bpCd "-"
+	#d=~/pmg/tmp/$(basename "$1")
 
   # do stuff
-  ls
+  #ls
 
 }
 
@@ -659,7 +661,6 @@ sci() { ##D Install science and technology packages
 
 inkscape() { ##D Install Inkscape resources(fonts/clipart)
   installPkgs "${inkscapePkgs[@]}"
-
 }
 
 ##- Single programs
@@ -1137,8 +1138,8 @@ bpCd() { ##I Safe cd function (exits on fail)
 # $1 Directory to be created
 #
 bpMkDir() { ##I Create a directory if it does not exist
-  if [ ! -d $1 ]; then
-    if mkdir --parents $1; then
+  if [ ! -d "$1" ]; then
+    if mkdir --parents "$1"; then
       bpOk "Creating directory $(bpColorizeFile "${1}")."
       return 0
     else

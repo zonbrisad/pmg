@@ -827,6 +827,10 @@ function man() {
 	done
 }
 
+
+alias sall='service --status-all'
+
+
 # File & strings related functions: -----------------------------------------
 
 ##- Find
