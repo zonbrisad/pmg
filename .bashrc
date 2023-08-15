@@ -297,6 +297,8 @@ E_HIDE=$'\e[?25l' # Hide cursor
 E_SHOW=$'\e[?25h' # Show cursor
 
 E_RESET=$'\e[0m' # Clear Attributes
+NC=$E_RESET
+
 
 # Default Bashplate colortheme
 BP_C_OK="${E_BR_GREEN}"
