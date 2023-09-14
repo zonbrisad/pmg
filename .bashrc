@@ -756,8 +756,19 @@ alias la='ll -A'        #  Show hidden files.
 alias tree='tree -Csuh' #  Nice alternative to 'recursive ls' ...
 
 # Git aliases ---------------------------------------------------------------
+
+git-info() {
+  bpPrintLine "Tags"
+	git tag
+	bpPrintLine "Branches"
+	git branch
+	bpPrintLine "Remote information"
+	git remote -v
+}
+
 alias gs='git status '
 alias ga='git add '
+alias gt='git_tag'
 alias gb='git branch '
 alias gc='git commit -a'
 alias gd='git diff'
@@ -766,7 +777,11 @@ alias gh='git hist'
 alias go='git checkout '
 alias gk='gitk --all&'
 alias gx='gitx --all'
-alias gi='pmgp gi'
+alias gi='git-info'
+alias gp='git push origin --tags'
+alias gnt='pmgp gnt'
+alias gnb='pmgp gnb'
+
 
 alias got='git '
 alias get='git '
@@ -865,6 +880,13 @@ fstr() { ##D Find a pattern in a set of files and highlight them:
 	find . -type f -name "${2:-*}" -print0 |
 		xargs -0 egrep --color=always -sn ${case} "$1" 2>&- | more
 
+}
+
+fii() { ##D Print file information
+  echo
+  bpPrintDesc "Name" $(basename $(realpath $1))
+	bpPrintDesc "Directory" $(dirname $(realpath $1))
+	echo
 }
 
 ##- Create

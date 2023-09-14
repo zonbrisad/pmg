@@ -305,6 +305,21 @@ gc() { ## Show git configuration
   :
 }
 
+gnb() { ##D Create new git branch
+  git branch
+  branch=$(bpRead "Enter branchname")
+  git branch "${branch}"
+}
+
+gnt() { ##D Create new git tag
+
+  git tag
+  tag=$(bpRead "Enter tagname")
+  msg=$(bpRead "Enter message")
+
+  git tag -a "${tag}" -m "${msg}"
+}
+
 #---------------------------------------------------------------------
 # Bashplate modules
 #---------------------------------------------------------------------
