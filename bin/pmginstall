@@ -56,6 +56,7 @@ bpUserSettings() {
     "OmTerm" ":"
     "mpterm" ":"
     "def" "def install"
+		"fplot" ":"
   )
 
   #
@@ -239,6 +240,7 @@ bpUserSettings() {
     "pip" "black" ":"
     "pip" "rich" ":"
     "pip" "textual" ":"
+		"pip" "pyqgtgraph" ":"
   )
 
   devRust=(
@@ -695,8 +697,8 @@ gclone() {
 }
 
 ghClone() { ## Github clone
-  #  gclone "ssh://git@${ghURL}:/${ghUser}/${1}.git" "${PROJDIR}"
-  gclone "${1}" "${PROJDIR}"
+  gclone "ssh://git@${ghURL}:/${ghUser}/${1}.git" "${PROJDIR}"
+  #gclone "${1}" "${PROJDIR}"
 }
 
 projects() { ##D Checkout all git projects

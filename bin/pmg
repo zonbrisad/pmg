@@ -1341,6 +1341,7 @@ bpChangeSetting() { ##I Change setting in config file
   KEY="$2"
   VAL="$3"
   DESC="$4"
+#	echo $FILE $KEY $VAL $DESC
   if ! bpStrExist "${1}" "${KEY}"; then
     bpAddSetting "$FILE" "$KEY" "$VAL" "$DESC"
   fi
@@ -1384,7 +1385,7 @@ bpConfChangeSetting() {
   CONF=("${@:2}")
   FILE=${CONF[1]}
   DESC=$(bpConfGetDesc "$KEY" "${CONF[@]}")
-
+#  echo $KEY $VAL 
   if ! bpConfInList "$KEY" "${CONF[@]}"; then
     bpError "\"$KEY\" is not a valid setting"
     return
@@ -1446,7 +1447,7 @@ bpConfInList() { ##I Check if key exist in config file list
   arr=("${@:1}")
   len=${#arr[@]}
   bpReturn=""
-  i=1
+  i=0
   while [ "$i" -lt "$len" ]; do
     key=${arr[$i]}
     ((i++))
@@ -1454,7 +1455,7 @@ bpConfInList() { ##I Check if key exist in config file list
     ((i++))
     desc=${arr[$i]}
     ((i++))
-    #echo "$key"
+    #echo "KEY = $key"
     if [ "$key" == "$1" ]; then
       return 0
     fi
@@ -1480,13 +1481,21 @@ bpConfPrint() { ##I Print settings in config list
   done
 }
 
+
+#
+# $1
+# $2 Key
+# $3 Value
+#
 bpset() { ##C BP_CONF Change setting in bp config file
+
   if [ -z "$2" ]; then
     bpConfPrint "" "" "${BP_CONFIG_LIST[@]}"
     return
   fi
   if bpConfInList "$2" "${BP_CONFIG_LIST[@]}"; then
-    bpChangeSetting "${BP_CONFIG_FILE}" "${bpReturn}" "\"${3}\""
+#    bpChangeSetting "${BP_CONFIG_FILE}" "${bpReturn}" "\"${3}\""
+		bpConfChangeSetting  "$2" "${3}" "${BP_CONFIG_LIST[@]}"
     return
   fi
   bpError "\"$2\" is not a valid setting"
