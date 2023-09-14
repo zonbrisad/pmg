@@ -240,6 +240,7 @@ bpUserSettings() {
     "pip" "black" ":"
     "pip" "rich" ":"
     "pip" "textual" ":"
+		"pip" "pyqgtgraph" ":"
   )
 
   devRust=(
