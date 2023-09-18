@@ -781,6 +781,7 @@ alias gi='git-info'
 alias gp='git push origin --tags'
 alias gnt='pmgp gnt'
 alias gnb='pmgp gnb'
+alias gls='git ls-tree HEAD'
 
 
 alias got='git '
