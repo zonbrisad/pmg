@@ -56,7 +56,7 @@ bpUserSettings() {
     "OmTerm" ":"
     "mpterm" ":"
     "def" "def install"
-		"fplot" ":"
+    "fplot" ":"
   )
 
   #
@@ -210,7 +210,7 @@ bpUserSettings() {
     "apt" "gdb-arm-none-eabi" ":"
     "apt" "libnewlib-arm-none-eabi" ":"
     "apt" "openocd" ":"
-		"apt" "qemu-system-arm" ":" 
+    "apt" "qemu-system-arm" ":"
   )
 
   devAVR=(
@@ -219,7 +219,7 @@ bpUserSettings() {
     "apt" "avr-libc" ":"
     "apt" "gcc-avr" ":"
     "apt" "gdb-avr" ":"
-		"apt" "qemu-system-avr" ":"
+    "apt" "qemu-system-avr" ":"
   )
 
   devPython=(
@@ -240,35 +240,39 @@ bpUserSettings() {
     "pip" "black" ":"
     "pip" "rich" ":"
     "pip" "textual" ":"
-		"pip" "pyqgtgraph" ":"
+    "pip" "pyqgtgraph" ":"
+  )
+
+  devMicroPython=(
+    "code" "paulober.pico-w-go" ":"
+    "apt" "thonny" ":"
+    "pip" "pyboard-rshell" ":"
   )
 
   devRust=(
     "apt" "rust-all" ":"
-		"apt" "cargo" ":"
-		"apt" "rust-markdown" ":"
-		"apt" "librust-ansi-colours-dev" ":"
-		"apt" "librust-ansi-term-dev" ":"
-		"apt" "librust-argparse-dev" ":"
-		"apt" "librust-async-io-dev" ":"
-		"apt" "librust-configparser-dev" ":"
-		"apt" "librust-lua52-sys-dev" ":"
-		"apt" "librust-serial-dev" ":"
-		"apt" "librust-signal-hook-dev" ":"
-		"apt" "librust-time-dev" ":"
-		"apt" "librust-tokio-dev" ":"
-		"apt" "librust-toml-dev" ":"
-)
+    "apt" "cargo" ":"
+    "apt" "rust-markdown" ":"
+    "apt" "librust-ansi-colours-dev" ":"
+    "apt" "librust-ansi-term-dev" ":"
+    "apt" "librust-argparse-dev" ":"
+    "apt" "librust-async-io-dev" ":"
+    "apt" "librust-configparser-dev" ":"
+    "apt" "librust-lua52-sys-dev" ":"
+    "apt" "librust-serial-dev" ":"
+    "apt" "librust-signal-hook-dev" ":"
+    "apt" "librust-time-dev" ":"
+    "apt" "librust-tokio-dev" ":"
+    "apt" "librust-toml-dev" ":"
+  )
 
   science=(
     "apt" "scilab" ":"
   )
 
   inkscapePkgs=(
-    "git" "https://github.com/upb-lea/Inkscape_electric_Symbols.git"  "${HOME}/pmg/media/inkscape/symbols"
+    "git" "https://github.com/upb-lea/Inkscape_electric_Symbols.git" "${HOME}/pmg/media/inkscape/symbols"
   )
-
-
 
 }
 
@@ -397,24 +401,48 @@ installSnap() { ##I Install snap package
 }
 
 installGit() { ##I Install git package
-  bpError "Git install function is not developed yes"
+  bpError "Git install function is not developed yet"
 
-	REPO=$1
-	if [ "$2" != ":" ]; then
-	  bpMkDir "$2"
-	fi
-	bpCd "$2"
-	#pwd
-	
-#  return
-#  git -C "${PMG_TEMP}" clone "$1"
-	git clone "$REPO"
+  REPO=$1
+  if [ "$2" != ":" ]; then
+    bpMkDir "$2"
+  fi
+  bpCd "$2"
+  #pwd
+
+  #  return
+  #  git -C "${PMG_TEMP}" clone "$1"
+  git clone "$REPO"
   bpCd "-"
-	#d=~/pmg/tmp/$(basename "$1")
+  #d=~/pmg/tmp/$(basename "$1")
 
   # do stuff
   #ls
 
+}
+
+#
+# $1 package name
+#
+codeIsInstalled() { ##I Check if VSCode extention is installed
+  if code --list-extensions | grep --quiet "$1"; then
+    return 0
+  else
+    return 1
+  fi
+}
+
+installCode() { ##I Install vscode extention
+  if codeIsInstalled "$1"; then
+    bpInfo "VSCode package $1 is already installed"
+    return
+  fi
+
+  if code --install-extension "$1"; then
+    bpOk "Installed: ${E_BR_GREEN}${1}${E_RESET}"
+  else
+    bpError "Failed installing ${E_BR_GREEN}${1}${E_RESET}"
+  fi
 }
 
 #
@@ -444,6 +472,10 @@ installGeneric() {
 
   if [ "$1" == "ppa" ]; then
     installPPA "$2" "$3"
+  fi
+
+  if [ "$1" == "code" ]; then
+    installCode "$2" "$3"
   fi
 
   if [ "$1" == "lst" ]; then
@@ -574,15 +606,17 @@ python() { ##D Install python development packages
   installPkgs "${devPython[@]}"
 }
 
+mpython() { ##D Install python development packages
+  installPkgs "${devMicroPython[@]}"
+}
+
 sci() { ##D Install science and technology packages
   installPkgs "${science[@]}"
 }
 
-
 rust() { ##D Install Rust development packages
   installPkgs "${devRust[@]}"
 }
-
 
 WORK=~/Downloads
 
@@ -651,7 +685,6 @@ libgtk() { ##D Install GTK+/glib development libraries
 libmisc() { ##D Install various C development libraries (ncurses/lua/
   installPkgs "${devCLibs[@]}"
 }
-  
 
 ##- Science and technology
 
@@ -659,7 +692,7 @@ sci() { ##D Install science and technology packages
   installPkgs "${sciPkgs[@]}"
 }
 
-##- Media 
+##- Media
 
 inkscape() { ##D Install Inkscape resources(fonts/clipart)
   installPkgs "${inkscapePkgs[@]}"
