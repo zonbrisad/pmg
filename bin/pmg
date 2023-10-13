@@ -100,27 +100,38 @@ all_setups() { ##D All setups (except jed_setup)
 }
 
 configFiles=(
-  ".bashrc"
-  ".bash_profile"
-  ".jedrc"
-  "bin"
-  ".gitconfig"
-  ".tmux.conf"
-  ".ssh/config"
+  ".bashrc" ":"
+  ".bash_profile" ":"
+  ".jedrc" ":"
+  "bin" ":"
+  ".gitconfig" ":"
+  ".tmux.conf" ":"
+  ".ssh/config" ":"
+  ".config/inkscape/palettes" "pmg/palettes"
 )
 
 #
-# $1 file to be replaced
+# $1 file to become link
+# $2 target (optional)
 #
-cf() {
-  TARGET="${HOME}/pmg/${1}"
+fileToLink() { ##I Backup and remove file then replace with link
   LINK="${HOME}/${1}"
+  if [ -z "$2" ]; then
+    TARGET="${HOME}/pmg/${1}"
+  else
+    TARGET="${HOME}/$2"
+  fi
+
   if [ -h "$LINK" ]; then # if aldready symbolic return
     bpInfo "File '${LINK}' already symbolic link"
     return
   fi
 
-  if [ -e "$LINK" ]; then # if file exist make a copy
+  if [ -d "$LINK" ]; then # if file is directory, rename
+    bpMv "$LINK" "${LINK}.old"
+  fi
+
+  if [ -e "$LINK" ]; then # if file exist make backup
     bpBackup "$LINK"
     bpRm "$LINK"
   fi
@@ -131,8 +142,19 @@ cf() {
 pmg_setup() { ##D Initiates pmg infrastructure
   bpAddModule "${BP_SELF_DIR}/pmg_init"
 
-  for pkg in "${configFiles[@]}"; do
-    cf "${pkg}"
+  local i=0
+  while [ "$i" -lt "${#configFiles[@]}" ]; do
+    LINK=${configFiles[$i]}
+    ((i++))
+    TARGET=${configFiles[$i]}
+    ((i++))
+
+    if [ "$TARGET" == ":" ]; then
+      fileToLink "${LINK}" ""
+    else
+      fileToLink "${LINK}" "${TARGET}"
+    fi
+
   done
 
   bpset "" "BP_NAME" "${MY_NAME}"
@@ -371,21 +393,21 @@ hwinfoe() { ##D Print general hardware information
 
 batinfo() { ##D Print battery information
   for bat in "/sys/class/power_supply"/*; do
-	  echo "X: $bat"
-	  if [ $(cat ${bat}/type) == "Battery" ]; then
-		  bpPrintLine "Battery $bat"
-			bpPrintDesc "Manufacturer:" "$(cat ${bat}/manufacturer)"
-			bpPrintDesc "Serial:" "$(cat ${bat}/serial_number)"
-		  bpPrintDesc "Battery type:" "$(cat ${bat}/technology)"
-			bpPrintDesc "Status:" "$(cat ${bat}/status)"
-			bpPrintDesc "Charge state:" "$(cat ${bat}/capacity) %"
-			V=$(bc <<< "scale=1; $(cat ${bat}/voltage_now) / 1000000")
-			bpPrintDesc "Battery voltage:"  "$V V"
-			C=$(bc <<< "scale=1; $(cat ${bat}/current_now) / 1000000")
-			bpPrintDesc "Battery current:"  "$C A"
-		fi
-	done
-	bpPrintLine
+    echo "X: $bat"
+    if [ $(cat ${bat}/type) == "Battery" ]; then
+      bpPrintLine "Battery $bat"
+      bpPrintDesc "Manufacturer:" "$(cat ${bat}/manufacturer)"
+      bpPrintDesc "Serial:" "$(cat ${bat}/serial_number)"
+      bpPrintDesc "Battery type:" "$(cat ${bat}/technology)"
+      bpPrintDesc "Status:" "$(cat ${bat}/status)"
+      bpPrintDesc "Charge state:" "$(cat ${bat}/capacity) %"
+      V=$(bc <<<"scale=1; $(cat ${bat}/voltage_now) / 1000000")
+      bpPrintDesc "Battery voltage:" "$V V"
+      C=$(bc <<<"scale=1; $(cat ${bat}/current_now) / 1000000")
+      bpPrintDesc "Battery current:" "$C A"
+    fi
+  done
+  bpPrintLine
 }
 
 ##- Project management (git)
@@ -447,11 +469,10 @@ pull() { ##D Pull project from GITHUB
   bpCd -
 }
 
-
 ##- Arduino bootloader
 write_arduino_bootloader() {
   MCU=$1
-  BOOTLOADER=$2 
+  BOOTLOADER=$2
   avrdude -c jtag2isp -p ${MCU} -v -e -U hfuse:w:0xDA:m -U lfuse:w:0xFF:m -U flash:w:${BOOTLOADER}:i -U lock:w:0x0F:m #-U efuse:w:0x05:m
 }
 
@@ -474,30 +495,28 @@ ward() { ## Write Arduino optiboot_168_328.ex to ATMega328
   write_arduino_bootloader "m328" "${BP_SELF_DIR}/arduino/optiboot/optiboot_atmega328.hex"
 }
 
-watbp() { ## Write Arduino ATmegaBOOT_168_atmega328.hex bootloader to ATMega328P 
+watbp() { ## Write Arduino ATmegaBOOT_168_atmega328.hex bootloader to ATMega328P
   write_arduino_bootloader "m328p" "${BP_SELF_DIR}/arduino/ATmegaBOOT_168_atmega328.hex"
 }
-
 
 watb() { ##D Write Arduino ATmegaBOOT_168_atmega328.hex bootloader to ATMega328 (working)
   write_arduino_bootloader "m328" "${BP_SELF_DIR}/arduino/ATmegaBOOT_168_atmega328.hex"
 }
 
 wamtb() { ##D Write Arduino ATmegaBOOT_168_atmega1280.hex bootloader to ATMega1280 (working)
-	write_arduino_bootloader "m1280" "${BP_SELF_DIR}/arduino/ATmegaBOOT_168_atmega1280.hex"
+  write_arduino_bootloader "m1280" "${BP_SELF_DIR}/arduino/ATmegaBOOT_168_atmega1280.hex"
 }
 
 ##- Arduino USB-serial firmware (ATmegaxxu2)
 
 dfu8() { ##D Write Arduino usb-serial firmware ATmega8u2 via dfu
   dfu-programmer atmega8u2 erase
-	dfu-programmer atmega8u2 flash "${BP_SELF_DIR}/arduino/ArduinoCore-avr/firmwares/atmegaxxu2/UNO-dfu_and_usbserial_combined.hex"
+  dfu-programmer atmega8u2 flash "${BP_SELF_DIR}/arduino/ArduinoCore-avr/firmwares/atmegaxxu2/UNO-dfu_and_usbserial_combined.hex"
 }
 
 aus8() { ##D Write Arduino usb-serial firmware to ATmega8u2 JTAG2ICE mkii
   write_arduino_usb-serial_firmware at90usb82 "${BP_SELF_DIR}/arduino/ArduinoCore-avr/firmwares/atmegaxxu2/UNO-dfu_and_usbserial_combined.hex"
 }
-
 
 ##- AVR
 
@@ -507,9 +526,9 @@ avr() { ##D Read avr ATmega328p device with avrdude and jtagice mkii programmer
 
 ard() { ##D Read arduino ATMega328P
   bpPrintLine "Serial ports"
-	ls /dev/ttyUSB*
-	bpPrintLine
-	PORT=$(bpReadStr "Enter serial port" "/dev/ttyUSB0")
+  ls /dev/ttyUSB*
+  bpPrintLine
+  PORT=$(bpReadStr "Enter serial port" "/dev/ttyUSB0")
   avrdude -v -c arduino -P "$PORT" -p m328p -U flash:r:flash.hex:i
 }
 
@@ -1341,7 +1360,7 @@ bpChangeSetting() { ##I Change setting in config file
   KEY="$2"
   VAL="$3"
   DESC="$4"
-#	echo $FILE $KEY $VAL $DESC
+  #	echo $FILE $KEY $VAL $DESC
   if ! bpStrExist "${1}" "${KEY}"; then
     bpAddSetting "$FILE" "$KEY" "$VAL" "$DESC"
   fi
@@ -1385,7 +1404,7 @@ bpConfChangeSetting() {
   CONF=("${@:2}")
   FILE=${CONF[1]}
   DESC=$(bpConfGetDesc "$KEY" "${CONF[@]}")
-#  echo $KEY $VAL 
+  #  echo $KEY $VAL
   if ! bpConfInList "$KEY" "${CONF[@]}"; then
     bpError "\"$KEY\" is not a valid setting"
     return
@@ -1481,7 +1500,6 @@ bpConfPrint() { ##I Print settings in config list
   done
 }
 
-
 #
 # $1
 # $2 Key
@@ -1494,8 +1512,8 @@ bpset() { ##C BP_CONF Change setting in bp config file
     return
   fi
   if bpConfInList "$2" "${BP_CONFIG_LIST[@]}"; then
-#    bpChangeSetting "${BP_CONFIG_FILE}" "${bpReturn}" "\"${3}\""
-		bpConfChangeSetting  "$2" "${3}" "${BP_CONFIG_LIST[@]}"
+    #    bpChangeSetting "${BP_CONFIG_FILE}" "${bpReturn}" "\"${3}\""
+    bpConfChangeSetting "$2" "${3}" "${BP_CONFIG_LIST[@]}"
     return
   fi
   bpError "\"$2\" is not a valid setting"
