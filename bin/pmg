@@ -154,7 +154,6 @@ pmg_setup() { ##D Initiates pmg infrastructure
     else
       fileToLink "${LINK}" "${TARGET}"
     fi
-
   done
 
   bpset "" "BP_NAME" "${MY_NAME}"

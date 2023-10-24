@@ -159,7 +159,7 @@ bpInitDisplay() { ##I Init DISPLAY variable
 
 	if [ -z "${DISPLAY:=""}" ]; then
 		get_xserver
-		echo "XSERVER = $XSERVER"
+		#echo "XSERVER = $XSERVER"
 		if [[ -z ${XSERVER} || ${XSERVER} == $(hostname) || ${XSERVER} == "unix" ]]; then
 			DISPLAY=":0.0" # Display on local host.
 		else
