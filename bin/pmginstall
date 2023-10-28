@@ -64,7 +64,7 @@ bpUserSettings() {
   #
   # Fields
   # =================================================
-  # Package type: [apt|npm|pip|snap|ppa|git]
+  # Package type: [apt|npm|pip|snap|ppa|git|lst]
   # Name:         Package type
   # Param:        Extra parameter
   #
@@ -610,10 +610,6 @@ mpython() { ##D Install python development packages
   installPkgs "${devMicroPython[@]}"
 }
 
-sci() { ##D Install science and technology packages
-  installPkgs "${science[@]}"
-}
-
 rust() { ##D Install Rust development packages
   installPkgs "${devRust[@]}"
 }
@@ -674,12 +670,12 @@ avrsim() { ##D Download compile and install avrsim
 
 #- C/C++ libraries
 
-libqt() { ##D Install Qt development libraries
-  installPkgs "${libqtPkgs[@]}"
+libqt() { ##D Install Qt5 development libraries
+  installPkgs "${devQt5[@]}"
 }
 
 libgtk() { ##D Install GTK+/glib development libraries
-  installPkgs "${libgtkPkgs[@]}"
+  installPkgs "${devGTK[@]}"
 }
 
 libmisc() { ##D Install various C development libraries (ncurses/lua/
@@ -689,7 +685,7 @@ libmisc() { ##D Install various C development libraries (ncurses/lua/
 ##- Science and technology
 
 sci() { ##D Install science and technology packages
-  installPkgs "${sciPkgs[@]}"
+  installPkgs "${science[@]}"
 }
 
 ##- Media

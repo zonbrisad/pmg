@@ -363,8 +363,9 @@ info() { ##D General information
   bpPrintLine "General"
   bpPrintVar HOSTNAME "Hostname"
   bpPrintDesc "Username" "$USER ($UID)"
-  IFS=$'\n'
+  #IFS=$'\n'
   bpPrintDesc "IP addr" "$(bpIpInfo)"
+
   bpPrintLine "Hardware"
   bpPrintDesc "CPU" "$(bpCPU)"
   bpPrintDesc "Memory" "$(free --mega | grep Mem | awk '{ print $2 }') Mb"
@@ -378,6 +379,13 @@ info() { ##D General information
   bpPrintLine "SSH"
   bpPrintDesc "SSH public key location" "${SSH_KEY}.pub"
   bpPrintDesc "SSH public key" "$(cat "${SSH_KEY}.pub")"
+
+  bpPrintLine "Dev. tools"
+  bpPrintDesc "Python" "$(bpRun python3 --version)"
+  bpPrintDesc "Java" "$(bpRun java --version | grep openjdk)"
+  bpPrintDesc "gcc" "$(bpRun gcc --version | grep gcc)"
+  bpPrintDesc "avr-gcc" "$(bpRun avr-gcc --version | grep gcc)"
+  bpPrintDesc "arm-gcc" "$(bpRun arm-none-eabi-gcc --version | grep gcc)"
 
   bpPrintLine
 }
