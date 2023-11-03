@@ -249,6 +249,10 @@ bpUserSettings() {
     "pip" "pyboard-rshell" ":"
   )
 
+  devRasperryPi=(
+    "apt" "rpi-imager" ":"
+  )
+
   devRust=(
     "apt" "rust-all" ":"
     "apt" "cargo" ":"
@@ -668,7 +672,11 @@ avrsim() { ##D Download compile and install avrsim
   bpCd "-"
 }
 
-#- C/C++ libraries
+rp() { ##D Install Raspberry Pi development tools
+  installPkgs "${devRasperryPi[@]}"
+}
+
+##- C/C++ libraries
 
 libqt() { ##D Install Qt5 development libraries
   installPkgs "${devQt5[@]}"

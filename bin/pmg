@@ -363,7 +363,6 @@ info() { ##D General information
   bpPrintLine "General"
   bpPrintVar HOSTNAME "Hostname"
   bpPrintDesc "Username" "$USER ($UID)"
-  #IFS=$'\n'
   bpPrintDesc "IP addr" "$(bpIpInfo)"
 
   bpPrintLine "Hardware"
