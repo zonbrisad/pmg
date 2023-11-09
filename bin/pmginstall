@@ -54,9 +54,9 @@ bpUserSettings() {
     "luaconf" ":"
     "gittest" ":"
     "OmTerm" ":"
-    "mpterm" ":"
+    "mpterm" "mptemp_init -q"
     "def" "def install"
-    "fplot" ":"
+    "fplot" "fplot_init -q"
   )
 
   #
