@@ -218,6 +218,7 @@ gi() { ##D Print git project information
   git branch
   bpPrintLine "Remote information"
   git remote -v
+	bpPrintLine 
 }
 
 gc() { ## Show git configuration
