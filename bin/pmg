@@ -1431,13 +1431,16 @@ bpConfChangeSetting() {
 #
 bpConfCreate() { ##I Create configuration file
   FILE="$1"
+  #bpInfo "Creating new bashplates settings. $(bpColorizeFile "${BP_CONFIG_FILE}")"
+  bpMkDir "${BP_CONFIG_DIR}"
+  bpMkDir "${BP_CONFIG_PATHS}"
+  bpMkDir "${BP_CONFIG_MODULES}"
   {
     echo "# "
     echo "# $2"
     echo "# "
     echo
   } >>"${FILE}"
-
   arr=("${@:2}")
   len=${#arr[@]}
   i=1
@@ -1456,6 +1459,7 @@ bpConfCreate() { ##I Create configuration file
 # $1 Config file
 #
 bpConfLoad() { ##I Load config file
+
   if [ -n "${1}" ]; then
     if [ ! -e "${1}" ]; then
       bpConfCreate "${@}"

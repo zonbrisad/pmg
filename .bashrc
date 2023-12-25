@@ -45,6 +45,7 @@ ii() { ##D Print general system information
   bpPrintDesc "Username:" "$USER ($UID)"
   bpPrintDesc "Current date:" "$(date)"
   bpPrintDesc "IP addr" "$(bpIpInfo)"
+  bpPrintDesc "SSID" "$(iwgetid -r)"
   bpPrintDesc "Machine Uptime:" "$(uptime -p)"
   bpPrintDesc "Machine Type:" "$(bpCPU)"
   bpPrintDesc "Distibution" "$(lsb_release -d | cut -b 14-)"
