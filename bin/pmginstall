@@ -400,29 +400,19 @@ installSnap() { ##I Install snap package
   fi
 
   sudo snap install "$1"
-
-  #bpError "Snap install function is not developed yet"
 }
 
 installGit() { ##I Install git package
   bpError "Git install function is not developed yet"
-
+  return
   REPO=$1
   if [ "$2" != ":" ]; then
     bpMkDir "$2"
   fi
   bpCd "$2"
-  #pwd
 
-  #  return
-  #  git -C "${PMG_TEMP}" clone "$1"
   git clone "$REPO"
   bpCd "-"
-  #d=~/pmg/tmp/$(basename "$1")
-
-  # do stuff
-  #ls
-
 }
 
 #
