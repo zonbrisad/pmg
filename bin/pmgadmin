@@ -375,7 +375,7 @@ bpInitSettings() {
   BP_LOG_CRITICAL=1
 
   ##V Activate settings function (will create settings file when run)
-  #BP_CONF=1
+  BP_CONF=1
 
 }
 #---------------------------------------------------------------------
