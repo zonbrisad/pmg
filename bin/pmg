@@ -95,8 +95,6 @@ all_setups() { ##D All setups (except jed_setup)
   git_setup
   ssh
   pmg2ssh
-
-  #  jed_setup
 }
 
 configFiles=(
