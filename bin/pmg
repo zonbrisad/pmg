@@ -357,6 +357,22 @@ batd() { ##D Battery discharge test
 }
 
 ##- Information
+
+bpCheckVersion() {
+  CMD=$1
+	
+  if bpHasCmd "${CMD}"; then
+    ${CMD} --version | grep "$CMD"
+		return
+  fi
+	echo Command not installed!
+  #else
+   # bpError "Could not execute $1, command does not exist!"
+    #return 1
+  #fi
+
+}
+
 info() { ##D General information
   bpPrintLine "General"
   bpPrintVar HOSTNAME "Hostname"
@@ -380,9 +396,9 @@ info() { ##D General information
   bpPrintLine "Dev. tools"
   bpPrintDesc "Python" "$(bpRun python3 --version)"
   bpPrintDesc "Java" "$(bpRun java --version | grep openjdk)"
-  bpPrintDesc "gcc" "$(bpRun gcc --version | grep gcc)"
-  bpPrintDesc "avr-gcc" "$(bpRun avr-gcc --version | grep gcc)"
-  bpPrintDesc "arm-gcc" "$(bpRun arm-none-eabi-gcc --version | grep gcc)"
+  bpPrintDesc "gcc" "$(bpCheckVersion gcc)"
+	bpPrintDesc "avr-gcc"  "$(bpCheckVersion avr-gcc)"
+  bpPrintDesc "arm-gcc" "$(bpCheckVersion arm-none-eabi-gcc)"
 
   bpPrintLine
 }
