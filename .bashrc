@@ -80,6 +80,11 @@ host_rpexp() {
   SYSTEMP=/sys/class/thermal/thermal_zone0/temp
 }
 
+host_rpexp2() {
+  SYSTEMP=/sys/class/thermal/thermal_zone0/temp
+	start_ssh_agent
+}
+
 host_rpserver() {
   SYSTEMP=/sys/class/thermal/thermal_zone0/temp
 }
@@ -653,6 +658,32 @@ ask() { ## See 'killps' for example of use.
   y* | Y*) return 0 ;;
   *) return 1 ;;
   esac
+}
+
+
+SSH_ENV=$HOME/.ssh/environment
+
+# start the ssh-agent
+function start_agent {
+  echo "Initializing new SSH agent..."
+	# spawn ssh-agent
+	/usr/bin/ssh-agent | sed 's/^echo/#echo/' > "${SSH_ENV}"
+	echo succeeded
+	chmod 600 "${SSH_ENV}"
+	. "${SSH_ENV}" > /dev/null
+#	/usr/bin/ssh-add
+}
+
+
+start_ssh_agent() { ##D Start ssh-agent
+  if [ -f "${SSH_ENV}" ]; then
+	  . "${SSH_ENV}" > /dev/null
+		ps -ef | grep ${SSH_AGENT_PID} | grep ssh-agent$ > /dev/null || {
+		start_agent;
+	}
+	else
+	  start_agent;
+	fi
 }
 
 ##- Development
@@ -1667,7 +1698,9 @@ bhelp() { ##D Print help information
 BP_SELF_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 
 ##V Name of script
-BP_SELF=$(basename "$0")
+BP_SELF_NAME=.bashrc
+
+#BP_SELF_NAME=$(basename "$0")
 
 ##V Number of arguments given to script
 BP_ARGUMENTS=$#
