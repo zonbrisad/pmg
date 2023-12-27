@@ -709,6 +709,58 @@ eb() { ##D Open .bashrc in default editor
   bpEdit ~/.bashrc "$1"
 }
 
+xbpLoadModules() { ##I Load moduls
+  # Run bashplates module scripts
+  if [ -e "$BP_CONFIG_MODULES" ]; then
+    for m in $(find ${BP_CONFIG_MODULES} -type l); do
+      l=$(readlink "${m}")
+      if [ -e "${l}" ]; then
+        bpSource "$l"
+        bpOk "Loaded module $(bpColorizeFile "$l")"
+      else
+        bpError "Failed to load module $(bpColorizeFile "$l")"
+      fi
+    done
+  fi
+}
+
+
+bplsmod() { ##D List BP modules 
+  if [ ! -e "$BP_CONFIG_MODULES" ]; then
+	  return
+	fi
+	IFS=$'\n'
+	for m in $(find ${BP_CONFIG_MODULES} -type l); do
+	  l=$(readlink "${m}")
+		if [ -e "${l}" ]; then
+		  #echo $(basename $m)
+			printf "%-16s -> %s\n" $(basename $m) "$l"
+		else
+		  printf "%-16s -> ${E_RED}%s${E_RESET}\n" $(basename $m) "$l"
+		fi
+	done
+}
+
+bprmmod() { ##D Remove BP module
+  rm -f ${BP_CONFIG_MODULES}/${1}
+	bpOk "Removing module $m"
+}
+
+
+bpclrmod() { ##D Remove BP modules that are not valid
+  if [ ! -e "$BP_CONFIG_MODULES" ]; then
+	  return
+	fi
+	IFS=$'\n'
+	for m in $(find ${BP_CONFIG_MODULES} -type l); do
+	  l=$(readlink "${m}")
+		if [ ! -e "${l}" ]; then
+			bprmmod $(basename "$m")
+		fi
+	done
+}
+
+
 #=========================================================================
 #
 #  PROGRAMMABLE COMPLETION SECTION
@@ -1762,6 +1814,8 @@ loginInfo
 bpLoadPaths() { ##I Load k
   # Add bashplates PATH's
   if [ -e "$BP_CONFIG_PATHS" ]; then
+	
+		IFS=$'\n'
     for p in $(find ${BP_CONFIG_PATHS} -type l); do
       l=$(readlink "${p}")
       if [ -e "${l}" ]; then
@@ -1778,6 +1832,8 @@ bpLoadPaths() { ##I Load k
 bpLoadModules() { ##I Load moduls
   # Run bashplates module scripts
   if [ -e "$BP_CONFIG_MODULES" ]; then
+	
+		IFS=$'\n'
     for m in $(find ${BP_CONFIG_MODULES} -type l); do
       l=$(readlink "${m}")
       if [ -e "${l}" ]; then
