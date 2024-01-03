@@ -376,6 +376,12 @@ alias ..='cd ..'
 alias j='jobs -l'
 alias h='history'
 
+
+# ssh login aliases
+alias rpexp='ssh lpmg@rpexp'
+alias rpexp2='ssh lpmg@rpexp2'
+
+
 # The 'ls' family -----------------------------------------------------------
 
 # Add colors for filetype and  human-readable sizes by default on 'ls':
