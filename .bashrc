@@ -671,10 +671,16 @@ SSH_ENV=$HOME/.ssh/environment
 
 # start the ssh-agent
 function start_agent {
-  echo "Initializing new SSH agent..."
-	# spawn ssh-agent
-	/usr/bin/ssh-agent | sed 's/^echo/#echo/' > "${SSH_ENV}"
-	echo succeeded
+  # spawn ssh-agent
+	
+	bpRun /usr/bin/ssh-agent | sed 's/^echo/#echo/' >| "${SSH_ENV}"
+	
+	if [ $? -eq 0 ]; then
+	  bpOk "Starting ssh-agent"
+	else
+	  bpError "Failed to start ssh-agent"
+	fi
+	
 	chmod 600 "${SSH_ENV}"
 	. "${SSH_ENV}" > /dev/null
 #	/usr/bin/ssh-add
@@ -1811,9 +1817,9 @@ bpCompletion
 bpInitDisplay
 
 # Call host specific function if existing
-if [ "$(type -t host_"${HOSTNAME}")" == "function" ]; then
-  host_"${HOSTNAME}"
-fi
+#if [ "$(type -t host_"${HOSTNAME}")" == "function" ]; then
+#  host_"${HOSTNAME}"
+#i
 
 loginInfo
 
