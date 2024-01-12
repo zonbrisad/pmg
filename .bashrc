@@ -380,6 +380,8 @@ alias h='history'
 # ssh login aliases
 alias rpexp='ssh lpmg@rpexp'
 alias rpexp2='ssh lpmg@rpexp2'
+alias rpexp3='ssh lpmg@rpexp3'
+alias rpdesk='ssh lpmg@rpdesk'
 
 
 # The 'ls' family -----------------------------------------------------------
