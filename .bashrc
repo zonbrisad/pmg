@@ -51,7 +51,8 @@ ii() { ##D Print general system information
   bpPrintDesc "Distibution" "$(lsb_release -d | cut -b 14-)"
 
   if [ -n "${SYSTEMP}" ]; then
-    T=$(bc <<<"scale=1; $(cat "${SYSTEMP}") / 1000")
+#    T=$(bc <<<"scale=1; $(cat "${SYSTEMP}") / 1000")    
+		T=$(($(cat "${SYSTEMP}") / 1000))    
     bpPrintDesc "Temperature:" "$T °C"
   fi
 
