@@ -40,18 +40,26 @@ flag() { ##D Print Swedish flag
   echo -e "  ${FLAG_BLUE}        ${FLAG_YELLOW}  ${FLAG_BLUE}               ${E_RESET}"
 }
 
+bpGetSSID() {
+  if ! bpHasCmd "iwgetid"; then
+	  echo ""
+	fi
+	iwgetid -r
+}
+
 ii() { ##D Print general system information
   bpPrintDesc "Hostname:" "$HOSTNAME $NC"
   bpPrintDesc "Username:" "$USER ($UID)"
   bpPrintDesc "Current date:" "$(date)"
   bpPrintDesc "IP addr" "$(bpIpInfo)"
-  bpPrintDesc "SSID" "$(iwgetid -r)"
+	bpPrintDesc "SSID" "$(bpGetSSID)"
   bpPrintDesc "Machine Uptime:" "$(uptime -p)"
   bpPrintDesc "Machine Type:" "$(bpCPU)"
   bpPrintDesc "Distibution" "$(lsb_release -d | cut -b 14-)"
 
   if [ -n "${SYSTEMP}" ]; then
-    T=$(bc <<<"scale=1; $(cat "${SYSTEMP}") / 1000")
+#    T=$(bc <<<"scale=1; $(cat "${SYSTEMP}") / 1000")    
+		T=$(($(cat "${SYSTEMP}") / 1000))    
     bpPrintDesc "Temperature:" "$T °C"
   fi
 
