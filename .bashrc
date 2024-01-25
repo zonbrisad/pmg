@@ -43,6 +43,7 @@ flag() { ##D Print Swedish flag
 bpGetSSID() {
   if ! bpHasCmd "iwgetid"; then
 	  echo ""
+		return
 	fi
 	iwgetid -r
 }
