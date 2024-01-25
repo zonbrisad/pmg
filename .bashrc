@@ -205,6 +205,12 @@ shopt -s extglob # Necessary for programmable completion.
 shopt -u mailwarn
 unset MAILCHECK # Don't want my shell to warn me of incoming mail.
 
+# Ignore duplicate lines or lines begining with space in history
+HISTCONTROL=ignoreboth
+
+# Set timeformat for history list
+HISTTIMEFORMAT="%T "
+
 #---------------------------------------------------------------------
 # System functions and settings
 #---------------------------------------------------------------------
@@ -391,6 +397,7 @@ alias rpexp='ssh lpmg@rpexp'
 alias rpexp2='ssh lpmg@rpexp2'
 alias rpexp3='ssh lpmg@rpexp3'
 alias rpdesk='ssh lpmg@rpdesk'
+alias rpserver='ssh lpmg@rpserver'
 
 
 # The 'ls' family -----------------------------------------------------------
