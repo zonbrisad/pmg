@@ -85,6 +85,12 @@ host_rpexp2() {
 	start_ssh_agent
 }
 
+host_rpdesk() {
+  SYSTEMP=/sys/class/thermal/thermal_zone0/temp
+	start_ssh_agent
+	init_starship
+}
+
 host_rpserver() {
   SYSTEMP=/sys/class/thermal/thermal_zone0/temp
 }
