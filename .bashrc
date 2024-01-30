@@ -124,6 +124,16 @@ host_fileserver() {
   :
 }
 
+host_all() {
+# ssh login aliases
+  alias rpexp='ssh lpmg@rpexp'  
+  alias rpexp2='ssh lpmg@rpexp2'
+  alias rpexp3='ssh lpmg@rpexp3'
+  alias rpdesk='ssh lpmg@rpdesk'
+  alias rpserver='ssh lpmg@rpserver'
+	alias lsmnt='mount | column --table --table-hide 2,4,6'
+}
+
 #---------------------------------------------------------------------
 # bashrc personal functions
 #---------------------------------------------------------------------
@@ -396,14 +406,6 @@ alias libpath='echo -e ${LD_LIBRARY_PATH//:/\\n}'
 alias ..='cd ..'
 alias j='jobs -l'
 alias h='history'
-
-
-# ssh login aliases
-alias rpexp='ssh lpmg@rpexp'
-alias rpexp2='ssh lpmg@rpexp2'
-alias rpexp3='ssh lpmg@rpexp3'
-alias rpdesk='ssh lpmg@rpdesk'
-alias rpserver='ssh lpmg@rpserver'
 
 
 # The 'ls' family -----------------------------------------------------------
@@ -1661,6 +1663,12 @@ bpRun() { ##I Execute command
   return $?
 }
 
+bpCallFunction() { ##D Call a given function if it exists
+  if bpIsFunction "${1}"; then
+    "${1}"
+  fi
+}
+
 #
 # $1 file to open in editor
 # $2 override editor (optional)
@@ -1896,7 +1904,6 @@ if [ -e "$BP_CONFIG_DIR" ]; then
   bpLoadModules
 fi
 
-# Call host specific function if existing
-if bpIsFunction "host_${HOSTNAME}"; then
-  host_"${HOSTNAME}"
-fi
+bpCallFunction host_"${HOSTNAME}"
+
+bpCallFunction host_all

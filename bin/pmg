@@ -58,7 +58,7 @@ bpUserSettings() {
 ##- New install options
 
 newt() { ##D Setup tools/users/config on new install without desktop
-  all_setups
+   all_setups
   "${BP_SELF_DIR}"/pmginstall newterminal
 }
 
@@ -90,11 +90,11 @@ iso2usb() { ##D Write ISO file to USB drive
 ##- Setup
 
 all_setups() { ##D All setups (except jed_setup)
-  pmg_setup
-  add_groups
+  ssh_setup
   git_setup
-  ssh
-  pmg2ssh
+  files_setup
+  add_groups
+  git2ssh
 }
 
 configFiles=(
@@ -137,7 +137,7 @@ fileToLink() { ##I Backup and remove file then replace with link
   bpLn "${TARGET}" "${LINK}" -r
 }
 
-pmg_setup() { ##D Initiates pmg infrastructure
+files_setup() { ##D Initiate links to config files and directories
   bpAddModule "${BP_SELF_DIR}/pmg_init"
 
   local i=0
@@ -189,7 +189,7 @@ clear() { ##D Clear all settings
 
 ##- SSH
 
-ssh() { ##D Generate SSH key
+ssh_setup() { ##D Generate SSH key
   if [ -e "${SSH_KEY}" ]; then
     bpWarning "SSH key already exists."
     if ! bpReadBoolDN "Do you want to overwrite existing key?"; then
@@ -205,7 +205,7 @@ ssh() { ##D Generate SSH key
   cat "${SSH_KEY}".pub
 }
 
-pmg2ssh() { ##D Change pmg remote git repository to ssh
+git2ssh() { ##D Change pmg remote git repository to ssh authentication
   cd "${BP_SELF_DIR}/.." || bpExit
 
   git remote -v
