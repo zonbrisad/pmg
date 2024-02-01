@@ -616,6 +616,10 @@ gt() { ##D Show information about
 # Process/system related functions:
 #-------------------------------------------------------------
 
+inst() { ##D Install dpkg packate
+  sudo dpkg -i "$1"
+}
+
 lam() { ##D List all available kernel modules
   find /lib/modules/$(uname -r) -type f -name '*.ko'
 }
