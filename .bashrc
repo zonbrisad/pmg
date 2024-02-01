@@ -43,6 +43,7 @@ flag() { ##D Print Swedish flag
 bpGetSSID() {
   if ! bpHasCmd "iwgetid"; then
 	  echo ""
+		return
 	fi
 	iwgetid -r
 }
@@ -93,6 +94,12 @@ host_rpexp2() {
 	start_ssh_agent
 }
 
+host_rpdesk() {
+  SYSTEMP=/sys/class/thermal/thermal_zone0/temp
+	start_ssh_agent
+	init_starship
+}
+
 host_rpserver() {
   SYSTEMP=/sys/class/thermal/thermal_zone0/temp
 }
@@ -115,6 +122,16 @@ host_extra() {
 
 host_fileserver() {
   :
+}
+
+host_all() {
+# ssh login aliases
+  alias rpexp='ssh lpmg@rpexp'  
+  alias rpexp2='ssh lpmg@rpexp2'
+  alias rpexp3='ssh lpmg@rpexp3'
+  alias rpdesk='ssh lpmg@rpdesk'
+  alias rpserver='ssh lpmg@rpserver'
+	alias lsmnt='mount | column --table --table-hide 2,4,6'
 }
 
 #---------------------------------------------------------------------
@@ -389,14 +406,6 @@ alias libpath='echo -e ${LD_LIBRARY_PATH//:/\\n}'
 alias ..='cd ..'
 alias j='jobs -l'
 alias h='history'
-
-
-# ssh login aliases
-alias rpexp='ssh lpmg@rpexp'
-alias rpexp2='ssh lpmg@rpexp2'
-alias rpexp3='ssh lpmg@rpexp3'
-alias rpdesk='ssh lpmg@rpdesk'
-alias rpserver='ssh lpmg@rpserver'
 
 
 # The 'ls' family -----------------------------------------------------------
@@ -742,7 +751,7 @@ eb() { ##D Open .bashrc in default editor
   bpEdit ~/.bashrc "$1"
 }
 
-xbpLoadModules() { ##I Load moduls
+xbpLoadModules() { ##I Load modules
   # Run bashplates module scripts
   if [ -e "$BP_CONFIG_MODULES" ]; then
     for m in $(find ${BP_CONFIG_MODULES} -type l); do
@@ -1064,43 +1073,87 @@ _tar() {
 # ANSI escape codes
 #---------------------------------------------------------------------
 
-# ANSI foreground colors codes
-#
-E_BLACK=$'\e[38:5:0m'       # Black
-E_RED=$'\e[38:5:1m'         # Red
-E_GREEN=$'\e[38:5:2m'       # Green
-E_YELLOW=$'\e[38:5:3m'      # Yellow
-E_BLUE=$'\e[38:5:4m'        # Blue
-E_MAGENTA=$'\e[38:5:5m'     # Magenta
-E_CYAN=$'\e[38:5:6m'        # Cyan
-E_GRAY=$'\e[38:5:7m'        # Gray
-E_DARKGRAY=$'\e[38:5:8m'    # Dark Gray
-E_BR_RED=$'\e[38:5:9m'      # Bright Red
-E_BR_GREEN=$'\e[38:5:10m'   # Bright Green
-E_BR_YELLOW=$'\e[38:5:11m'  # Bright Yellow
-E_BR_BLUE=$'\e[38:5:12m'    # Bright Blue
-E_BR_MAGENTA=$'\e[38:5:13m' # Bright Magenta
-E_BR_CYAN=$'\e[38:5:14m'    # Bright Cyan
-E_WHITE=$'\e[38:5:15m'      # White
+# Check if terminal is 16 color only
+if [[ "linux rxvt-16color" = *${TERM}* ]]; then
+  echo "Term is $TERM"тт
+  # ANSI foreground colors codes
+	#
+	E_BLACK=$'\e[30m'        # Black
+	E_RED=$'\e[31m'          # Red
+	E_GREEN=$'\e[32m'        # Green
+	E_YELLOW=$'\e[33m'       # Yellow
+	E_BLUE=$'\e[34m'         # Blue
+	E_MAGENTA=$'\e[35m'      # Magenta
+	E_CYAN=$'\e[36m'         # Cyan
+	E_GRAY=$'\e[37m'         # Gray
+	E_DARKGRAY=$'\e[1;30m'   # Dark Gray
+	E_BR_RED=$'\e[1;31m'     # Bright Red
+	E_BR_GREEN=$'\e[1;32m'   # Bright Green
+	E_BR_YELLOW=$'\e[1;33m'  # Bright Yellow
+	E_BR_BLUE=$'\e[1;34m'    # Bright Blue
+	E_BR_MAGENTA=$'\e[1;35m' # Bright Magenta
+	E_BR_CYAN=$'\e[1;36m'    # Bright Cyan
+	E_WHITE=$'\e[1;37m'      # White
+	
+	# ANSI background color codes
+	#
+	E_BG_BLACK=$'\e[40m'       # Black
+	E_BG_RED=$'\e[41m'         # Red
+	E_BG_GREEN=$'\e[42m'       # Green
+	E_BG_YELLOW=$'\e[43m'      # Yellow
+	E_BG_BLUE=$'\e[44m'        # Blue
+	E_BG_MAGENTA=$'\e[45m'     # Magenta
+	E_BG_CYAN=$'\e[46m'        # Cyan
+	E_BG_GRAY=$'\e[47m'        # Gray
+	E_BG_DARK_GRAY=$'\e[40m'   # Dark gray
+	E_BG_BR_RED=$'\e[41m'      # Bright Red
+	E_BG_BR_GREEN=$'\e[42m'    # Bright Green
+	E_BG_BR_YELLOW=$'\e[43m'   # Bright Yellow
+	E_BG_BR_BLUE=$'\e[43m'     # Bright Blue
+	E_BG_BR_MAGENTA=$'\e[45m'  # Bright Magenta
+	E_BG_BR_CYAN=$'\e[46m'     # Bright Cyan
+	E_BG_WHITE=$'\e[47m'       # White
+	
+else
 
-# ANSI background color codes
-#
-E_BG_BLACK=$'\e[48;5;0m'       # Black
-E_BG_RED=$'\e[48;5;1m'         # Red
-E_BG_GREEN=$'\e[48;5;2m'       # Green
-E_BG_YELLOW=$'\e[48;5;3m'      # Yellow
-E_BG_BLUE=$'\e[48;5;4m'        # Blue
-E_BG_MAGENTA=$'\e[48;5;5m'     # Magenta
-E_BG_CYAN=$'\e[48;5;6m'        # Cyan
-E_BG_GRAY=$'\e[48;5;7m'        # Gray
-E_BG_DARK_GRAY=$'\e[48;5;8m'   # Dark gray
-E_BG_BR_RED=$'\e[48;5;9m'      # Bright Red
-E_BG_BR_GREEN=$'\e[48;5;10m'   # Bright Green
-E_BG_BR_YELLOW=$'\e[48;5;11m'  # Bright Yellow
-E_BG_BR_BLUE=$'\e[48;5;12m'    # Bright Blue
-E_BG_BR_MAGENTA=$'\e[48;5;13m' # Bright Magenta
-E_BG_BR_CYAN=$'\e[48;5;14m'    # Bright Cyan
-E_BG_WHITE=$'\e[48;5;15m'      # White
+  # ANSI foreground colors codes
+  #
+	E_BLACK=$'\e[38:5:0m'       # Black
+	E_RED=$'\e[38:5:1m'         # Red
+	E_GREEN=$'\e[38:5:2m'       # Green
+	E_YELLOW=$'\e[38:5:3m'      # Yellow
+	E_BLUE=$'\e[38:5:4m'        # Blue
+	E_MAGENTA=$'\e[38:5:5m'     # Magenta
+	E_CYAN=$'\e[38:5:6m'        # Cyan
+	E_GRAY=$'\e[38:5:7m'        # Gray
+	E_DARKGRAY=$'\e[38:5:8m'    # Dark Gray
+	E_BR_RED=$'\e[38:5:9m'      # Bright Red
+	E_BR_GREEN=$'\e[38:5:10m'   # Bright Green
+	E_BR_YELLOW=$'\e[38:5:11m'  # Bright Yellow
+	E_BR_BLUE=$'\e[38:5:12m'    # Bright Blue
+	E_BR_MAGENTA=$'\e[38:5:13m' # Bright Magenta
+	E_BR_CYAN=$'\e[38:5:14m'    # Bright Cyan
+	E_WHITE=$'\e[38:5:15m'      # White
+	
+	# ANSI background color codes
+	#
+	E_BG_BLACK=$'\e[48;5;0m'       # Black
+	E_BG_RED=$'\e[48;5;1m'         # Red
+	E_BG_GREEN=$'\e[48;5;2m'       # Green
+	E_BG_YELLOW=$'\e[48;5;3m'      # Yellow
+	E_BG_BLUE=$'\e[48;5;4m'        # Blue
+	E_BG_MAGENTA=$'\e[48;5;5m'     # Magenta
+	E_BG_CYAN=$'\e[48;5;6m'        # Cyan
+	E_BG_GRAY=$'\e[48;5;7m'        # Gray
+	E_BG_DARK_GRAY=$'\e[48;5;8m'   # Dark gray
+	E_BG_BR_RED=$'\e[48;5;9m'      # Bright Red
+	E_BG_BR_GREEN=$'\e[48;5;10m'   # Bright Green
+	E_BG_BR_YELLOW=$'\e[48;5;11m'  # Bright Yellow
+	E_BG_BR_BLUE=$'\e[48;5;12m'    # Bright Blue
+	E_BG_BR_MAGENTA=$'\e[48;5;13m' # Bright Magenta
+	E_BG_BR_CYAN=$'\e[48;5;14m'    # Bright Cyan
+	E_BG_WHITE=$'\e[48;5;15m'      # White
+fi
 
 # ANSI underline color codes
 #
@@ -1124,6 +1177,7 @@ E_UL_BR_CYAN=$'\e[58;5;14m'    # Bright Cyan
 E_UL_WHITE=$'\e[58;5;15m'      # White
 
 # ANSI Text attributes
+E_RESET=$'\e[0m'              # Clear all attributes
 E_BOLD=$'\e[1m'               # Bold text
 E_DIM=$'\e[2m'                # Dim(low intensity) text
 E_ITALIC=$'\e[3m'             # Italic text
@@ -1151,8 +1205,6 @@ E_FORWARD=$'\e[C' # Move cursor forward
 E_BACK=$'\e[D'    # Move cursor backward
 E_HIDE=$'\e[?25l' # Hide cursor
 E_SHOW=$'\e[?25h' # Show cursor
-
-E_RESET=$'\e[0m' # Clear Attributes
 
 # Default Bashplate colortheme
 BP_C_OK="${E_BR_GREEN}"
@@ -1658,6 +1710,12 @@ bpRun() { ##I Execute command
   return $?
 }
 
+bpCallFunction() { ##D Call a given function if it exists
+  if bpIsFunction "${1}"; then
+    "${1}"
+  fi
+}
+
 #
 # $1 file to open in editor
 # $2 override editor (optional)
@@ -1893,7 +1951,6 @@ if [ -e "$BP_CONFIG_DIR" ]; then
   bpLoadModules
 fi
 
-# Call host specific function if existing
-if bpIsFunction "host_${HOSTNAME}"; then
-  host_"${HOSTNAME}"
-fi
+bpCallFunction host_"${HOSTNAME}"
+
+bpCallFunction host_all
