@@ -132,6 +132,9 @@ host_all() {
   alias rpdesk='ssh lpmg@rpdesk'
   alias rpserver='ssh lpmg@rpserver'
 	alias lsmnt='mount | column --table --table-hide 2,4,6'
+	
+	alias us='cat /etc/passwd | column --table --separator :'
+	alias gr='cat /etc/group | column --table --separator :'
 }
 
 #---------------------------------------------------------------------
@@ -148,7 +151,6 @@ bpInstall() { ##I Install a package
 # bashrc settings
 #---------------------------------------------------------------------
 bpInitSettings() {
-
   echo
 }
 
