@@ -77,6 +77,11 @@ bpUserSettings() {
     "apt" "mailutils" ":"
   )
 
+
+  sshPkgs=(
+	  "apt" "openssh-server" ":"
+	)
+
   sambaPkgs=(
     "apt" "samba-common" ":"
     "apt" "samba" ":"
@@ -543,7 +548,7 @@ kvm() { ##D Install KVM virtual machine manager
 }
 
 sshserver() { ##D Install and activate ssh server
-  bpInstall "openssh-server"
+  installPkgs  "${sshPkgs[@]}"
   sudo systemctl enable ssh
   sudo systemctl start ssh
 }
