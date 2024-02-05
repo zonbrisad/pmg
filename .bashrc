@@ -376,7 +376,7 @@ esac
 
 # Personal Aliases ----------------------------------------------------------
 
-alias lsblk='lsblk --output NAME,SIZE,TYPE,FSTYPE,MOUNTPOINT,UUID'
+alias lsblk='lsblk --output NAME,SIZE,TYPE,FSTYPE,MOUNTPOINT,UUID,MODEL'
 
 # Install aliases
 alias sui='sudo apt install'
