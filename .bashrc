@@ -15,7 +15,7 @@
 
 HOSTNAME=$(hostname)
 OS=$(uname -s)
-
+ 
 # Paths ---------------------------------------------------------------------
 
 export LD_LIBRARY_PATH=/usr/local/lib
@@ -125,13 +125,15 @@ host_fileserver() {
 }
 
 host_all() {
-# ssh login aliases
+  # ssh login aliases
   alias rpexp='ssh lpmg@rpexp'  
   alias rpexp2='ssh lpmg@rpexp2'
   alias rpexp3='ssh lpmg@rpexp3'
   alias rpdesk='ssh lpmg@rpdesk'
   alias rpserver='ssh lpmg@rpserver'
-	alias lsmnt='mount | column --table --table-hide 2,4,6'
+  alias lsmnt='mount | column --table --table-hide 2,4,6'
+  alias lsus='cat /etc/passwd | column --table --separator :'
+  alias lsgr='cat /etc/group | column --table --separator :'
 }
 
 #---------------------------------------------------------------------
@@ -148,7 +150,6 @@ bpInstall() { ##I Install a package
 # bashrc settings
 #---------------------------------------------------------------------
 bpInitSettings() {
-
   echo
 }
 
