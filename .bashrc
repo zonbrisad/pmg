@@ -578,6 +578,23 @@ ped() { ##D Open file in path with editor
   fi
 }
 
+
+pdiff() { ##D Open file in path with diff program
+ 
+  if ! L=$("which" "$1"); then
+    bpError "File \"$1\" not found in path"
+    return 1
+  fi
+ 
+  if [ ! -n "$BP_DIFF" ]; then
+  	bpError "BP_DIFF variable not set, can't open file ${1}"
+    return 1
+  fi
+	
+  bpInfo "Opening $L"
+	bpRun "${BP_DIFF}" "${L}" "$2"		
+}
+
 swap() { ##D Swap 2 filenames around, if they exist (from Uzi's bashrc).
   local TMPFILE=tmp.$$
 
