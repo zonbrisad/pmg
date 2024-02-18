@@ -134,6 +134,8 @@ host_all() {
   alias lsmnt='mount | column --table --table-hide 2,4,6'
   alias lsus='cat /etc/passwd | column --table --separator :'
   alias lsgr='cat /etc/group | column --table --separator :'
+	alias lsuser='cat /etc/passwd |  column --table --separator :'
+	alias lsgroup='cat /etc/group |  column --table --separator :'
 }
 
 #---------------------------------------------------------------------

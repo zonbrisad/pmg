@@ -102,25 +102,25 @@ nfs_mount() { ##I Mount nfs share
   #sudo bpMkDir "$MPOINT"
 }
 
-bpSudo=false
+#bpSudo=false
 
 mrps() { ##D Mount rpserver nfs share
 
-  bpSudo=true
+  BP_SUDO=true
   bpMkDir "${RPSERVER_MNT}"
-  bpSudo=false
-  #if sudo mount -t nfs ${RPSERVER_SHARE}  $RPSERVER_MNT ; then
-  #  bpOk "Rpserver mounted on ${RPSERVER_MNT}"
-  #else
-  #  bpError "Failed to mount rpserver nfs share"
-  #fi
+  BP_SUDO=false
+  if sudo mount -t nfs "${RPSERVER_SHARE}" "${RPSERVER_MNT}"; then
+    bpOk "Rpserver mounted on ${RPSERVER_MNT}"
+  else
+    bpError "Failed to mount rpserver nfs share"
+  fi
 }
 
 addrps() { ##D Add mount rule to rpserver in fstab
-  bpSudo=true
+  BP_SUDO=true
   bpMkDir "${RPSERVER_MNT}"
   bpAppendIfNoSuchLine /etc/fstab "${RPSERVER_SHARE}  ${RPSERVER_MNT} nfs    auto   0 0"
-  bpSudo=false
+  BP_SUDO=false
 }
 
 ##- Users & groups
@@ -135,7 +135,7 @@ addSambaUser() {
 # $1 uid
 #
 bpIsUser() {
-  getent passwd $1 >/dev/null
+  getent passwd "$1" >/dev/null
   return $?
 }
 
@@ -145,7 +145,7 @@ bpIsUser() {
 # $1 uid
 #
 bpIsGroup() {
-  getent group $1 >/dev/null
+  getent group "$1" >/dev/null
   return $?
 }
 
@@ -159,8 +159,8 @@ bpIsGroup() {
 # $5 = shell
 #
 addUser() {
-  if bpIsUser $2; then
-    bpInfo "User "$2" already exists"
+  if bpIsUser "$2"; then
+    bpInfo "User $2 already exists"
     return
   fi
 
@@ -179,13 +179,13 @@ addUser() {
 # $2 = id
 #
 addGroup() {
-  if bpIsGroup $1; then
+  if bpIsGroup "$1"; then
     bpInfo "Group $1 already exists"
     return 1
   fi
 
-  if sudo groupadd $1 --gid $2; then
-    bpOk "Adding group: "$1
+  if sudo groupadd "$1" --gid "$2"; then
+    bpOk "Adding group: $1"
   else
     bpError "Failed adding group $1"
   fi
@@ -198,12 +198,12 @@ addGroup() {
 # $2 = userid
 #
 rmUser() {
-  if ! bpIsUser $2; then
-    bpError "User "$1" does not exist"
+  if ! bpIsUser "$2"; then
+    bpError "User $1 does not exist"
     return
   fi
 
-  if sudo deluser $1 --remove-home &>/dev/null; then
+  if sudo deluser "$1" --remove-home &>/dev/null; then
     bpOk "Removed user:  $1"
   else
     bpError "Failed to remove user $1"
@@ -762,36 +762,23 @@ bpHasCmd() { ##I Check if command is available
 #
 # $1 command to execute
 #
-# bpRun() { ##I Execute command
-#   if bpHasCmd "${1}"; then
-#     "$@"
-#     return $?
-#   else
-#     bpError "Could not execute $1, command does not exist!"
-#     return 1
-#   fi
-# }
-
-#
-# $1 command to execute
-#
 bpRun() { ##I Execute command
-  echo XX: "$@"
-  if bpHasCmd "${1}"; then
-    if [ "$bpSudo" == true ]; then
-      sudo "$@"
-    else
-      "$@"
-    fi
-    return $?
-  else
-    if [ "$bpSudo" == true ]; then
+
+  if ! bpHasCmd "${1}"; then
+    if [ "$BP_SUDO" == true ]; then
       bpError "Could not execute \"sudo $1\", command does not exist!"
     else
       bpError "Could not execute \"$1\", command does not exist!"
     fi
     return 1
   fi
+
+  if [ "$BP_SUDO" == true ]; then
+    sudo "$@"
+  else
+    "$@"
+  fi
+  return $?
 }
 
 #
@@ -911,10 +898,10 @@ bpReplaceLine() { ##I Replace entire line matching pattern
 # $2 line to append
 #
 bpAppendIfNoSuchLine() { ##I Append a line if it does not exist in file
-  if [ "$bpSudo" == true ]; then
-    sudo grep -q -F "$2" "$1" || echo -e "\n$2" | sudo tee -a "$1"
+  if [ "$BP_SUDO" == true ]; then
+    sudo grep -q -F "$2" "$1" || echo -e "$2" | sudo tee -a "$1" >/dev/null
   else
-    grep -q -F "$2" "$1" || echo -e "\n$2" >>"$1"
+    grep -q -F "$2" "$1" || echo -e "$2" >>"$1"
   fi
 }
 
@@ -1299,7 +1286,6 @@ log() { ##C BP_LOGFILE View logfile
         -e "s/[-0-9]+/\\${E_GREEN}&\\${E_RESET}/1" \
         -e "s/[:0-9]+/\\${E_BR_GREEN}&\\${E_RESET}/6" \
         -e "s|\[Crit\]|\[\\${E_BG_RED}\\${E_WHITE}Crit\\${E_RESET}\]|" <"${BP_LOGFILE}")
-
       echo -e "$D"
     fi
   else
@@ -1318,7 +1304,6 @@ mlog() { ##C BP_LOGFILE Monitor logfile
         -e "s/[-0-9]+/\\${E_GREEN}&\\${E_RESET}/1" \
         -e "s/[:0-9]+/\\${E_BR_GREEN}&\\${E_RESET}/6" \
         -e "s|\[Crit\]|\[\\${E_BG_RED}\\${E_WHITE}Crit\\${E_RESET}\]|"
-
     fi
   else
     bpInfo "Logging is not activated"
@@ -1409,7 +1394,7 @@ bpAssertProgs() { ##I Assert that required programs are available on the system
         e=1
       }
   done
-  if [ $e -eq 1 ]; then
+  if [ "$e" -eq 1 ]; then
     bpExit 1
   fi
 }
@@ -1730,6 +1715,8 @@ BP_SETTINGS_PATHS="${BP_SETTINGS_DIR}/path"
 
 ##V Links to modules
 BP_SETTINGS_MODULES="${BP_SETTINGS_DIR}/modules"
+
+BP_SUDO=false
 
 # Initiate bashplate settings
 bpInitSettings
