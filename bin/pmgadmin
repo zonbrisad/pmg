@@ -41,15 +41,8 @@ bpUserSettings() {
 
   #  UID    UNAME NAME             EMAIL                     SHELL
   userList=(
-    "2000" "pmg" "Peter Malmberg" "peter.malmberg@gmail.com" "/bin/bash"
-    "2001" "tpmg" "Peter Malmberg" "peter.malmberg@gmail.com" "/bin/bash"
-  )
-
-  userList_test=(
-    "5000" "apmg" "APeter Malmberg" "apeter.malmberg@gmail.com" "/bin/bash"
-    "5001" "bpmg" "BPeter Malmberg" "bpeter.malmberg@gmail.com" "/bin/bash"
-    "5002" "cpmg" "CPeter Malmberg" "cpeter.malmberg@gmail.com" "/bin/bash"
-    "5003" "dpmg" "DPeter Malmberg" "dpeter.malmberg@gmail.com" "/bin/bash"
+    "2000" "pmg" "Peter Malmberg" "peter.malmberg@gmail.com" "/bin/bash" "--create-home"
+    "3000" "files" "Files" "" "/usr/sbin/nologin" "--no-create-home"
   )
 
   # GROUPID  GROUPNAME
@@ -157,14 +150,14 @@ bpIsGroup() {
 # $3 = name
 # $4 = email
 # $5 = shell
-#
+# $6 = options
 addUser() {
   if bpIsUser "$2"; then
     bpInfo "User $2 already exists"
     return
   fi
 
-  if sudo useradd "$1" --create-home --uid "$2" --shell "$5" --comment "${3},,,"; then
+  if sudo useradd "$1" --uid "$2" --shell "$5" --comment "${3},,," "$6"; then
     bpOk "Adding user:  $1 $2 $3 $4"
   else
     bpError "Failed to add user $1"
@@ -328,7 +321,9 @@ cu() { ##D Create users
     ((i++))
     U_SHELL=${userList[i]}
     ((i++))
-    addUser "$U_NAME" "$U_ID" "$U_PERSONAL" "$U_SHELL" "$U_SHELL"
+    U_OPTS=${userList[i]}
+    ((i++))
+    addUser "$U_NAME" "$U_ID" "$U_PERSONAL" "$U_EMAIL" "$U_SHELL" "$U_OPTS"
   done
 }
 
@@ -336,7 +331,7 @@ cg() { ##D Create groups
   IFS=$'\n'
   i=0
   len=${#groupList[@]}
-  while [ $i -lt $len ]; do
+  while [ "$i" -lt "$len" ]; do
     G_ID=${groupList[i]}
     ((i++))
     G_NAME=${groupList[i]}

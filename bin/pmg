@@ -326,6 +326,22 @@ bpCPU() { # Print CPU info
   lscpu | grep "Model name" | awk '{ print $3" "$4" "$5" "$6" "$7" "$8" "$9 }'
 }
 
+interfaceToIp() {
+  ip addr show "${INTERFACE}" | grep "inet" | head -n 1 | awk '/inet/ {print $2}' | cut -d'/' -f1
+}
+	
+interfaceToMAC() {
+ ip addr show "${INTERFACE}" | grep "link/ether" | awk '{print $2}'
+}
+
+interfaceToType() {
+  ip route | grep "${1}" | awk '/default/ { print $7 }'
+}
+
+lsInterfaces() {
+  ip route | awk '/default/ { print $5 }'
+}
+	
 bpIpInfo() { ##D List all default IP adresses
   read -d "\n" -r -a INTERFACES <<<$(ip route | awk '/default/ { print $5 "\n" $7 }')
   IFS=$'\n'
@@ -336,10 +352,7 @@ bpIpInfo() { ##D List all default IP adresses
     ((i++))
     LINK=${INTERFACES[$i]}
     ((i++))
-    IP=$(ip addr show "${INTERFACE}" | grep "inet" | head -n 1 | awk '/inet/ {print $2}' | cut -d'/' -f1)
-    MAC=$(ip addr show "${INTERFACE}" | grep "link/ether" | awk '{print $2}')
-
-    echo "$IP $INTERFACE $LINK $MAC"
+		echo "$(interfaceToIp $INTERFACE) $INTERFACE $LINK $(interfaceToMAC $INTERFACE)"
   done
 }
 
@@ -385,7 +398,7 @@ info() { ##D General information
   bpPrintLine "General"
   bpPrintVar HOSTNAME "Hostname"
   bpPrintDesc "Username" "$USER ($UID)"
-  bpPrintDesc "IP addr" "$(bpIpInfo)"
+  bpPrintDesc "IP addr" "$(bpIpInfo | column --table)"
 
   bpPrintLine "Hardware"
   bpPrintDesc "CPU" "$(bpCPU)"
