@@ -81,6 +81,15 @@ bpUserSettings() {
 #   fi
 # }
 
+##- System
+
+hostname() { ##D Set hostname
+  hn=$(cat /etc/hostname)
+  nhn=$(bpReadStr "New hostname" "$hn")
+	echo "$nhn" | sudo tee /etc/hostname > /dev/null
+}
+
+
 ##- Filesystems
 
 mountServer() { ##D Add mount rule to fileserver in fstab
