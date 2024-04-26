@@ -284,40 +284,6 @@ update() { ##D  Update operating system
   sudo apt update && sudo apt upgrade --assume-yes && sudo apt autoremove && sudo apt autoclean
 }
 
-##- Performance test
-stopwatch() { ##D Stopwatch function
-  start=$(date +%s)
-  while true; do
-    end=$(date +%s)
-    #printf '%s\n' "$(date)"
-    dur=$((end - start))
-    durs=$((dur % 60))
-    echo "${dur}" "${durs}"
-    sleep 1
-  done
-}
-
-dperf() { ##D Disk performance test using dd 128M
-  lsblk --list --output NAME,SIZE,TYPE,MOUNTPOINT
-  MNT=$(bpReadStr "Enter disk mount")
-  TF="${MNT}"/test1.img
-  bpPrintLine "Write speed"
-  sudo dd if=/dev/zero of="${TF}" bs=1G count=1 oflag=dsync status=progress
-  bpPrintLine "Latency"
-  sudo dd if=/dev/zero of="${TF}" bs=512 count=1000 oflag=dsync status=progress
-  DEV=$(bpReadStr "Enter disk device (/dev/sd?)")
-  bpPrintLine "Read speed(buffered)"
-  sudo hdparm -t "${DEV}"
-
-  sudo rm -f "${TF}"
-}
-
-rperf() { ##D Read performance using hdparm
-  lsblk --output NAME,SIZE,TYPE,VENDOR,REV,SERIAL | grep -e "disk" -e "NAME"
-  DEV=$(bpReadStr "Enter disk id")
-  sudo hdparm -t-direct "/dev/${DEV}"
-}
-
 bpIp() { # Get IP adress on ethernet.
   ip addr show $(ip route | awk '/default/ { print $5 }') | grep "inet" | head -n 1 | awk '/inet/ {print $2}' | cut -d'/' -f1
 }
@@ -342,7 +308,7 @@ lsInterfaces() {
   ip route | awk '/default/ { print $5 }'
 }
 
-bpIpInfo() { ##D List all default IP adresses
+bpIpInfo() { # List all default IP adresses
   read -d "\n" -r -a INTERFACES <<<$(ip route | awk '/default/ { print $5 "\n" $7 }')
   IFS=$'\n'
   LEN=${#INTERFACES[@]}
@@ -353,19 +319,6 @@ bpIpInfo() { ##D List all default IP adresses
     LINK=${INTERFACES[$i]}
     ((i++))
     echo "$(interfaceToIp $INTERFACE) $INTERFACE $LINK $(interfaceToMAC $INTERFACE)"
-  done
-}
-
-batd() { ##D Battery discharge test
-  bpReadBoolDY "Press enter to start battery discharge test"
-
-  declare -g BP_LOGFILE=${PWD}/batterytest.log
-  rm -rf "$BP_LOGFILE"
-
-  bpInfo "Battery discharge test commence"
-  while true; do
-    bpInfo "Time lasted: ${SECONDS} s"
-    sleep 10
   done
 }
 

@@ -131,11 +131,19 @@ host_all() {
   alias rpexp3='ssh lpmg@rpexp3'
   alias rpdesk='ssh lpmg@rpdesk'
   alias rpserver='ssh lpmg@rpserver'
-  alias lsmnt='mount | column --table --table-hide 2,4,6'
-  #alias lsus='cat /etc/passwd | column --table --separator :'
-  #alias lsgr='cat /etc/group | column --table --separator :'
+	alias pxubuntu='ssh lpmg@192.168.1.158'
+  
+	alias lsmnt='mount | column --table --table-hide 2,4,6'
 	alias lsusr='cat /etc/passwd |  column --table --separator :'
 	alias lsgrp='cat /etc/group |  column --table --separator :'
+	alias lsblk='lsblk --output NAME,SIZE,TYPE,FSTYPE,MOUNTPOINT,UUID,MODEL'
+
+  # Install aliases
+  alias sui='sudo apt install'
+	
+	# Dev aliases
+	alias py='python3'
+
 }
 
 #---------------------------------------------------------------------
@@ -379,10 +387,6 @@ esac
 
 # Personal Aliases ----------------------------------------------------------
 
-alias lsblk='lsblk --output NAME,SIZE,TYPE,FSTYPE,MOUNTPOINT,UUID,MODEL'
-
-# Install aliases
-alias sui='sudo apt install'
 
 alias rm='rm -i'
 alias cp='cp -i'
