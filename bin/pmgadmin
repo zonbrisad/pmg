@@ -300,8 +300,8 @@ lsgm() { ##D List group members
 
 
 aug() { ##D Add users and groups
-  cu
-  cg
+  au
+  ag
 }
 
 
@@ -412,7 +412,7 @@ au() { ##D Add users
   done
 }
 
-cg() { ##D Add groups
+ag() { ##D Add groups
   IFS=$'\n'
   i=0
   len=${#groupList[@]}
