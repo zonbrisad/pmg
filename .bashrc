@@ -56,6 +56,7 @@ ii() { ##D Print general system information
 	bpPrintDesc "SSID" "$(bpGetSSID)"
   bpPrintDesc "Machine Uptime:" "$(uptime -p)"
   bpPrintDesc "Machine Type:" "$(bpCPU)"
+	bpPrintDesc "Memory:" "$(bpMem)"
   bpPrintDesc "Distibution" "$(lsb_release -d | cut -b 14-)"
 
   if [ -n "${SYSTEMP}" ]; then
@@ -703,6 +704,10 @@ bpIpInfo() { ##I List all default IP adresses
 
 bpCPU() { # Print CPU info
   lscpu | grep "Model name" | awk '{ print $3" "$4" "$5" "$6" "$7" "$8" "$9 }'
+}
+
+bpMem() { # Print installed memory
+  lsmem | grep "Total online memory:" | awk '{ print $4 }'
 }
 
 function loginInfo() { ##I Login info
