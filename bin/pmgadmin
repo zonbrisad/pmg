@@ -221,6 +221,62 @@ rmGroup() {
   fi
 }
 
+lsu() { ##D List existing users
+  cat /etc/passwd |  column --table --separator :
+}
+
+lsug() { ##D List users and groups
+
+  IFS=$'\n'
+	bpPrintLine "Users"
+  i=0
+  len=${#userList[@]}
+  while [ "$i" -lt "$len" ]; do
+    U_ID=${userList[i]}
+    ((i++))
+    U_NAME=${userList[i]}
+    ((i++))
+    U_PERSONAL=${userList[i]}
+    ((i++))
+    U_EMAIL=${userList[i]}
+    ((i++))
+    U_SHELL=${userList[i]}
+    ((i++))
+    U_OPTS=${userList[i]}
+    ((i++))
+		printf "%-10s %-4s %-15s %-30s %-20s %s\n"  "$U_NAME" "$U_ID" "$U_PERSONAL" "$U_EMAIL" "$U_SHELL" "$U_OPTS"
+  done
+	bpPrintLine "Groups"
+  i=0
+  len=${#groupList[@]}
+  while [ "$i" -lt "$len" ]; do
+    G_ID=${groupList[i]}
+    ((i++))
+    G_NAME=${groupList[i]}
+    ((i++))
+    printf "%-10s %s\n" "$G_NAME" "$G_ID"
+  done
+	
+	bpPrintLine "Group members"
+	i=0
+  len=${#userGroup[@]}
+  while [ "$i" -lt "$len" ]; do
+    USER=${userGroup[i]}
+    ((i++))
+    GROUP=${userGroup[i]}
+    ((i++))
+
+    printf "%-10s %-10s\n" "$USER" "$GROUP"
+    #if sudo usermod -a -G "$GROUP" "$USER"; then
+#      bpOk "Adding user $USER to group $GROUP"
+    #else
+ #     bpError "Failed adding user $USER to group $GROUP"
+  #  fi
+  done
+	bpPrintLine
+}
+
+
 cug() { ##D Create users and groups
   cu
   cg
