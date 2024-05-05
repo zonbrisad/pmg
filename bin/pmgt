@@ -4,17 +4,19 @@
 # shellcheck disable=1090
 #---------------------------------------------------------------------
 #
+#  pmgt
+#
 #  [Description]
-#    pmg management script
+#    System test functions
 #
 #  [Author]
 #    Peter Malmberg <peter.malmberg@gmail.com>
 #
 #  [Date]
-#    2018-06-17
+#    2024-04-26
 #
 #  [License]
-#     MIT
+#    MIT
 #
 #---------------------------------------------------------------------
 # Generated with bashplates. [https://github.com/zonbrisad/bashplates]
@@ -37,432 +39,57 @@ set -o pipefail
 # User defined Settings
 #---------------------------------------------------------------------
 bpUserSettings() {
-  USERNAME="Peter Malmberg"
-  USEREMAIL="peter.malmberg@gmail.com"
-
-  EDITOR=jed
-
-  MY_NAME="Peter Malmberg"
-  MY_EMAIL="peter.malmberg@gmail.com"
-  MY_EDITOR="jed"
-  MY_DIFF="meld"
-  MY_ORG="malmberg"
-
-  SSH_KEY=~/.ssh/id_ed25519
-
+  :
 }
 #---------------------------------------------------------------------
 # User defined functions
 #---------------------------------------------------------------------
 
-##- New install options
-
-newt() { ##D Setup tools/users/config on new install without desktop
-  all_setups
-  "${BP_SELF_DIR}"/pmginstall newterminal
-}
-
-newd() { ##D Setup tools/users/config on new install with desktop
-  newt
-  "${BP_SELF_DIR}"/pmginstall newdesktop
-}
-
-news() { ##D Setup tools/users/config on new server install
-  newt
-  "${BP_SELF_DIR}"/pmginstall newserver
-}
-
-devel() {
-  echo ""
-}
-
-##- Tools
-
-#
-# $1 isofile
-# $2 device to write to
-#
-iso2usb() { ##D Write ISO file to USB drive
-  bpInfo "Writing ${3} to USB drive"
-  sudo dd if="$2" of="$3" bs=4MB status=progress oflag=sync
-}
-
-##- Setup
-
-all_setups() { ##D All setups (except jed_setup)
-  ssh_setup
-  git_setup
-  files_setup
-  add_groups
-  git2ssh
-}
-
-configFiles=(
-  ".bashrc" ":"
-  ".bash_profile" ":"
-  ".jedrc" ":"
-  "bin" ":"
-  ".gitconfig" ":"
-  ".tmux.conf" ":"
-  ".ssh/config" ":"
-  ".config/inkscape/palettes" "pmg/palettes"
-)
-
-#
-# $1 file to become link
-# $2 target (optional)
-#
-fileToLink() { ##I Backup and remove file then replace with link
-  LINK="${HOME}/${1}"
-  if [ -z "$2" ]; then
-    TARGET="${HOME}/pmg/${1}"
-  else
-    TARGET="${HOME}/$2"
-  fi
-
-  if [ -h "$LINK" ]; then # if aldready symbolic return
-    bpInfo "File '${LINK}' already symbolic link"
-    return
-  fi
-
-  if [ -d "$LINK" ]; then # if file is directory, rename
-    bpMv "$LINK" "${LINK}.old"
-  fi
-
-  if [ -e "$LINK" ]; then # if file exist make backup
-    bpBackup "$LINK"
-    bpRm "$LINK"
-  fi
-
-  bpLn "${TARGET}" "${LINK}" -r
-}
-
-files_setup() { ##D Initiate links to config files and directories
-  bpAddModule "${BP_SELF_DIR}/pmg_init"
-
-  local i=0
-  while [ "$i" -lt "${#configFiles[@]}" ]; do
-    LINK=${configFiles[$i]}
-    ((i++))
-    TARGET=${configFiles[$i]}
-    ((i++))
-
-    if [ "$TARGET" == ":" ]; then
-      fileToLink "${LINK}" ""
-    else
-      fileToLink "${LINK}" "${TARGET}"
-    fi
-  done
-
-  bpset "" "BP_NAME" "${MY_NAME}"
-  bpset "" "BP_EMAIL" "${MY_EMAIL}"
-  bpset "" "BP_EDITOR" "${MY_EDITOR}"
-  bpset "" "BP_DIFF" "${MY_DIFF}"
-}
-
-git_setup() { ##D Setup git correctly
-  git config --global user.name "${BP_NAME}"
-  git config --global user.email "${BP_EMAIL}"
-  git config --global core.editor "${BP_EDITOR}"
-  git config --global diff.external "${BP_SELF_DIR}/git_diff_meld.py"
-  git config --global init.defaultBranch master
-
-  # merge strategy
-  git config pull.rebase false
-  git config --list
-}
-
-jed_setup() { ##D Setup jed editor (requires root access)
-  bpAssertRoot
-  bpCp "${BP_SELF_DIR}"/setupfiles/make.sl /usr/share/jed/lib/.
-}
-
-clear() { ##D Clear all settings
-  bpWarning "This command will remove all settings and installed projects!"
-  if ! bpReadBoolDN "Are you sure you want to proceed?"; then
-    bpExit
-  fi
-  if ! bpReadBoolDN "Are you ${E_BOLD}REALY${E_RESET} sure you want to proceed?"; then
-    bpExit
-  fi
-}
-
-##- SSH
-
-ssh_setup() { ##D Generate SSH key
-  if [ -e "${SSH_KEY}" ]; then
-    bpWarning "SSH key already exists."
-    if ! bpReadBoolDN "Do you want to overwrite existing key?"; then
-      cat "${SSH_KEY}".pub
-      return 1
-    fi
-  fi
-
-  bpInfo "Creating SSH key"
-  #  ssh-keygen -t rsa -b 4096 -C "${MY_EMAIL}"
-  ssh-keygen -t ed25519 -b 4096 -C "${MY_EMAIL}"
-  ssh-add "${SSH_KEY}"
-  cat "${SSH_KEY}".pub
-}
-
-git2ssh() { ##D Change pmg remote git repository to ssh authentication
-  cd "${BP_SELF_DIR}/.." || bpExit
-
-  git remote -v
-  git remote set-url origin git@github.com:zonbrisad/pmg.git
-  git remote -v
-  cd - || bpExit
-}
-
-sshid() { ##D Install SSH public key on remote host
-  sn=$(bpReadStr "Remote host" "")
-  un=$(bpReadStr "Username" "$USER")
-  #  ssh-copy-id -i ~/.ssh/id_rsa.pub "${un}@${sn}"
-  ssh-copy-id -i "${SSH_KEY}".pub "${un}@${sn}"
-}
-
-##- Samba
-
-#
-# Add smb user
-#
-smbadd() {
-  # add user
-  sudo smbpasswd -a "$1"
-  # enable user
-  sudo smbpasswd -a "$1"
-}
-
-initsamba() { ##D Initiate samba server
-
-  #  d=$( bpReadStr "Directory to share" )
-
-  #  sudo mkdir -p $d
-
-  #smbadd pi
-  sudo systemctl restart smbd
-}
-
-##- Backup
-
-#
-#
-bpAvail() { ## Amount of available diskpace in directory in MB
-  df --output=avail --block-size=M .
-}
-
-bpBackupDir() { ##D Backup directory
-  if [ ! -e "$1" ]; then
-    bpError "Source file \"${1}\" does not exist!"
-    return 1
-  fi
-  if [ ! -e "$2" ]; then
-    bpError "Destination dir $2 does not exist"
-    return 1
-  fi
-
-  src=$(realpath "$1")
-  dst=$(realpath "$2")
-
-  BF="backup_$(hostname)_${USER}_$(date +"%Y%m%d")-$(date +"%H%M%S")"
-
-  #	echo "Available: $(bpAvail ".")"
-
-  bpInfo "Backing up $src to \"${dst}/${BF}\"."
-  rsync --info=progress2 --recursive --links "${src}"/* "${dst}/${BF}"
-
-}
-
-backup() { ##D Backup user data
-  #  bpBackupDir ~/Project "$2"
-  bpBackupDir ~/ "$2"
-}
-
-##- System Management
-
-update() { ##D  Update operating system
-  sudo apt update && sudo apt upgrade --assume-yes && sudo apt autoremove && sudo apt autoclean
-}
-
-bpIp() { # Get IP adress on ethernet.
-  ip addr show $(ip route | awk '/default/ { print $5 }') | grep "inet" | head -n 1 | awk '/inet/ {print $2}' | cut -d'/' -f1
-}
-
-bpCPU() { # Print CPU info
-  lscpu | grep "Model name" | awk '{ print $3" "$4" "$5" "$6" "$7" "$8" "$9 }'
-}
-
-interfaceToIp() {
-  ip addr show "${INTERFACE}" | grep "inet" | head -n 1 | awk '/inet/ {print $2}' | cut -d'/' -f1
-}
-
-interfaceToMAC() {
-  ip addr show "${INTERFACE}" | grep "link/ether" | awk '{print $2}'
-}
-
-interfaceToType() {
-  ip route | grep "${1}" | awk '/default/ { print $7 }'
-}
-
-lsInterfaces() {
-  ip route | awk '/default/ { print $5 }'
-}
-
-bpIpInfo() { # List all default IP adresses
-  read -d "\n" -r -a INTERFACES <<<$(ip route | awk '/default/ { print $5 "\n" $7 }')
-  IFS=$'\n'
-  LEN=${#INTERFACES[@]}
-  i=0
-  while [ "$i" -lt "$LEN" ]; do
-    INTERFACE=${INTERFACES[$i]}
-    ((i++))
-    LINK=${INTERFACES[$i]}
-    ((i++))
-    echo "$(interfaceToIp $INTERFACE) $INTERFACE $LINK $(interfaceToMAC $INTERFACE)"
+##- Performance test
+stopwatch() { ##D Stopwatch function
+  start=$(date +%s)
+  while true; do
+    end=$(date +%s)
+    #printf '%s\n' "$(date)"
+    dur=$((end - start))
+    durs=$((dur % 60))
+    echo "${dur}" "${durs}"
+    sleep 1
   done
 }
 
-##- Information
+dperf() { ##D Disk performance test using dd 128M
+  lsblk --list --output NAME,SIZE,TYPE,MOUNTPOINT
+  MNT=$(bpReadStr "Enter disk mount")
+  TF="${MNT}"/test1.img
+  bpPrintLine "Write speed"
+  sudo dd if=/dev/zero of="${TF}" bs=1G count=1 oflag=dsync status=progress
+  bpPrintLine "Latency"
+  sudo dd if=/dev/zero of="${TF}" bs=512 count=1000 oflag=dsync status=progress
+  DEV=$(bpReadStr "Enter disk device (/dev/sd?)")
+  bpPrintLine "Read speed(buffered)"
+  sudo hdparm -t "${DEV}"
 
-bpCheckVersion() {
-  CMD=$1
-
-  if bpHasCmd "${CMD}"; then
-    ${CMD} --version | grep "$CMD"
-    return
-  fi
-  echo Command not installed!
-  #else
-  # bpError "Could not execute $1, command does not exist!"
-  #return 1
-  #fi
-
+  sudo rm -f "${TF}"
 }
 
-bpCat() { ##
-  if [ -f "$1" ]; then
-    cat "$1"
-  else
-    echo "N/A"
-  fi
+rperf() { ##D Read performance using hdparm
+  lsblk --output NAME,SIZE,TYPE,VENDOR,REV,SERIAL | grep -e "disk" -e "NAME"
+  DEV=$(bpReadStr "Enter disk id")
+  sudo hdparm -t-direct "/dev/${DEV}"
 }
 
-info() { ##D General information
-  bpPrintLine "General"
-  bpPrintVar HOSTNAME "Hostname"
-  bpPrintDesc "Username" "$USER ($UID)"
-  bpPrintDesc "IP addr" "$(bpIpInfo | column --table)"
+batd() { ##D Battery discharge test
+  bpReadBoolDY "Press enter to start battery discharge test"
 
-  bpPrintLine "Hardware"
-  bpPrintDesc "CPU" "$(bpCPU)"
-  bpPrintDesc "Memory" "$(free --mega | grep Mem | awk '{ print $2 }') Mb"
-  bpPrintDesc "Graphics" "$(lspci 2>/dev/null | grep VGA | sed -r 's/.*controller: //')"
-  bpPrintDesc "Drives" "$(lsblk --noheadings --nodeps --output NAME,SIZE,MODEL)"
+  declare -g BP_LOGFILE=${PWD}/batterytest.log
+  rm -rf "$BP_LOGFILE"
 
-  bpPrintLine "System"
-  bpPrintDesc "Distibution" "$(lsb_release -d | cut -b 14-)"
-  bpPrintDesc "Kernel" "$(uname -r)"
-  bpPrintVar TERM "Terminal"
-  bpPrintDesc "Uptime" "$(uptime -p)"
-
-  bpPrintLine "SSH"
-  bpPrintDesc "SSH public key location" "${SSH_KEY}.pub"
-  bpPrintDesc "SSH public key" "$(bpCat "${SSH_KEY}.pub")"
-
-  bpPrintLine "Dev. tools"
-  bpPrintDesc "Python" "$(bpRun python3 --version)"
-  bpPrintDesc "Java" "$(bpRun java --version | grep openjdk)"
-  bpPrintDesc "gcc" "$(bpCheckVersion gcc)"
-  bpPrintDesc "avr-gcc" "$(bpCheckVersion avr-gcc)"
-  bpPrintDesc "arm-gcc" "$(bpCheckVersion arm-none-eabi-gcc)"
-
-  bpPrintLine
-}
-
-hwinfo() { ##D Print general hardware information
-  inxi --full --usb --filter
-}
-
-hwinfoe() { ##D Print general hardware information
-  sudo inxi --full --extra 3 --usb --filter --memory-modules
-}
-
-batinfo() { ##D Print battery information
-  for bat in "/sys/class/power_supply"/*; do
-    echo "X: $bat"
-    if [ $(cat ${bat}/type) == "Battery" ]; then
-      bpPrintLine "Battery $bat"
-      bpPrintDesc "Manufacturer:" "$(cat ${bat}/manufacturer)"
-      bpPrintDesc "Serial:" "$(cat ${bat}/serial_number)"
-      bpPrintDesc "Battery type:" "$(cat ${bat}/technology)"
-      bpPrintDesc "Status:" "$(cat ${bat}/status)"
-      bpPrintDesc "Charge state:" "$(cat ${bat}/capacity) %"
-      V=$(bc <<<"scale=1; $(cat ${bat}/voltage_now) / 1000000")
-      bpPrintDesc "Battery voltage:" "$V V"
-      C=$(bc <<<"scale=1; $(cat ${bat}/current_now) / 1000000")
-      bpPrintDesc "Battery current:" "$C A"
-    fi
+  bpInfo "Battery discharge test commence"
+  while true; do
+    bpInfo "Time lasted: ${SECONDS} s"
+    sleep 10
   done
-  bpPrintLine
-}
-
-##- Project management (git)
-
-status() { ##D Show git status
-  bpCd "${BP_SELF_DIR}"
-  git status
-  bpCd -
-
-}
-
-hist() { ##D Show project history
-  bpCd "${BP_SELF_DIR}"
-  git hist
-  bpCd -
-}
-
-clean() { ##D Remove leftover files
-  bpCd "${BP_SELF_DIR}"
-
-  find . -name "*~" -delete
-  find . -name "*.orig" -delete
-
-  # Remove untraced files
-  git clean -df -e "*.log"
-  bpCd -
-}
-
-commit() { ##D Commit project to repository
-  bpCd "${BP_SELF_DIR}"
-  git commit -a
-  #git push --tags -a
-  bpCd -
-}
-
-tag() { ##D Make a new tag
-  bpCd "${BP_SELF_DIR}"
-  # List existing tags
-  git tag
-
-  # read tag name/description
-  tag=$(bpReadStr "Tagname" "")
-  desc=$(bpReadStr "Description" "")
-
-  # Tag revision
-  git tag -a "$tag" -m "$desc"
-  bpCd -
-}
-
-push() { ##D Push project to GITHUB
-  bpCd "${BP_SELF_DIR}"
-  git push --progress
-  bpCd -
-}
-
-pull() { ##D Pull project from GITHUB
-  bpCd "${BP_SELF_DIR}"
-  git pull --progress
-  bpCd -
 }
 
 #---------------------------------------------------------------------
@@ -474,16 +101,16 @@ bpInitSettings() {
   BP_VERSION="1.00"
 
   ##V Usage info
-  BP_USAGE="Usage: ${BP_SELF} command [option]"
+  BP_USAGE="Usage: ${BP_SELF_NAME} command [option]"
 
   ##V Description text
-  BP_DESC="Peter Malmberg's management script"
+  BP_DESC="System test functions"
 
   ##V logfile (uncomment to use logfile)
-  BP_LOGFILE=${BP_SELF_DIR}/${BP_SELF}.log
+  BP_LOGFILE=${BP_SELF_DIR}/${BP_SELF_NAME}.log
 
   ##V Lock file (uncomment to use lock file feature )
-  BP_LOCK_FILE=/tmp/${BP_SELF}.lock
+  BP_LOCK_FILE=/tmp/${BP_SELF_NAME}.lock
 
   ##V Logging options (uncomment to activate logging parameters)
   BP_LOG_OK=1
@@ -493,7 +120,7 @@ bpInitSettings() {
   BP_LOG_CRITICAL=1
 
   ##V Activate settings function (will create settings file when run)
-  BP_CONF=1
+  #BP_CONF=1
 
 }
 #---------------------------------------------------------------------
@@ -608,87 +235,43 @@ bpErrorExit() { ##I Safely exit script with a error
 # ANSI escape codes
 #---------------------------------------------------------------------
 
-# Check if terminal is 16 color only
-if [[ "linux rxvt-16color" = *${TERM}* ]]; then
+# ANSI foreground colors codes
+#
+E_BLACK=$'\e[38:5:0m'       # Black
+E_RED=$'\e[38:5:1m'         # Red
+E_GREEN=$'\e[38:5:2m'       # Green
+E_YELLOW=$'\e[38:5:3m'      # Yellow
+E_BLUE=$'\e[38:5:4m'        # Blue
+E_MAGENTA=$'\e[38:5:5m'     # Magenta
+E_CYAN=$'\e[38:5:6m'        # Cyan
+E_GRAY=$'\e[38:5:7m'        # Gray
+E_DARKGRAY=$'\e[38:5:8m'    # Dark Gray
+E_BR_RED=$'\e[38:5:9m'      # Bright Red
+E_BR_GREEN=$'\e[38:5:10m'   # Bright Green
+E_BR_YELLOW=$'\e[38:5:11m'  # Bright Yellow
+E_BR_BLUE=$'\e[38:5:12m'    # Bright Blue
+E_BR_MAGENTA=$'\e[38:5:13m' # Bright Magenta
+E_BR_CYAN=$'\e[38:5:14m'    # Bright Cyan
+E_WHITE=$'\e[38:5:15m'      # White
 
-  # ANSI foreground colors codes
-  #
-  E_BLACK=$'\e[30m'        # Black
-  E_RED=$'\e[31m'          # Red
-  E_GREEN=$'\e[32m'        # Green
-  E_YELLOW=$'\e[33m'       # Yellow
-  E_BLUE=$'\e[34m'         # Blue
-  E_MAGENTA=$'\e[35m'      # Magenta
-  E_CYAN=$'\e[36m'         # Cyan
-  E_GRAY=$'\e[37m'         # Gray
-  E_DARKGRAY=$'\e[1;30m'   # Dark Gray
-  E_BR_RED=$'\e[1;31m'     # Bright Red
-  E_BR_GREEN=$'\e[1;32m'   # Bright Green
-  E_BR_YELLOW=$'\e[1;33m'  # Bright Yellow
-  E_BR_BLUE=$'\e[1;34m'    # Bright Blue
-  E_BR_MAGENTA=$'\e[1;35m' # Bright Magenta
-  E_BR_CYAN=$'\e[1;36m'    # Bright Cyan
-  E_WHITE=$'\e[1;37m'      # White
-
-  # ANSI background color codes
-  #
-  E_BG_BLACK=$'\e[40m'      # Black
-  E_BG_RED=$'\e[41m'        # Red
-  E_BG_GREEN=$'\e[42m'      # Green
-  E_BG_YELLOW=$'\e[43m'     # Yellow
-  E_BG_BLUE=$'\e[44m'       # Blue
-  E_BG_MAGENTA=$'\e[45m'    # Magenta
-  E_BG_CYAN=$'\e[46m'       # Cyan
-  E_BG_GRAY=$'\e[47m'       # Gray
-  E_BG_DARK_GRAY=$'\e[40m'  # Dark gray
-  E_BG_BR_RED=$'\e[41m'     # Bright Red
-  E_BG_BR_GREEN=$'\e[42m'   # Bright Green
-  E_BG_BR_YELLOW=$'\e[43m'  # Bright Yellow
-  E_BG_BR_BLUE=$'\e[44m'    # Bright Blue
-  E_BG_BR_MAGENTA=$'\e[45m' # Bright Magenta
-  E_BG_BR_CYAN=$'\e[46m'    # Bright Cyan
-  E_BG_WHITE=$'\e[47m'      # White
-
-else
-
-  # ANSI foreground colors codes
-  #
-  E_BLACK=$'\e[38:5:0m'       # Black
-  E_RED=$'\e[38:5:1m'         # Red
-  E_GREEN=$'\e[38:5:2m'       # Green
-  E_YELLOW=$'\e[38:5:3m'      # Yellow
-  E_BLUE=$'\e[38:5:4m'        # Blue
-  E_MAGENTA=$'\e[38:5:5m'     # Magenta
-  E_CYAN=$'\e[38:5:6m'        # Cyan
-  E_GRAY=$'\e[38:5:7m'        # Gray
-  E_DARKGRAY=$'\e[38:5:8m'    # Dark Gray
-  E_BR_RED=$'\e[38:5:9m'      # Bright Red
-  E_BR_GREEN=$'\e[38:5:10m'   # Bright Green
-  E_BR_YELLOW=$'\e[38:5:11m'  # Bright Yellow
-  E_BR_BLUE=$'\e[38:5:12m'    # Bright Blue
-  E_BR_MAGENTA=$'\e[38:5:13m' # Bright Magenta
-  E_BR_CYAN=$'\e[38:5:14m'    # Bright Cyan
-  E_WHITE=$'\e[38:5:15m'      # White
-
-  # ANSI background color codes
-  #
-  E_BG_BLACK=$'\e[48;5;0m'       # Black
-  E_BG_RED=$'\e[48;5;1m'         # Red
-  E_BG_GREEN=$'\e[48;5;2m'       # Green
-  E_BG_YELLOW=$'\e[48;5;3m'      # Yellow
-  E_BG_BLUE=$'\e[48;5;4m'        # Blue
-  E_BG_MAGENTA=$'\e[48;5;5m'     # Magenta
-  E_BG_CYAN=$'\e[48;5;6m'        # Cyan
-  E_BG_GRAY=$'\e[48;5;7m'        # Gray
-  E_BG_DARK_GRAY=$'\e[48;5;8m'   # Dark gray
-  E_BG_BR_RED=$'\e[48;5;9m'      # Bright Red
-  E_BG_BR_GREEN=$'\e[48;5;10m'   # Bright Green
-  E_BG_BR_YELLOW=$'\e[48;5;11m'  # Bright Yellow
-  E_BG_BR_BLUE=$'\e[48;5;12m'    # Bright Blue
-  E_BG_BR_MAGENTA=$'\e[48;5;13m' # Bright Magenta
-  E_BG_BR_CYAN=$'\e[48;5;14m'    # Bright Cyan
-  E_BG_WHITE=$'\e[48;5;15m'      # White
-fi
+# ANSI background color codes
+#
+E_BG_BLACK=$'\e[48;5;0m'       # Black
+E_BG_RED=$'\e[48;5;1m'         # Red
+E_BG_GREEN=$'\e[48;5;2m'       # Green
+E_BG_YELLOW=$'\e[48;5;3m'      # Yellow
+E_BG_BLUE=$'\e[48;5;4m'        # Blue
+E_BG_MAGENTA=$'\e[48;5;5m'     # Magenta
+E_BG_CYAN=$'\e[48;5;6m'        # Cyan
+E_BG_GRAY=$'\e[48;5;7m'        # Gray
+E_BG_DARK_GRAY=$'\e[48;5;8m'   # Dark gray
+E_BG_BR_RED=$'\e[48;5;9m'      # Bright Red
+E_BG_BR_GREEN=$'\e[48;5;10m'   # Bright Green
+E_BG_BR_YELLOW=$'\e[48;5;11m'  # Bright Yellow
+E_BG_BR_BLUE=$'\e[48;5;12m'    # Bright Blue
+E_BG_BR_MAGENTA=$'\e[48;5;13m' # Bright Magenta
+E_BG_BR_CYAN=$'\e[48;5;14m'    # Bright Cyan
+E_BG_WHITE=$'\e[48;5;15m'      # White
 
 # ANSI underline color codes
 #
@@ -712,7 +295,6 @@ E_UL_BR_CYAN=$'\e[58;5;14m'    # Bright Cyan
 E_UL_WHITE=$'\e[58;5;15m'      # White
 
 # ANSI Text attributes
-E_RESET=$'\e[0m'              # Clear all attributes
 E_BOLD=$'\e[1m'               # Bold text
 E_DIM=$'\e[2m'                # Dim(low intensity) text
 E_ITALIC=$'\e[3m'             # Italic text
@@ -740,6 +322,8 @@ E_FORWARD=$'\e[C' # Move cursor forward
 E_BACK=$'\e[D'    # Move cursor backward
 E_HIDE=$'\e[?25l' # Hide cursor
 E_SHOW=$'\e[?25h' # Show cursor
+
+E_RESET=$'\e[0m' # Clear Attributes
 
 # Default Bashplate colortheme
 BP_C_OK="${E_BR_GREEN}"
@@ -1294,9 +878,9 @@ bpPrintChoiceList() { # Print items in selection list
     fi
 
     if [ "${desc}" == ":" ]; then
-      printf "%1s ${BP_C_KEY}%-7s  ${BP_C_DESCRIPTION}%s${E_RESET}\n" "$default" "$key" "$val"
+      printf "${BP_C_KEY} %-5s${E_RESET}%1s  ${BP_C_DESCRIPTION}%s${E_RESET}\n" "$key" "$default" "$val"
     else
-      printf "%1s ${BP_C_KEY}%-7s  ${BP_C_DESCRIPTION}%s${E_RESET}\n" "$default" "$key" "$desc"
+      printf "${BP_C_KEY} %-5s${E_RESET}%1s  ${BP_C_DESCRIPTION}%s${E_RESET}\n" "$key" "$default" "$desc"
     fi
   done
 }
@@ -1444,9 +1028,6 @@ bpConfChangeSetting() {
 #
 bpConfCreate() { ##I Create configuration file
   FILE="$1"
-  bpMkDir "${BP_CONFIG_DIR}"
-  bpMkDir "${BP_CONFIG_PATHS}"
-  bpMkDir "${BP_CONFIG_MODULES}"
   {
     echo "# "
     echo "# $2"
@@ -1946,7 +1527,6 @@ iinfo() { ##I Show information about script
   bpPrintDesc "PID" $$
   bpPrintVar BP_DATE "Date"
   bpPrintVar BP_TIME "Time"
-  bpPrintVar TERM "Terminal"
   bpPrintVar BP_COLUMNS "Terminal columns"
   bpPrintVar BP_LINES "Terminal lines"
 
@@ -2029,25 +1609,6 @@ ivars() { ##I Print internal variables
 
 ied() { ##I Open this file with default editor
   bpEdit "$0" "$2"
-}
-
-#
-# $1 File to diff with, if not given diff with bashplate template
-#
-idiff() { ##I Run diff with file or bashplate template
-
-  if [ -z "$BP_DIFF" ]; then
-    bpError "Diff program not declared (BP_DIFF)"
-    return
-  fi
-
-  if [ -z "$2" ]; then
-    if [ -n "${BP_PATH}" ]; then
-      bpRun "${BP_DIFF}" "${BP_SELF_DIR}/${BP_SELF}" "${BP_PATH}/templates/bashplate"
-      return
-    fi
-  fi
-  bpRun "${BP_DIFF}" "${BP_SELF_DIR}/${BP_SELF}" "$2"
 }
 
 version() { ##D Print version information

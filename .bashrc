@@ -56,6 +56,7 @@ ii() { ##D Print general system information
 	bpPrintDesc "SSID" "$(bpGetSSID)"
   bpPrintDesc "Machine Uptime:" "$(uptime -p)"
   bpPrintDesc "Machine Type:" "$(bpCPU)"
+	bpPrintDesc "Memory:" "$(bpMem)"
   bpPrintDesc "Distibution" "$(lsb_release -d | cut -b 14-)"
 
   if [ -n "${SYSTEMP}" ]; then
@@ -131,11 +132,19 @@ host_all() {
   alias rpexp3='ssh lpmg@rpexp3'
   alias rpdesk='ssh lpmg@rpdesk'
   alias rpserver='ssh lpmg@rpserver'
-  alias lsmnt='mount | column --table --table-hide 2,4,6'
-  #alias lsus='cat /etc/passwd | column --table --separator :'
-  #alias lsgr='cat /etc/group | column --table --separator :'
+	alias pxubuntu='ssh lpmg@192.168.1.158'
+  
+	alias lsmnt='mount | column --table --table-hide 2,4,6'
 	alias lsusr='cat /etc/passwd |  column --table --separator :'
 	alias lsgrp='cat /etc/group |  column --table --separator :'
+	alias lsblk='lsblk --output NAME,SIZE,TYPE,FSTYPE,MOUNTPOINT,UUID,MODEL'
+
+  # Install aliases
+  alias sui='sudo apt install'
+	
+	# Dev aliases
+	alias py='python3'
+
 }
 
 #---------------------------------------------------------------------
@@ -379,10 +388,6 @@ esac
 
 # Personal Aliases ----------------------------------------------------------
 
-alias lsblk='lsblk --output NAME,SIZE,TYPE,FSTYPE,MOUNTPOINT,UUID,MODEL'
-
-# Install aliases
-alias sui='sudo apt install'
 
 alias rm='rm -i'
 alias cp='cp -i'
@@ -699,6 +704,10 @@ bpIpInfo() { ##I List all default IP adresses
 
 bpCPU() { # Print CPU info
   lscpu | grep "Model name" | awk '{ print $3" "$4" "$5" "$6" "$7" "$8" "$9 }'
+}
+
+bpMem() { # Print installed memory
+  lsmem | grep "Total online memory:" | awk '{ print $4 }'
 }
 
 function loginInfo() { ##I Login info
