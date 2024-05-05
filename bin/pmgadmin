@@ -40,27 +40,19 @@ set -o pipefail
 #---------------------------------------------------------------------
 bpUserSettings() {
 
-  #  UID    UNAME NAME             EMAIL                     SHELL
+  #  UID    UNAME NAME             EMAIL                     SHELL  OPTIONS    GROUPS
   userList=(
-    "2000" "pmg" "Peter Malmberg" "peter.malmberg@gmail.com" "/bin/bash" "--create-home"
-    "3000" "files" "Files" "" "/usr/sbin/nologin" "--no-create-home"
+    "2000" "pmg" "Peter Malmberg" "peter.malmberg@gmail.com" "/bin/bash" "--create-home" "dialout adm sudo"
+    "3000" "files" "Files" "" "/usr/sbin/nologin" "--no-create-home" ""
   )
 
   # GROUPID  GROUPNAME
   groupList=(
   )
 
-  groupList_test=(
-    "10002" "groupname1"
-    "10003" "groupname2"
-  )
-
   #  USER   GROUP
   userGroup=(
     "lpmg" "dialout"
-    "pmg" "dialout"
-    "pmg" "adm"
-    "pmg" "sudo"
   )
 
   RPSERVER=rpserver
@@ -71,16 +63,6 @@ bpUserSettings() {
 #---------------------------------------------------------------------
 # User defined functions
 #---------------------------------------------------------------------
-
-#
-# Create dir if it does not exist
-# $1 directory to be created
-#
-# cDir() {
-#   if [ ! -d "$1" ]; then
-#     mkdir -p $1
-#   fi
-# }
 
 ##- System
 
@@ -152,6 +134,30 @@ bpIsGroup() {
   return $?
 }
 
+
+#
+# $1 User 
+# $2 Group
+#
+addUserToGroup() {
+  local USER="$1"
+	local GROUP="$2"
+
+  if ! bpIsUser "$USER"; then
+	  bpError "User $USER does not exist!"
+	fi
+	
+	if ! bpIsGroup "$GROUP"; then
+	  bpError "Group $GROUP does not exist!"
+	fi
+	
+  if sudo usermod -a -G "$GROUP" "$USER"; then
+    bpOk "Adding user $USER to group $GROUP"
+  else
+    bpError "Failed adding user $USER to group $GROUP"
+  fi 
+}
+
 #
 # Add a new user if not existing
 #
@@ -161,18 +167,23 @@ bpIsGroup() {
 # $4 = email
 # $5 = shell
 # $6 = options
+# $7 = groups
+#
 addUser() {
   if bpIsUser "$2"; then
     bpInfo "User $2 already exists"
     return
   fi
-
   if sudo useradd "$1" --uid "$2" --shell "$5" --comment "${3},,," "$6"; then
     bpOk "Adding user:  $1 $2 $3 $4"
   else
     bpError "Failed to add user $1"
   fi
-
+  IFS=' '
+	read -ra XGROUPS <<< "$7"
+	for GROUP in "${XGROUPS[@]}"; do
+		addUserToGroup "$1" "$GROUP" 
+	done 
 }
 
 #
@@ -194,6 +205,7 @@ addGroup() {
   fi
 }
 
+
 #
 # Remove user
 #
@@ -202,7 +214,7 @@ addGroup() {
 #
 rmUser() {
   if ! bpIsUser "$2"; then
-    bpError "User $1 does not exist"
+    bpInfo "User $1 does not exist"
     return
   fi
 
@@ -254,7 +266,9 @@ lsug() { ##D List users and groups
     ((i++))
     U_OPTS=${userList[i]}
     ((i++))
-		printf "%-10s %-4s %-15s %-30s %-20s %s\n"  "$U_NAME" "$U_ID" "$U_PERSONAL" "$U_EMAIL" "$U_SHELL" "$U_OPTS"
+		U_GROUPS=${userList[i]}
+    ((i++))
+		printf "%-10s %-4s %-15s %-30s %-20s %-20s  %s\n"  "$U_NAME" "$U_ID" "$U_PERSONAL" "$U_EMAIL" "$U_SHELL" "$U_OPTS" "$U_GROUPS"
   done
 	bpPrintLine "Groups"
   i=0
@@ -266,7 +280,11 @@ lsug() { ##D List users and groups
     ((i++))
     printf "%-10s %s\n" "$G_NAME" "$G_ID"
   done
-	
+
+	bpPrintLine
+}	
+
+lsgm() { ##D List group members
 	bpPrintLine "Group members"
 	i=0
   len=${#userGroup[@]}
@@ -275,37 +293,27 @@ lsug() { ##D List users and groups
     ((i++))
     GROUP=${userGroup[i]}
     ((i++))
-
     printf "%-10s %-10s\n" "$USER" "$GROUP"
-    #if sudo usermod -a -G "$GROUP" "$USER"; then
-#      bpOk "Adding user $USER to group $GROUP"
-    #else
- #     bpError "Failed adding user $USER to group $GROUP"
-  #  fi
   done
 	bpPrintLine
 }
 
 
-cug() { ##D Create users and groups
+aug() { ##D Add users and groups
   cu
   cg
 }
 
-aug() { ##D Add users to groups
+
+agm() { ##D Add users to groups
   i=0
   len=${#userGroup[@]}
   while [ "$i" -lt "$len" ]; do
     USER=${userGroup[i]}
     ((i++))
     GROUP=${userGroup[i]}
-    ((i++))
-
-    if sudo usermod -a -G "$GROUP" "$USER"; then
-      bpOk "Adding user $USER to group $GROUP"
-    else
-      bpError "Failed adding user $USER to group $GROUP"
-    fi
+    ((i++))		
+		addUserToGroup "$USER" "$GROUP"
   done
 }
 
@@ -314,16 +322,21 @@ rug() { ##D Remove users and groups
   i=0
   len=${#userList[@]}
   while [ "$i" -lt "$len" ]; do
-    UI=${userList[i]}
+    U_ID=${userList[i]}
     ((i++))
-    UN=${userList[i]}
+    U_NAME=${userList[i]}
     ((i++))
-    US=${userList[i]}
+    U_PERSONAL=${userList[i]}
     ((i++))
-    UE=${userList[i]}
+    U_EMAIL=${userList[i]}
     ((i++))
+    U_SHELL=${userList[i]}
     ((i++))
-    rmUser "$UN" "$UI"
+    U_OPTS=${userList[i]}
+    ((i++))
+		U_GROUPS=${userList[i]}
+    ((i++))
+		rmUser "$U_NAME" "$U_ID"
   done
 
   i=0
@@ -354,6 +367,10 @@ omv() { ##D Open media vault import data
     ((i++))
     U_SHELL=${userList[i]}
     ((i++))
+		U_OPTS=${userList[i]}
+    ((i++))
+		U_GROUPS=${userList[i]}
+    ((i++))
     # <username>;<uid>;<comment>;<email>;<password>;<shell>;<groupname,groupname,...>;<disallowusermod>
     echo "${U_NAME};${U_ID};${U_PERSONAL};${U_EMAIL};;${U_SHELL};;false"
   done
@@ -372,7 +389,7 @@ omv() { ##D Open media vault import data
   done
 }
 
-cu() { ##D Create users
+au() { ##D Add users
   IFS=$'\n'
   i=0
   len=${#userList[@]}
@@ -389,11 +406,13 @@ cu() { ##D Create users
     ((i++))
     U_OPTS=${userList[i]}
     ((i++))
-    addUser "$U_NAME" "$U_ID" "$U_PERSONAL" "$U_EMAIL" "$U_SHELL" "$U_OPTS"
+		U_GROUPS=${userList[i]}
+    ((i++))
+    addUser "$U_NAME" "$U_ID" "$U_PERSONAL" "$U_EMAIL" "$U_SHELL" "$U_OPTS" "$U_GROUPS"
   done
 }
 
-cg() { ##D Create groups
+cg() { ##D Add groups
   IFS=$'\n'
   i=0
   len=${#groupList[@]}
