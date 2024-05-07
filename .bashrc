@@ -715,7 +715,9 @@ bpCPU() { # Print CPU info
 }
 
 bpMem() { # Print installed memory
-  lsmem | grep "Total online memory:" | awk '{ print $4 }'
+  #lsmem | grep "Total online memory:" | awk '{ print $4 }'
+	echo  $(($(grep "MemTotal" /proc/meminfo | awk '{ print $2 }') / 1024))M
+	
 }
 
 function loginInfo() { ##I Login info
