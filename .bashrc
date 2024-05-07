@@ -15,7 +15,7 @@
 
 HOSTNAME=$(hostname)
 OS=$(uname -s)
- 
+
 # Paths ---------------------------------------------------------------------
 
 export LD_LIBRARY_PATH=/usr/local/lib
