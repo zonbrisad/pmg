@@ -144,6 +144,14 @@ host_all() {
 	
 	# Dev aliases
 	alias py='python3'
+		
+	# Git settings	
+	# if meld is installed use it otherwise internal diff
+	if bpHasCmd "meld"; then
+	  export GIT_EXTERNAL_DIFF="~/pmg/bin/git_diff hook_default"
+	else
+		unset GIT_EXTERNAL_DIFF
+	fi
 
 }
 

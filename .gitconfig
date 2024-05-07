@@ -1,23 +1,29 @@
-[user]
-	name = Peter Malmberg
-	email = peter.malmberg@gmail.com
 
 [core]
-	editor = jed
-[diff]
-	external = /home/lpmg/pmg/bin/git_diff_meld.py
+  editor = jed
+
+[user]
+  name = Peter Malmberg
+  email = peter.malmberg@gmail.com
+
+#[diff]
+#  external = ~/pmg/bin/git_diff hook_default
+
 [push]
-	default = simple
+  default = simple
+
 [alias]
   co = checkout
-	ci = commit
-	st = status
-	br = branch
-	hist = log --pretty=format:\"%h %ad | %s%d [%an]\" --graph --date=short 
-	type = cat-file -t 
-	dump = cat-file -p
+  ci = commit
+  st = status
+  br = branch
+  hist = log --pretty=format:\"%h %ad | %s%d [%an]\" --graph --date=short 
+  type = cat-file -t 
+  dump = cat-file -p
   deleted = log --diff-filter=D --summary
+
 [init]
-	defaultBranch = master
+  defaultBranch = master
+
 [pull]
-	rebase = false
+  rebase = false
