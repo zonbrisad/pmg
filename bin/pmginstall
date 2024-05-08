@@ -110,16 +110,19 @@ bpUserSettings() {
     "apt" "testdisk" ":"
     "apt" "gddrescue" ":"
     "apt" "tmux" ":"
+		"git" "https://github.com/tmux-plugins/tpm" "$HOME/.tmux/plugins/tpm"
     "apt" "npm" ":"
     "apt" "snapd" "snap_unrestrict"
     "apt" "acpi" ":"
     "apt" "bat" ":"
     "apt" "ncdu" ":"
-    "git" "https://github.com/ogham/exa" ":"
-    "git" "powertop" ":"
     "apt" "shellcheck" ":"
     "apt" "tree" ":"
   )
+#    "git" "https://github.com/ogham/exa" ":"
+#    "git" "powertop" ":"
+
+
 
   testing=(
     "apt" "stress-ng" ":"
@@ -408,16 +411,9 @@ installSnap() { ##I Install snap package
 }
 
 installGit() { ##I Install git package
-  bpError "Git install function is not developed yet"
-  return
-  REPO=$1
-  if [ "$2" != ":" ]; then
-    bpMkDir "$2"
-  fi
-  bpCd "$2"
-
-  git clone "$REPO"
-  bpCd "-"
+  REPO="$1"
+	ARGS="$2"
+  git clone "$REPO" "$ARGS"
 }
 
 #
