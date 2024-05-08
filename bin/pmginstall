@@ -413,7 +413,11 @@ installSnap() { ##I Install snap package
 installGit() { ##I Install git package
   REPO="$1"
 	ARGS="$2"
-  git clone "$REPO" "$ARGS"
+  if git clone "$REPO" "$ARGS"; then
+	  bpOk "Installed  ${E_BR_GREEN}${1}${E_RESET}"
+	else
+    bpError "Failed installing ${E_BR_GREEN}${1}${E_RESET}"
+	fi
 }
 
 #
