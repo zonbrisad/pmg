@@ -111,7 +111,6 @@ bpUserSettings() {
     "apt" "gddrescue" ":"
     "apt" "tmux" ":"
 		"git" "https://github.com/tmux-plugins/tpm" "$HOME/.tmux/plugins/tpm"
-    "apt" "npm" ":"
     "apt" "snapd" "snap_unrestrict"
     "apt" "acpi" ":"
     "apt" "bat" ":"
