@@ -646,35 +646,24 @@ extract() { ##D Handy Extract Program
 
 ##- git
 
-gi() { ##D Show information about
+gi() { ##D Show information about project
   pmgp gi
 }
 
-gt() { ##D Show information about
-  pmgp gt "$1"
+##- tmux
+
+treload() { ##D Reload .tmux.conf
+	tmux source ~/.tmux.conf	
 }
 
-#-------------------------------------------------------------
-# Process/system related functions:
-#-------------------------------------------------------------
-
-inst() { ##D Install dpkg packate
-  sudo dpkg -i "$1"
+et() { ##D Open .tmux.conf in default editor
+  bpEdit ~/.tmux.conf "$1"
 }
 
-lam() { ##D List all available kernel modules
-  find /lib/modules/$(uname -r) -type f -name '*.ko'
-}
-
-function my_ps() {
-  ps "$@" -u "$USER" -o pid,%cpu,%mem,bsdtime,command
-}
-function pp() {
-  my_ps f | awk '!/awk/ && $0~var' var="${1:-".*"}"
-}
 
 ##- Misc
-killps() {                    ##D kill by process name
+
+killps() { ##D kill by process name
   local pid pname sig="-TERM" # default signal
   if [ "$#" -lt 1 ] || [ "$#" -gt 2 ]; then
     echo "Usage: killps [-SIGNAL] pattern"
@@ -692,6 +681,20 @@ killps() {                    ##D kill by process name
 ofm() { ##D Open filemanager in current dir
   xdg-open .
 }
+
+inst() { ##D Install dpkg package
+  sudo dpkg -i "$1"
+}
+
+lam() { ##D List all available kernel modules
+  find /lib/modules/$(uname -r) -type f -name '*.ko'
+}
+
+mps() { ##D List all processes belonging to \"me\"
+  ps "$@" -u "$USER" -o pid,%cpu,%mem,bsdtime,command
+}
+
+
 
 bpIpInfo() { ##I List all default IP adresses
   read -d "\n" -r -a INTERFACES <<<$(ip route | awk '/default/ { print $5 "\n" $7 }')
@@ -718,7 +721,7 @@ bpMem() { # Print installed memory
   lsmem | grep "Total online memory:" | awk '{ print $4 }'
 }
 
-function loginInfo() { ##I Login info
+loginInfo() { ##I Login info
   flag
   echo
   ii
@@ -737,9 +740,8 @@ ask() { ## See 'killps' for example of use.
 SSH_ENV=$HOME/.ssh/environment
 
 # start the ssh-agent
-function start_agent {
-  # spawn ssh-agent
-	
+start_agent() {
+  # spawn ssh-agent	
 	bpRun /usr/bin/ssh-agent | sed 's/^echo/#echo/' >| "${SSH_ENV}"
 	
 	if [ $? -eq 0 ]; then
