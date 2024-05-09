@@ -281,6 +281,10 @@ backup() { ##D Backup user data
 ##- System Management
 
 update() { ##D  Update operating system
+  if [ -f ~/.tmux/plugins/tpm/bin/update_plugins ]; then
+	  ~/.tmux/plugins/tpm/bin/update_plugins all
+	fi
+
   sudo apt update && sudo apt upgrade --assume-yes && sudo apt autoremove && sudo apt autoclean
 }
 
