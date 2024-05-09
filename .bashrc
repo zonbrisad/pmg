@@ -15,7 +15,7 @@
 
 HOSTNAME=$(hostname)
 OS=$(uname -s)
- 
+
 # Paths ---------------------------------------------------------------------
 
 export LD_LIBRARY_PATH=/usr/local/lib
@@ -718,7 +718,9 @@ bpCPU() { # Print CPU info
 }
 
 bpMem() { # Print installed memory
-  lsmem | grep "Total online memory:" | awk '{ print $4 }'
+  #lsmem | grep "Total online memory:" | awk '{ print $4 }'
+	echo  $(($(grep "MemTotal" /proc/meminfo | awk '{ print $2 }') / 1024))M
+	
 }
 
 loginInfo() { ##I Login info
