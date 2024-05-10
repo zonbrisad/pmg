@@ -115,6 +115,7 @@ bpUserSettings() {
     "apt" "acpi" ":"
     "apt" "bat" ":"
     "apt" "ncdu" ":"
+		"apt" "zoxide" ":"
     "apt" "shellcheck" ":"
     "apt" "tree" ":"
   )

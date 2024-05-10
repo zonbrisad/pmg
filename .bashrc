@@ -153,6 +153,12 @@ host_all() {
 		unset GIT_EXTERNAL_DIFF
 	fi
 
+  # Loading zoxide, a smart cd command
+  if bpHasCmd zoxide; then
+    eval "$(zoxide init bash)"
+  fi
+
+
 }
 
 #---------------------------------------------------------------------
