@@ -384,11 +384,13 @@ info() { ##D General information
 }
 
 hwinfo() { ##D Print general hardware information
-  bpRun inxi --full --usb --filter
+	bpAssertProgs "inxi"
+  inxi --full --usb --filter
 }
 
 hwinfoe() { ##D Print general hardware information
-  bpRun sudo inxi --full --extra 3 --usb --filter --memory-modules
+	bpAssertProgs "inxi"
+	sudo inxi --full --extra 3 --usb --filter --memory-modules	
 }
 
 batinfo() { ##D Print battery information
