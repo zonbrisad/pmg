@@ -1942,11 +1942,6 @@ bpCompletion
 
 bpInitDisplay
 
-# Call host specific function if existing
-#if [ "$(type -t host_"${HOSTNAME}")" == "function" ]; then
-#  host_"${HOSTNAME}"
-#i
-
 loginInfo
 
 bpLoadPaths() { ##I Load k
