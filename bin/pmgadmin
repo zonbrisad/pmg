@@ -42,7 +42,7 @@ bpUserSettings() {
 
   #  UID    UNAME NAME             EMAIL                     SHELL  OPTIONS    GROUPS
   userList=(
-    "2000" "pmg" "Peter Malmberg" "peter.malmberg@gmail.com" "/bin/bash" "--create-home" "dialout adm sudo"
+    "2000" "pmg" "Peter Malmberg" "peter.malmberg@gmail.com" "/bin/bash" "--create-home" "dialout adm sudo i2c spi"
     "3000" "files" "Files" "" "/usr/sbin/nologin" "--no-create-home" ""
   )
 
@@ -52,7 +52,7 @@ bpUserSettings() {
 
   #  USER   GROUP
   userGroup=(
-    "lpmg" "dialout"
+    "lpmg" "dialout i2c spi"
   )
 
   RPSERVER=rpserver
@@ -136,26 +136,52 @@ bpIsGroup() {
 
 
 #
+# Check if user is member of group
+#
+# $username
+# $groupname
+#
+bpIsInGroup() {
+  if id --name --groups --zero "$1" | grep --quiet --null-data --line-regexp --fixed-string "$2"; then
+	  return 0
+	else
+	  return 1
+	fi
+}
+
+
+#
 # $1 User 
-# $2 Group
+# $2 Groups
 #
 addUserToGroup() {
   local USER="$1"
-	local GROUP="$2"
-
+	local GROUPSS="$2"
+	
   if ! bpIsUser "$USER"; then
 	  bpError "User $USER does not exist!"
+		return
 	fi
-	
-	if ! bpIsGroup "$GROUP"; then
-	  bpError "Group $GROUP does not exist!"
-	fi
-	
-  if sudo usermod -a -G "$GROUP" "$USER"; then
-    bpOk "Adding user $USER to group $GROUP"
-  else
-    bpError "Failed adding user $USER to group $GROUP"
-  fi 
+
+  IFS=' '
+	for GROUP in $GROUPSS; do
+    
+		if ! bpIsGroup "$GROUP"; then
+	    bpWarning "Group $GROUP does not exist!"
+			continue
+	  fi
+		
+		if bpIsInGroup $USER $GROUP; then 
+		  bpInfo "User $USER is already member of group $GROUP"
+			continue
+		fi
+		
+		if sudo usermod -a -G "$GROUP" "$USER"; then
+      bpOk "Adding user $USER to group $GROUP"
+    else
+      bpError "Failed adding user $USER to group $GROUP"
+    fi 
+	done
 }
 
 #
@@ -197,7 +223,6 @@ addGroup() {
     bpInfo "Group $1 already exists"
     return 1
   fi
-
   if sudo groupadd "$1" --gid "$2"; then
     bpOk "Adding group: $1"
   else
@@ -299,24 +324,6 @@ lsgm() { ##D List group members
 }
 
 
-aug() { ##D Add users and groups
-  au
-  ag
-}
-
-
-agm() { ##D Add users to groups
-  i=0
-  len=${#userGroup[@]}
-  while [ "$i" -lt "$len" ]; do
-    USER=${userGroup[i]}
-    ((i++))
-    GROUP=${userGroup[i]}
-    ((i++))		
-		addUserToGroup "$USER" "$GROUP"
-  done
-}
-
 rug() { ##D Remove users and groups
   IFS=$'\n'
   i=0
@@ -389,6 +396,12 @@ omv() { ##D Open media vault import data
   done
 }
 
+all() { ##D Add users and groups
+  au
+  ag
+	aug
+}
+
 au() { ##D Add users
   IFS=$'\n'
   i=0
@@ -409,6 +422,7 @@ au() { ##D Add users
 		U_GROUPS=${userList[i]}
     ((i++))
     addUser "$U_NAME" "$U_ID" "$U_PERSONAL" "$U_EMAIL" "$U_SHELL" "$U_OPTS" "$U_GROUPS"
+		addUserToGroup "$U_NAME" "$U_GROUPS"
   done
 }
 
@@ -424,6 +438,19 @@ ag() { ##D Add groups
     addGroup "$G_NAME" "$G_ID"
   done
 }
+
+aug() { ##D Add users to groups
+  i=0
+  len=${#userGroup[@]}
+  while [ "$i" -lt "$len" ]; do
+    USER=${userGroup[i]}
+    ((i++))
+    GROUP=${userGroup[i]}
+    ((i++))		
+    addUserToGroup "$USER" "$GROUP"
+  done
+}
+
 
 ##-
 
