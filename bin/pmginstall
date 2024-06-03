@@ -57,7 +57,7 @@ bpUserSettings() {
     "mpterm" "mptemp_init -q"
     "def" "def install"
     "fplot" "fplot_init -q"
-		"pins" "pins_init -q"
+    "pins" "pins_init -q"
   )
 
   #
@@ -78,10 +78,9 @@ bpUserSettings() {
     "apt" "mailutils" ":"
   )
 
-
   sshPkgs=(
-	  "apt" "openssh-server" ":"
-	)
+    "apt" "openssh-server" ":"
+  )
 
   sambaPkgs=(
     "apt" "samba-common" ":"
@@ -111,19 +110,17 @@ bpUserSettings() {
     "apt" "testdisk" ":"
     "apt" "gddrescue" ":"
     "apt" "tmux" ":"
-		"git" "https://github.com/tmux-plugins/tpm" "$HOME/.tmux/plugins/tpm"
+    "git" "https://github.com/tmux-plugins/tpm" "$HOME/.tmux/plugins/tpm"
     "apt" "snapd" "snap_unrestrict"
     "apt" "acpi" ":"
     "apt" "bat" ":"
     "apt" "ncdu" ":"
-		"apt" "zoxide" ":"
+    "apt" "zoxide" ":"
     "apt" "shellcheck" ":"
     "apt" "tree" ":"
   )
-#    "git" "https://github.com/ogham/exa" ":"
-#    "git" "powertop" ":"
-
-
+  #    "git" "https://github.com/ogham/exa" ":"
+  #    "git" "powertop" ":"
 
   testing=(
     "apt" "stress-ng" ":"
@@ -319,7 +316,15 @@ npmIsInstalled() { ##I Check if npm package is installed
 # $1 package name
 #
 pipIsInstalled() { ##I
-  if pip list | grep GitPython &>/dev/null; then
+
+  # Since retreiving a list of installed python modules from pip is slow,
+  # it is read into a cache-variable to speed upp subsequent checks
+  if [ -z "$BP_PIP_LIST" ]; then
+    bpInfo "Retreiving list from pip"
+    BP_PIP_LIST=$(pip3 list)
+  fi
+
+  if grep "$1" &>/dev/null <<<"$BP_PIP_LIST"; then
     return 0
   else
     return 1
@@ -413,12 +418,12 @@ installSnap() { ##I Install snap package
 
 installGit() { ##I Install git package
   REPO="$1"
-	ARGS="$2"
+  ARGS="$2"
   if git clone "$REPO" "$ARGS"; then
-	  bpOk "Installed  ${E_BR_GREEN}${1}${E_RESET}"
-	else
+    bpOk "Installed  ${E_BR_GREEN}${1}${E_RESET}"
+  else
     bpError "Failed installing ${E_BR_GREEN}${1}${E_RESET}"
-	fi
+  fi
 }
 
 #
@@ -549,7 +554,7 @@ kvm() { ##D Install KVM virtual machine manager
 }
 
 sshserver() { ##D Install and activate ssh server
-  installPkgs  "${sshPkgs[@]}"
+  installPkgs "${sshPkgs[@]}"
   sudo systemctl enable ssh
   sudo systemctl start ssh
 }
@@ -901,12 +906,12 @@ bpErrorExit() { ##I Safely exit script with a error
 
 # Check if terminal is 16 color only
 if [[ "linux rxvt-16color" = *${TERM}* ]]; then
-  
-	# ANSI foreground colors codes
-	#
+
+  # ANSI foreground colors codes
+  #
   E_BLACK=$'\e[30m'        # Black
   E_RED=$'\e[31m'          # Red
-  E_GREEN=$'\e[32m'        # Green 
+  E_GREEN=$'\e[32m'        # Green
   E_YELLOW=$'\e[33m'       # Yellow
   E_BLUE=$'\e[34m'         # Blue
   E_MAGENTA=$'\e[35m'      # Magenta
@@ -921,7 +926,7 @@ if [[ "linux rxvt-16color" = *${TERM}* ]]; then
   E_BR_CYAN=$'\e[1;36m'    # Bright Cyan
   E_WHITE=$'\e[1;37m'      # White
 
-  # ANSI background color codes 
+  # ANSI background color codes
   #
   E_BG_BLACK=$'\e[40m'      # Black
   E_BG_RED=$'\e[41m'        # Red
@@ -1031,7 +1036,6 @@ E_FORWARD=$'\e[C' # Move cursor forward
 E_BACK=$'\e[D'    # Move cursor backward
 E_HIDE=$'\e[?25l' # Hide cursor
 E_SHOW=$'\e[?25h' # Show cursor
-
 
 # Default Bashplate colortheme
 BP_C_OK="${E_BR_GREEN}"
