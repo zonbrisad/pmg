@@ -57,6 +57,7 @@ bpUserSettings() {
     "mpterm" "mptemp_init -q"
     "def" "def install"
     "fplot" "fplot_init -q"
+		"pins" "pins_init -q"
   )
 
   #

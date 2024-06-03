@@ -83,13 +83,14 @@ cp_file() {
 # $2 template path
 # $3 destination
 #
-new_file() {
-  F="${2}/${1}"
+file_from_template() {
+  local FILE="${2}/${1}"
   #  bpInfo "$F"
-  if [ -e "${F}" ]; then
+  if [ -e "${FILE}" ]; then
     if bpReadBoolDY "Create ${1} file?"; then
-      bpCp "${F}" "$(pwd)/${3}" -L
+      bpCp "${FILE}" "$(pwd)/${3}" -L
       git add "${1}"
+      echo
     fi
   fi
 }
@@ -100,16 +101,18 @@ languages=(
   "g" "default" "Generic project"
 )
 
+#
+# $1 language default
+#
 new_proj() { ##I New project
   proj_name=$(bpReadStr "Project name?")
   proj_dir=$(bpReadStr "Project directory?" "${proj_name}")
+  PROJECT_LANGUAGE="$1"
 
-  bpSelectFromList "g" "Choose language" "${languages[@]}"
-  echo "$bpReturn"
-
+  bpSelectFromList "$PROJECT_LANGUAGE" "Choose language" "${languages[@]}"
   TEMPLATE="${TEMPLATES}/$bpReturn"
   HOOK_TEMPLATES="${TEMPLATES}/git/hooks"
-  echo -e "${TEMPLATE}"
+  #echo -e "${TEMPLATE}"
 
   if ! bpMkDir "${proj_dir}"; then
     bpExit
@@ -118,10 +121,19 @@ new_proj() { ##I New project
   bpCd "${proj_dir}"
   git init
 
-  new_file "README.md" "$TEMPLATE" "."
-  new_file "HISTORY.md" "$TEMPLATE" "."
-  new_file ".gitignore" "$TEMPLATE" "."
-  new_file "pre-commit" "$HOOK_TEMPLATES" ".git/hooks/."
+  # bpReadBoolDY "Create A file?"
+  # touch AAABBBCCC
+  # bpReadBoolDY "Create B file?"
+  # bpCp AAABBBCCC CCCBBBAAA
+  # bpReadBoolDY "Create C file?"
+  # bpRm AAABBBCCC
+  # bpRm CCCBBBAAA
+  # bpReadBoolDY "Create D file?"
+
+  file_from_template "README.md" "$TEMPLATE" "."
+  file_from_template "HISTORY.md" "$TEMPLATE" "."
+  file_from_template ".gitignore" "$TEMPLATE" "."
+  #file_from_template "pre-commit" "$HOOK_TEMPLATES" ".git/hooks/."
 
   git commit -m "Initial commit"
   git branch -M master
@@ -218,7 +230,7 @@ gi() { ##D Print git project information
   git branch
   bpPrintLine "Remote information"
   git remote -v
-	bpPrintLine 
+  bpPrintLine
 }
 
 gc() { ## Show git configuration
@@ -534,6 +546,7 @@ E_UL_BR_CYAN=$'\e[58;5;14m'    # Bright Cyan
 E_UL_WHITE=$'\e[58;5;15m'      # White
 
 # ANSI Text attributes
+E_RESET=$'\e[0m'              # Clear Attributes
 E_BOLD=$'\e[1m'               # Bold text
 E_DIM=$'\e[2m'                # Dim(low intensity) text
 E_ITALIC=$'\e[3m'             # Italic text
@@ -561,8 +574,6 @@ E_FORWARD=$'\e[C' # Move cursor forward
 E_BACK=$'\e[D'    # Move cursor backward
 E_HIDE=$'\e[?25l' # Hide cursor
 E_SHOW=$'\e[?25h' # Show cursor
-
-E_RESET=$'\e[0m' # Clear Attributes
 
 # Default Bashplate colortheme
 BP_C_OK="${E_BR_GREEN}"
@@ -1043,9 +1054,13 @@ bpReadBool() { ##I Ask yes/no question generic
   while true; do
 
     if [ "$2" -eq 1 ]; then
-      yn=$(bpReadGeneric "${BP_C_QUERY}${1}${E_RESET} ${BP_C_QUERY_DEF}[${BP_C_DEEMPHASIS}y${BP_C_QUERY_DEF}/${BP_C_EMPHASIS}N${BP_C_QUERY_DEF}]${E_RESET}")
+      # yn=$(bpReadGeneric "${BP_C_QUERY}${1}${E_RESET} ${BP_C_QUERY_DEF}[${BP_C_DEEMPHASIS}y${BP_C_QUERY_DEF}/${BP_C_EMPHASIS}N${BP_C_QUERY_DEF}]${E_RESET}")
+      # read -er -i "$DEFAULT" -p "${BP_C_QUERY}${1}${E_RESET} > " yn
+      read -er -p "${BP_C_QUERY}${1}${E_RESET} ${BP_C_QUERY_DEF}[${BP_C_DEEMPHASIS}y${BP_C_QUERY_DEF}/${BP_C_EMPHASIS}N${BP_C_QUERY_DEF}]${E_RESET} > " yn
     else
-      yn=$(bpReadGeneric "${BP_C_QUERY}${1}${E_RESET} ${BP_C_QUERY_DEF}[${E_RESET}${BP_C_EMPHASIS}Y${BP_C_QUERY_DEF}/${BP_C_DEEMPHASIS}n${BP_C_QUERY_DEF}]${E_RESET}")
+      # yn=$(bpReadGeneric "${BP_C_QUERY}${1}${E_RESET} ${BP_C_QUERY_DEF}[${E_RESET}${BP_C_EMPHASIS}Y${BP_C_QUERY_DEF}/${BP_C_DEEMPHASIS}n${BP_C_QUERY_DEF}]${E_RESET}")
+      # read -er -i "$DEFAULT" -p "${BP_C_QUERY}${1}${E_RESET} ${BP_C_QUERY_DEF}[${E_RESET}${BP_C_EMPHASIS}Y${BP_C_QUERY_DEF}/${BP_C_DEEMPHASIS}n${BP_C_QUERY_DEF}]${E_RESET} > " yn
+      read -er -p "${BP_C_QUERY}${1}${E_RESET} ${BP_C_QUERY_DEF}[${E_RESET}${BP_C_EMPHASIS}Y${BP_C_QUERY_DEF}/${BP_C_DEEMPHASIS}n${BP_C_QUERY_DEF}]${E_RESET} > " yn
     fi
 
     case "$yn" in
