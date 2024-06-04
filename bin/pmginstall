@@ -118,6 +118,7 @@ bpUserSettings() {
     "apt" "zoxide" ":"
     "apt" "shellcheck" ":"
     "apt" "tree" ":"
+		"apt" "gpiod" ":"
   )
   #    "git" "https://github.com/ogham/exa" ":"
   #    "git" "powertop" ":"
