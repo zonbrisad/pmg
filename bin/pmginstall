@@ -243,6 +243,7 @@ bpUserSettings() {
     "apt" "pyqt5-dev-tools" ":"
     "apt" "pyqt5-examples" ":"
     "apt" "bpython" ":"
+		"apt" "gir1.2-gtk-3.0" ":"
     "pip" "GitPython" ":"
     "pip" "black" ":"
     "pip" "rich" ":"

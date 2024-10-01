@@ -411,8 +411,8 @@ alias mkdir='mkdir -p'
 
 alias which='type -a'
 alias grep='grep --color=auto'
-alias du='du -kh' # Makes a more readable output.
-alias df='df -kTh'
+alias du='du -k --human-readable --max-depth 1' # Makes a more readable output.
+alias df='df -k --print-type --human-readable'
 
 # If available use batcat instead of cat
 if type batcat &>/dev/null; then
