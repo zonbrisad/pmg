@@ -67,9 +67,12 @@ bpUserSettings() {
 ##- System
 
 hostname() { ##D Set hostname
-  hn=$(cat /etc/hostname)
-  nhn=$(bpReadStr "New hostname" "$hn")
-  echo "$nhn" | sudo tee /etc/hostname >/dev/null
+  #hn=$(cat /etc/hostname)
+  #nhn=$(bpReadStr "New hostname" "$hn")
+	#echo "$nhn" | sudo tee /etc/hostname >/dev/null
+	
+	nhn=$(bpReadStr "New hostname" "$HOSTNAME")
+	sudo hostnamectl set-hostname  $nhn
 }
 
 ##- Filesystems
