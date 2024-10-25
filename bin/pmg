@@ -361,7 +361,7 @@ info() { ##D General information
   bpPrintDesc "CPU" "$(bpCPU)"
   bpPrintDesc "Memory" "$(free --mega | grep Mem | awk '{ print $2 }') Mb"
   bpPrintDesc "Graphics" "$(lspci 2>/dev/null | grep VGA | sed -r 's/.*controller: //')"
-  bpPrintDesc "Drives" "$(lsblk --noheadings --nodeps --output NAME,SIZE,MODEL)"
+  bpPrintDesc "Drives" "$(lsblk --noheadings --nodeps --output NAME,SIZE,MODEL | grep --invert-match loop)"
 
   bpPrintLine "System"
   bpPrintDesc "Distibution" "$(lsb_release -d | cut -b 14-)"
