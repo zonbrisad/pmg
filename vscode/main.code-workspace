@@ -1,0 +1,36 @@
+{
+	"folders": [
+		{
+			"name": "bashplates",
+			"path": "../../Projects/bashplates"
+		},
+		{
+			"path": "../../Projects/def"
+		},
+		{
+			"path": "../../Projects/fplot"
+		},
+		{
+			"path": "../../Projects/LEF"
+		},
+		{
+			"path": "../../Projects/luaconf"
+		},
+		{
+			"path": "../../Projects/makeplates"
+		},
+		{
+			"path": "../../Projects/mpterm"
+		},
+		{
+			"path": "../../Projects/pins"
+		},
+		{
+			"path": "../../Projects/pyplate"
+		},
+		{
+			"path": "../../Projects/Tester"
+		}
+	],
+	"settings": {}
+}
