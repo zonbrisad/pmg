@@ -45,19 +45,6 @@ bpUserSettings() {
 # User defined functions
 #---------------------------------------------------------------------
 
-##- Information
-con() { ##D Show network connections 
-  bpRun nmcli connection show
-}
-
-dev() { ##D Show network devices
-  bpRun nmcli device show
-}
-
-wd() { ##D Show WLAN device information
-  watch -n 1 cat /proc/net/wireless
-}
-
 interfaceToIp() {
   ip addr show "${INTERFACE}" | grep "inet" | head -n 1 | awk '/inet/ {print $2}' | cut -d'/' -f1
 }
@@ -75,30 +62,55 @@ lsInterfaces() {
 }
 
 
-info() { ##D Show network info
-	read -d "\n" -r -a INTERFACES <<<$(lsInterfaces)
-	IFS=$'\n'
-		
-	bpPrintLine "Interfaces"
+##- Information
 
-  LEN=${#INTERFACES[@]}
-	i=0
-	while [ "$i" -lt "$LEN" ]; do
-	  INTERFACE=${INTERFACES[$i]}
-	  ((i++))
-		bpPrintDesc $INTERFACE 	"$(interfaceToIp $INTERFACE)"$'\n'"$(interfaceToDefault $INTERFACE) "$'\n'"$(interfaceToMAC $INTERFACE)"
-	done							 
+con() { ##D Show network connections 
+  bpRun nmcli connection show
+}
+
+dev() { ##D Show network devices
+  bpRun nmcli
+}
+
+wd() { ##D Show WLAN device information
+  watch -n 1 cat /proc/net/wireless
+}
+
+info() { ##D Show network info
+#	read -d "\n" -r -a INTERFACES <<<$(lsInterfaces)
+#	IFS=$'\n'		
+#	bpPrintLine "Interfaces"
+
+#  LEN=${#INTERFACES[@]}
+#	i=0
+#	while [ "$i" -lt "$LEN" ]; do
+#	  INTERFACE=${INTERFACES[$i]}
+#	  ((i++))
+#   bpPrintDesc $INTERFACE 	"$(interfaceToIp $INTERFACE)"$'\n'"$(interfaceToDefault $INTERFACE) "$'\n'"$(interfaceToMAC $INTERFACE)"
+#	done							 
 	
-	bpPrintLine
+#	bpPrintLine
+	bpRun nmcli
 }
 
 ##- DHCP
-dr() { ##D Release DHCP lease
-  sudo dhclient -v -r
+dhcp() { ##D Release and rediscover DHCP lease
+  dr
+  dc
 }
 
+#
+# $1 interface
+#
+dr() { ##D Release DHCP lease
+  sudo dhclient -v -r $2
+}
+
+#
+# $1 interface
+#
 dc() { ##D Discover DHCP lease
-  sudo dhclient -v
+  sudo dhclient -v $2
 }
 
 
