@@ -42,10 +42,10 @@ flag() { ##D Print Swedish flag
 
 bpGetSSID() {
   if ! bpHasCmd "iwgetid"; then
-	  echo ""
-		return
-	fi
-	iwgetid -r
+    echo ""
+    return
+  fi
+  iwgetid -r
 }
 
 ii() { ##D Print general system information
@@ -53,15 +53,15 @@ ii() { ##D Print general system information
   bpPrintDesc "Username:" "$USER ($UID)"
   bpPrintDesc "Current date:" "$(date)"
   bpPrintDesc "IP addr" "$(bpIpInfo)"
-	bpPrintDesc "SSID" "$(bpGetSSID)"
+  bpPrintDesc "SSID" "$(bpGetSSID)"
   bpPrintDesc "Machine Uptime:" "$(uptime -p)"
   bpPrintDesc "Machine Type:" "$(bpCPU)"
-	bpPrintDesc "Memory:" "$(bpMem)"
+  bpPrintDesc "Memory:" "$(bpMem)"
   bpPrintDesc "Distibution" "$(lsb_release -d | cut -b 14-)"
 
   if [ -n "${SYSTEMP}" ]; then
-#    T=$(bc <<<"scale=1; $(cat "${SYSTEMP}") / 1000")    
-		T=$(($(cat "${SYSTEMP}") / 1000))    
+    #    T=$(bc <<<"scale=1; $(cat "${SYSTEMP}") / 1000")
+    T=$(($(cat "${SYSTEMP}") / 1000))
     bpPrintDesc "Temperature:" "$T Â°C"
   fi
 
@@ -92,22 +92,23 @@ host_rpexp() {
 
 host_rpexp2() {
   SYSTEMP=/sys/class/thermal/thermal_zone0/temp
-	start_ssh_agent
+  start_ssh_agent
 }
 
 host_rpdesk() {
   SYSTEMP=/sys/class/thermal/thermal_zone0/temp
-	start_ssh_agent
-	init_starship
+  start_ssh_agent
+  init_starship
 }
 
 host_rpserver() {
   SYSTEMP=/sys/class/thermal/thermal_zone0/temp
 }
 
-host_lstation() {
-  SYSTEMP=/sys/class/thermal/thermal_zone2/temp
-  init_starship
+host_main() {
+  #SYSTEMP=/sys/class/thermal/thermal_zone2/temp
+  #init_starship
+  :
 }
 
 host_lliten() {
@@ -127,38 +128,38 @@ host_fileserver() {
 
 host_all() {
   # ssh login aliases
-  alias rpexp='ssh pmg@rpexp'  
+  alias rpexp='ssh pmg@rpexp'
   alias rpexp2='ssh lpmg@rpexp2'
   alias rpexp3='ssh lpmg@rpexp3'
   alias rpdesk='ssh lpmg@rpdesk'
   alias rpserver='ssh lpmg@rpserver'
-	alias pxubuntu='ssh lpmg@192.168.1.158'
-  
-	alias lsmnt='mount | column --table --table-hide 2,4,6'
-	alias lsusr='cat /etc/passwd |  column --table --separator :'
-	alias lsgrp='cat /etc/group |  column --table --separator :'
-	alias lsblk='lsblk --output NAME,SIZE,TYPE,FSTYPE,MOUNTPOINT,UUID,MODEL'
+
+  alias lsmnt='mount | column --table --table-hide 2,4,6'
+  alias lsusr='cat /etc/passwd |  column --table --separator :'
+  alias lsgrp='cat /etc/group |  column --table --separator :'
+  alias lsblk='lsblk --output NAME,SIZE,TYPE,FSTYPE,MOUNTPOINT,UUID,MODEL'
+  alias dig='dig @192.168.1.1'
+  alias pgrep='pgrep --list-full'
+  alias date='date +"%A %B %e %T %Y"'
 
   # Install aliases
   alias sui='sudo apt install'
-	
-	# Dev aliases
-	alias py='python3'
-		
-	# Git settings	
-	# if meld is installed use it otherwise internal diff
-	if bpHasCmd "meld"; then
-	  export GIT_EXTERNAL_DIFF="~/pmg/bin/git_diff hook_default"
-	else
-		unset GIT_EXTERNAL_DIFF
-	fi
+
+  # Dev aliases
+  alias py='python3'
+
+  # Git settings
+  # if meld is installed use it otherwise internal diff
+  if bpHasCmd "meld"; then
+    export GIT_EXTERNAL_DIFF="${HOME}/pmg/bin/git_diff hook_default"
+  else
+    unset GIT_EXTERNAL_DIFF
+  fi
 
   # Loading zoxide, a smart cd command
   if bpHasCmd zoxide; then
     eval "$(zoxide init bash)"
   fi
-
-
 }
 
 #---------------------------------------------------------------------
@@ -263,132 +264,57 @@ HISTTIMEFORMAT="%T "
 #       http://www.askapache.com/linux/bash-power-prompt.html
 #       http://tldp.org/HOWTO/Bash-Prompt-HOWTO
 #       https://github.com/nojhan/liquidprompt
-#-------------------------------------------------------------
-# Current Format: [TIME USER@HOST PWD] >
-# TIME:
-#    Green     == machine load is low
-#    Orange    == machine load is medium
-#    Red       == machine load is high
-#    ALERT     == machine load is very high
-# USER:
-#    Cyan      == normal user
-#    Orange    == SU to user
-#    Red       == root
-# HOST:
-#    Cyan      == local session
-#    Green     == secured remote connection (via ssh)
-#    Red       == unsecured remote connection
-# PWD:
-#    Green     == more than 10% free disk space
-#    Orange    == less than 10% free disk space
-#    ALERT     == less than 5% free disk space
-#    Red       == current user does not have write privileges
-#    Cyan      == current filesystem is size zero (like /proc)
-# >:
-#    White     == no background or suspended jobs in this shell
-#    Cyan      == at least one background job in this shell
-#    Orange    == at least one suspended job in this shell
-#
-#    Command is added to the history file each time you hit enter,
-#    so it's available to all shells (using 'history -a').
 
-# Test connection type:
-if [ -n "${SSH_CONNECTION}" ]; then
-  CNX=${E_GREEN} # Connected on remote machine, via ssh (good).
-elif [[ "${DISPLAY%%:0*}" != "" ]]; then
-  CNX=${ALERT} # Connected on remote machine, not via ssh (bad).
-else
-  CNX=${E_BR_CYAN} # Connected on local machine.
-fi
-
-# Test user type:
-#if [[ ${USER} == "root" ]]; then
-#  SU=${Red}           # User is root.
-#elif [[ ${USER} != $(logname) ]]; then
-#  SU=${BRed}          # User is not login user.
-#else
-#  SU=${BCyan}         # User is normal (well ... most of us are).
-#fi
-
-# Returns a color indicating system load.
-function load_color() {
-  local SYSLOAD=$(load)
-  if [ ${SYSLOAD} -gt ${XLOAD} ]; then
-    echo -en ${ALERT}
-  elif [ "${SYSLOAD}" -gt "${MLOAD}" ]; then
-    echo -en ${E_RED}
-  elif [ "${SYSLOAD}" -gt "${SLOAD}" ]; then
-    echo -en "${E_BR_RED}"
-  else
-    echo -en "${E_BR_GREEN}"
-  fi
-}
-
-# Returns a color according to free disk space in $PWD.
-function disk_color() {
-  if [ ! -w "${PWD}" ]; then
-    echo -en "${E_RED}"
-    # No 'write' privilege in the current directory.
-  elif [ -s "${PWD}" ]; then
-    local used=$(command df -P "$PWD" |
-      awk 'END {print $5} {sub(/%/,"")}')
-    if [ "${used}" -gt 95 ]; then
-      echo -en "${ALERT}" # Disk almost full (>95%).
-    elif [ "${used}" -gt 90 ]; then
-      echo -en "${E_BR_RED}" # Free disk space almost gone.
-    else
-      echo -en "${E_GREEN}" # Free disk space is ok.
-    fi
-  else
-    echo -en "${E_CYAN}"
-  # Current directory is size '0' (like /proc, /sys etc).
-  fi
-}
-
-# Returns a color according to running/suspended jobs.
-function job_color() {
-  if [ $(jobs -s | wc -l) -gt "0" ]; then
-    echo -en "${E_BR_RED}"
-  elif [ $(jobs -r | wc -l) -gt "0" ]; then
-    echo -en "${E_BR_CYAN}"
-  fi
-}
+PROMPT_COMMAND=bpSetPrompt
 
 # Adds some text in the terminal frame (if applicable).
+function bpSetPrompt() {
+  # Test connection type:
+  if [ -n "${SSH_CONNECTION}" ]; then
+    CONNECTION_COLOR=${E_GREEN} # Connected on remote machine, via ssh (good).
+  elif [[ "${DISPLAY%%:0*}" != "" ]]; then
+    CONNECTION_COLOR=${ALERT} # Connected on remote machine, not via ssh (bad).
+  else
+    CONNECTION_COLOR=${E_BR_CYAN} # Connected on local machine.
+  fi
 
-# Now we construct the prompt.
-PROMPT_COMMAND="history -a"
-case ${TERM} in
-*term | rxvt | linux | xterm-256color)
-  # Time of day (with load info):
-  #PS1="\[\$(load_color)\][\A\[${NC}\] "
-  #		PS1="\${load_color}["
-  # User@Host (with connection type info):
-  #		PS1=${PS1}"\[\${SU}\]\u\[\${NC}\]@\[\${CNX}\]\h\[\${NC}\]"
-  # PWD (with 'disk space' info):
-  #		PS1=${PS1}"\[\${disk_color}\] \W]\[\${NC}\] "
-  # Prompt (with 'job' info):
-  #		PS1=${PS1}"\[\${job_color}\]>\[\${NC}\] "
-  # Set title of current xterm:
-  #		PS1=${PS1}"\[\e]0;[\u@\h]\w\a\]"
+  # Test user type:
+  if [[ ${USER} == "root" ]]; then
+    USER_COLOR="${E_RED}" # User is root.
+  elif [[ ${USER} != $(logname) ]]; then
+    USER_COLOR="${E_BR_RED}" # User is not login user.
+  else
+    USER_COLOR="" #"${E_BR_CYAN}" # User is normal (well ... most of us are).
+  fi
 
-  # Time of day (with load info):
-  #PS1="\[\$(load_color)\][\A\[${NC}\] "
-  PS1="\${load_color}["
-  # User@Host (with connection type info):
-  PS1=${PS1}"\[${SU}\]\u\[${NC}\]@\[${CNX}\]\h\[${NC}\]"
-  # PWD (with 'disk space' info):
-  PS1=${PS1}"\[\${disk_color}\] \W]\[${NC}\] "
-  # Prompt (with 'job' info):
-  PS1=${PS1}"\[\${job_color}\]>\[${NC}\] "
-  # Set title of current xterm:
-  PS1=${PS1}"\[\e]0;[\u@\h]\w\a\]"
-  ;;
-*)
-  PS1="(\A \u@\h \W) > " # --> PS1="(\A \u@\h \w) > "
-  # --> Shows full pathname of current dir.
-  ;;
-esac
+  if [ "$(jobs | wc -l)" -gt "0" ]; then
+    JOB_COLOR="${E_BR_RED}"
+  else
+    #JOB_COLOR="${E_BR_CYAN}"
+    JOB_COLOR=""
+  fi
+
+  # Now we construct the prompt.
+  case ${TERM} in
+  *term | rxvt | linux | xterm-256color)
+
+    # User@Host (with connection type info):
+    PS1="[\[${USER_COLOR}\]\u\[${E_RESET}\]\[${E_DARKGRAY}\]@\[${CONNECTION_COLOR}\]\h\[${E_RESET}\]"
+    # PWD (with 'disk space' info):
+    PS1=${PS1}" \W] "
+    # Prompt (with 'job' info):
+    # PS1=${PS1}"\[$(job_color)\]>\[${E_RESET}\] "
+    PS1=${PS1}"\[${JOB_COLOR}\]>\[${E_RESET}\] "
+
+    # Set title of current xterm:
+    PS1=${PS1}"\[\e]0;[\u@\h]\w\a\]"
+    ;;
+  *)
+    PS1="(\A \u@\h \W) > " # --> PS1="(\A \u@\h \w) > "
+    # --> Shows full pathname of current dir.
+    ;;
+  esac
+}
 
 #============================================================
 #
@@ -401,7 +327,6 @@ esac
 #============================================================
 
 # Personal Aliases ----------------------------------------------------------
-
 
 alias rm='rm -i'
 alias cp='cp -i'
@@ -428,7 +353,6 @@ alias libpath='echo -e ${LD_LIBRARY_PATH//:/\\n}'
 alias ..='cd ..'
 alias j='jobs -l'
 alias h='history'
-
 
 # The 'ls' family -----------------------------------------------------------
 
@@ -520,7 +444,7 @@ alias make='xtitle Making $(basename $PWD) ; make'
 # .. and functions
 function man() {
   for i; do
-    xtitle "The "$(basename "$1" | tr -d .[:digit:])" manual"
+    xtitle "The $(basename "$1" | tr -d ".[:digit:]") manual"
     command man -a "$i"
   done
 }
@@ -553,20 +477,22 @@ fstr() { ##D Find a pattern in a set of files and highlight them:
       ;;
     esac
   done
-  shift $(($OPTIND - 1))
+  shift $((OPTIND - 1))
   if [ "$#" -lt 1 ]; then
     echo "$usage"
     return
   fi
   find . -type f -name "${2:-*}" -print0 |
-    xargs -0 egrep --color=always -sn ${case} "$1" 2>&- | more
+    xargs -0 egrep --color=always -sn "${case}" "$1" 2>&- | more
 
 }
 
 fii() { ##D Print file information
   echo
-  bpPrintDesc "Name" $(basename $(realpath $1))
-  bpPrintDesc "Directory" $(dirname $(realpath $1))
+  bpPrintDesc "Name" "$(basename "$(realpath "$1")")"
+  bpPrintDesc "Directory" "$(dirname "$(realpath "$1")")"
+  bpPrintDesc "Owner" "$(stat -c '%U' "$1")"
+  bpPrintDesc "Size" "$(stat -c '%' "$1")"
   echo
 }
 
@@ -599,21 +525,20 @@ ped() { ##D Open file in path with editor
   fi
 }
 
-
 pdiff() { ##D Open file in path with diff program
- 
+
   if ! L=$("which" "$1"); then
     bpError "File \"$1\" not found in path"
     return 1
   fi
- 
-  if [ ! -n "$BP_DIFF" ]; then
-  	bpError "BP_DIFF variable not set, can't open file ${1}"
+
+  if [ -z "$BP_DIFF" ]; then
+    bpError "BP_DIFF variable not set, can't open file ${1}"
     return 1
   fi
-	
+
   bpInfo "Opening $L"
-	bpRun "${BP_DIFF}" "${L}" "$2"		
+  bpRun "${BP_DIFF}" "${L}" "$2"
 }
 
 swap() { ##D Swap 2 filenames around, if they exist (from Uzi's bashrc).
@@ -659,17 +584,16 @@ gi() { ##D Show information about project
 ##- tmux
 
 treload() { ##D Reload .tmux.conf
-	tmux source ~/.tmux.conf	
+  tmux source ~/.tmux.conf
 }
 
 et() { ##D Open .tmux.conf in default editor
   bpEdit ~/.tmux.conf "$1"
 }
 
-
 ##- Misc
 
-killps() { ##D kill by process name
+killps() {                    ##D kill by process name
   local pid pname sig="-TERM" # default signal
   if [ "$#" -lt 1 ] || [ "$#" -gt 2 ]; then
     echo "Usage: killps [-SIGNAL] pattern"
@@ -693,29 +617,57 @@ inst() { ##D Install dpkg package
 }
 
 lam() { ##D List all available kernel modules
-  find /lib/modules/$(uname -r) -type f -name '*.ko'
+  find "/lib/modules/$(uname -r)" -type f -name '*.ko'
 }
 
 mps() { ##D List all processes belonging to \"me\"
   ps "$@" -u "$USER" -o pid,%cpu,%mem,bsdtime,command
 }
 
+# interfaceToIp_old() {
+#   ip addr show "${1}" | grep "inet" | head -n 1 | awk '/inet/ {print $2}' | cut -d'/' -f1
+# }
 
+# interfaceToMAC_old() {
+#   ip addr show "${1}" | grep "link/ether" | awk '{print $2}'
+# }
 
-bpIpInfo() { ##I List all default IP adresses
-  read -d "\n" -r -a INTERFACES <<<$(ip route | awk '/default/ { print $5 "\n" $7 }')
+interfaceToIp() {
+  IFS=$' '
+  read -r -a IP <<<"$(ip addr show "${1}" | grep "inet ")"
+  echo "${IP[1]::-3}"
+}
+
+interfaceToMAC() {
+  IFS=$' '
+  read -r -a MAC <<<"$(ip link show "${1}" | grep "link/ether")"
+  echo "${MAC[1]}"
+}
+
+interfaceToDefault() {
+  ip route | grep -E "default.*${1}.*" | awk '/default/ { print $3 }'
+}
+
+lsInterfaces() {
   IFS=$'\n'
+  read -r -d '\n' -a INTERFACES <<<"$(ip link show | grep -v lo)"
   LEN=${#INTERFACES[@]}
   i=0
-  while [ $i -lt "$LEN" ]; do
-    INTERFACE=${INTERFACES[$i]}
+  while [ "$i" -lt "$LEN" ]; do
+    IFS=$' '
+    read -r A INTERFACE B <<<"${INTERFACES[$i]}"
     ((i++))
-    LINK=${INTERFACES[$i]}
     ((i++))
-    IP=$(ip addr show "${INTERFACE}" | grep "inet" | head -n 1 | awk '/inet/ {print $2}' | cut -d'/' -f1)
-    MAC=$(ip addr show "${INTERFACE}" | grep "link/ether" | awk '{print $2}')
+    echo "${INTERFACE::-1}"
+  done
+}
 
-    echo "$IP $INTERFACE $LINK $MAC"
+bpIpInfo() { ##I List all default IP adresses
+  read -d "\n" -r -a INTERFACES <<<"$(lsInterfaces)"
+  for INTERFACE in "${INTERFACES[@]}"; do
+    IP=$(interfaceToIp "$INTERFACE")
+    MAC=$(interfaceToMAC "$INTERFACE")
+    echo "$IP $INTERFACE $MAC"
   done
 }
 
@@ -725,8 +677,8 @@ bpCPU() { # Print CPU info
 
 bpMem() { # Print installed memory
   #lsmem | grep "Total online memory:" | awk '{ print $4 }'
-	echo  $(($(grep "MemTotal" /proc/meminfo | awk '{ print $2 }') / 1024))M
-	
+  echo $(($(grep "MemTotal" /proc/meminfo | awk '{ print $2 }') / 1024))M
+
 }
 
 loginInfo() { ##I Login info
@@ -737,42 +689,42 @@ loginInfo() { ##I Login info
 
 ask() { ## See 'killps' for example of use.
   echo -n "$@" '[y/n] '
-  read ans
+  read -r ans
   case "$ans" in
   y* | Y*) return 0 ;;
   *) return 1 ;;
   esac
 }
 
-
 SSH_ENV=$HOME/.ssh/environment
 
 # start the ssh-agent
 start_agent() {
-  # spawn ssh-agent	
-	bpRun /usr/bin/ssh-agent | sed 's/^echo/#echo/' >| "${SSH_ENV}"
-	
-	if [ $? -eq 0 ]; then
-	  bpOk "Starting ssh-agent"
-	else
-	  bpError "Failed to start ssh-agent"
-	fi
-	
-	chmod 600 "${SSH_ENV}"
-	. "${SSH_ENV}" > /dev/null
-#	/usr/bin/ssh-add
-}
+  # spawn ssh-agent
+  bpRun /usr/bin/ssh-agent | sed 's/^echo/#echo/' >|"${SSH_ENV}"
 
+  if [ $? -eq 0 ]; then
+    bpOk "Starting ssh-agent"
+  else
+    bpError "Failed to start ssh-agent"
+  fi
+
+  chmod 600 "${SSH_ENV}"
+  . "${SSH_ENV}" >/dev/null
+  #	/usr/bin/ssh-add
+}
 
 start_ssh_agent() { ##D Start ssh-agent
   if [ -f "${SSH_ENV}" ]; then
-	  . "${SSH_ENV}" > /dev/null
-		ps -ef | grep ${SSH_AGENT_PID} | grep ssh-agent$ > /dev/null || {
-		start_agent;
-	}
-	else
-	  start_agent;
-	fi
+    . "${SSH_ENV}" >/dev/null
+
+    if ps -p "${SSH_AGENT_PID}" >/dev/null; then
+      start_agent
+    fi
+
+  else
+    start_agent
+  fi
 }
 
 ##- Development
@@ -791,11 +743,12 @@ clean() { ##D Clean directory from old stuff
 ##- Bashrc
 
 reload() { ##D Reload .bashrc
-  source ${HOME}/.bashrc
+  # shellcheck source=~/.bashrc
+  source "${HOME}/.bashrc"
 }
 
 eb() { ##D Open .bashrc in default editor
-  bpEdit ~/.bashrc "$1"
+  bpEdit "${HOME}/.bashrc" "$1"
 }
 
 xbpLoadModules() { ##I Load modules
@@ -813,42 +766,39 @@ xbpLoadModules() { ##I Load modules
   fi
 }
 
-
-bplsmod() { ##D List BP modules 
+bplsmod() { ##D List BP modules
   if [ ! -e "$BP_CONFIG_MODULES" ]; then
-	  return
-	fi
-	IFS=$'\n'
-	for m in $(find ${BP_CONFIG_MODULES} -type l); do
-	  l=$(readlink "${m}")
-		if [ -e "${l}" ]; then
-		  #echo $(basename $m)
-			printf "%-16s -> %s\n" $(basename $m) "$l"
-		else
-		  printf "%-16s -> ${E_RED}%s${E_RESET}\n" $(basename $m) "$l"
-		fi
-	done
+    return
+  fi
+  IFS=$'\n'
+  for m in $(find ${BP_CONFIG_MODULES} -type l); do
+    l=$(readlink "${m}")
+    if [ -e "${l}" ]; then
+      #echo $(basename $m)
+      printf "%-16s -> %s\n" "$(basename $m)" "$l"
+    else
+      printf "%-16s -> ${E_RED}%s${E_RESET}\n" "$(basename $m)" "$l"
+    fi
+  done
 }
 
 bprmmod() { ##D Remove BP module
-  rm -f ${BP_CONFIG_MODULES}/${1}
-	bpOk "Removing module $m"
+  rm -f "${BP_CONFIG_MODULES}/${1}"
+  bpOk "Removing module $m"
 }
-
 
 bpclrmod() { ##D Remove BP modules that are not valid
   if [ ! -e "$BP_CONFIG_MODULES" ]; then
-	  return
-	fi
-	IFS=$'\n'
-	for m in $(find ${BP_CONFIG_MODULES} -type l); do
-	  l=$(readlink "${m}")
-		if [ ! -e "${l}" ]; then
-			bprmmod $(basename "$m")
-		fi
-	done
+    return
+  fi
+  IFS=$'\n'
+  for m in $(find ${BP_CONFIG_MODULES} -type l); do
+    l=$(readlink "${m}")
+    if [ ! -e "${l}" ]; then
+      bprmmod "$(basename "$m")"
+    fi
+  done
 }
-
 
 #=========================================================================
 #
@@ -1055,11 +1005,11 @@ _tar() {
     #          GNUmakefile,
     #     then makefile
     #     then Makefile ...
-    if [ -f ${makef_dir}/GNUmakefile ]; then
+    if [ -f "${makef_dir}/GNUmakefile" ]; then
       makef=${makef_dir}/GNUmakefile
-    elif [ -f ${makef_dir}/makefile ]; then
+    elif [ -f "${makef_dir}/makefile" ]; then
       makef=${makef_dir}/makefile
-    elif [ -f ${makef_dir}/Makefile ]; then
+    elif [ -f "${makef_dir}/Makefile" ]; then
       makef=${makef_dir}/Makefile
     else
       makef=${makef_dir}/*.mk
@@ -1071,23 +1021,23 @@ _tar() {
     for ((i = 0; i < ${#COMP_WORDS[@]}; i++)); do
       if [[ ${COMP_WORDS[i]} == -f ]]; then
         # eval for tilde expansion
-        eval makef=${COMP_WORDS[i + 1]}
+        eval makef="${COMP_WORDS[i + 1]}"
         break
 
       fi
     done
-    [ ! -f $makef ] && return 0
+    [ ! -f "$makef" ] && return 0
 
     # Deal with included Makefiles.
-    makef_inc=$(grep -E '^-?include' $makef |
+    makef_inc=$(grep -E '^-?include' "$makef" |
       sed -e "s,^.* ,"$makef_dir"/,")
     for file in $makef_inc; do
-      [ -f $file ] && makef="$makef $file"
+      [ -f "$file" ] && makef="$makef $file"
     done
 
     #  If we have a partial word to complete, restrict completions
     #+ to matches of that word.
-    if [ -n "$cur" ]; then gcmd='grep "^$cur"'; else gcmd=cat; fi
+    if [ -n "$cur" ]; then gcmd='grep "^$cur"'; else gcmd="cat"; fi
 
     COMPREPLY=($(awk -F':' '/^[a-zA-Z0-9][^$#\/\t=]*:([^=]|$)/ \
     {split($1,A,/ /);for(i in A)print A[i]}' \
@@ -1122,84 +1072,84 @@ _tar() {
 
 # Check if terminal is 16 color only
 if [[ "linux rxvt-16color" = *${TERM}* ]]; then
-  echo "Term is $TERM"ââ
+  echo "Term is $TERM"ï¿½ï¿½
   # ANSI foreground colors codes
-	#
-	E_BLACK=$'\e[30m'        # Black
-	E_RED=$'\e[31m'          # Red
-	E_GREEN=$'\e[32m'        # Green
-	E_YELLOW=$'\e[33m'       # Yellow
-	E_BLUE=$'\e[34m'         # Blue
-	E_MAGENTA=$'\e[35m'      # Magenta
-	E_CYAN=$'\e[36m'         # Cyan
-	E_GRAY=$'\e[37m'         # Gray
-	E_DARKGRAY=$'\e[1;30m'   # Dark Gray
-	E_BR_RED=$'\e[1;31m'     # Bright Red
-	E_BR_GREEN=$'\e[1;32m'   # Bright Green
-	E_BR_YELLOW=$'\e[1;33m'  # Bright Yellow
-	E_BR_BLUE=$'\e[1;34m'    # Bright Blue
-	E_BR_MAGENTA=$'\e[1;35m' # Bright Magenta
-	E_BR_CYAN=$'\e[1;36m'    # Bright Cyan
-	E_WHITE=$'\e[1;37m'      # White
-	
-	# ANSI background color codes
-	#
-	E_BG_BLACK=$'\e[40m'       # Black
-	E_BG_RED=$'\e[41m'         # Red
-	E_BG_GREEN=$'\e[42m'       # Green
-	E_BG_YELLOW=$'\e[43m'      # Yellow
-	E_BG_BLUE=$'\e[44m'        # Blue
-	E_BG_MAGENTA=$'\e[45m'     # Magenta
-	E_BG_CYAN=$'\e[46m'        # Cyan
-	E_BG_GRAY=$'\e[47m'        # Gray
-	E_BG_DARK_GRAY=$'\e[40m'   # Dark gray
-	E_BG_BR_RED=$'\e[41m'      # Bright Red
-	E_BG_BR_GREEN=$'\e[42m'    # Bright Green
-	E_BG_BR_YELLOW=$'\e[43m'   # Bright Yellow
-	E_BG_BR_BLUE=$'\e[43m'     # Bright Blue
-	E_BG_BR_MAGENTA=$'\e[45m'  # Bright Magenta
-	E_BG_BR_CYAN=$'\e[46m'     # Bright Cyan
-	E_BG_WHITE=$'\e[47m'       # White
-	
+  #
+  E_BLACK=$'\e[30m'        # Black
+  E_RED=$'\e[31m'          # Red
+  E_GREEN=$'\e[32m'        # Green
+  E_YELLOW=$'\e[33m'       # Yellow
+  E_BLUE=$'\e[34m'         # Blue
+  E_MAGENTA=$'\e[35m'      # Magenta
+  E_CYAN=$'\e[36m'         # Cyan
+  E_GRAY=$'\e[37m'         # Gray
+  E_DARKGRAY=$'\e[1;30m'   # Dark Gray
+  E_BR_RED=$'\e[1;31m'     # Bright Red
+  E_BR_GREEN=$'\e[1;32m'   # Bright Green
+  E_BR_YELLOW=$'\e[1;33m'  # Bright Yellow
+  E_BR_BLUE=$'\e[1;34m'    # Bright Blue
+  E_BR_MAGENTA=$'\e[1;35m' # Bright Magenta
+  E_BR_CYAN=$'\e[1;36m'    # Bright Cyan
+  E_WHITE=$'\e[1;37m'      # White
+
+  # ANSI background color codes
+  #
+  E_BG_BLACK=$'\e[40m'      # Black
+  E_BG_RED=$'\e[41m'        # Red
+  E_BG_GREEN=$'\e[42m'      # Green
+  E_BG_YELLOW=$'\e[43m'     # Yellow
+  E_BG_BLUE=$'\e[44m'       # Blue
+  E_BG_MAGENTA=$'\e[45m'    # Magenta
+  E_BG_CYAN=$'\e[46m'       # Cyan
+  E_BG_GRAY=$'\e[47m'       # Gray
+  E_BG_DARK_GRAY=$'\e[40m'  # Dark gray
+  E_BG_BR_RED=$'\e[41m'     # Bright Red
+  E_BG_BR_GREEN=$'\e[42m'   # Bright Green
+  E_BG_BR_YELLOW=$'\e[43m'  # Bright Yellow
+  E_BG_BR_BLUE=$'\e[43m'    # Bright Blue
+  E_BG_BR_MAGENTA=$'\e[45m' # Bright Magenta
+  E_BG_BR_CYAN=$'\e[46m'    # Bright Cyan
+  E_BG_WHITE=$'\e[47m'      # White
+
 else
 
   # ANSI foreground colors codes
   #
-	E_BLACK=$'\e[38:5:0m'       # Black
-	E_RED=$'\e[38:5:1m'         # Red
-	E_GREEN=$'\e[38:5:2m'       # Green
-	E_YELLOW=$'\e[38:5:3m'      # Yellow
-	E_BLUE=$'\e[38:5:4m'        # Blue
-	E_MAGENTA=$'\e[38:5:5m'     # Magenta
-	E_CYAN=$'\e[38:5:6m'        # Cyan
-	E_GRAY=$'\e[38:5:7m'        # Gray
-	E_DARKGRAY=$'\e[38:5:8m'    # Dark Gray
-	E_BR_RED=$'\e[38:5:9m'      # Bright Red
-	E_BR_GREEN=$'\e[38:5:10m'   # Bright Green
-	E_BR_YELLOW=$'\e[38:5:11m'  # Bright Yellow
-	E_BR_BLUE=$'\e[38:5:12m'    # Bright Blue
-	E_BR_MAGENTA=$'\e[38:5:13m' # Bright Magenta
-	E_BR_CYAN=$'\e[38:5:14m'    # Bright Cyan
-	E_WHITE=$'\e[38:5:15m'      # White
-	
-	# ANSI background color codes
-	#
-	E_BG_BLACK=$'\e[48;5;0m'       # Black
-	E_BG_RED=$'\e[48;5;1m'         # Red
-	E_BG_GREEN=$'\e[48;5;2m'       # Green
-	E_BG_YELLOW=$'\e[48;5;3m'      # Yellow
-	E_BG_BLUE=$'\e[48;5;4m'        # Blue
-	E_BG_MAGENTA=$'\e[48;5;5m'     # Magenta
-	E_BG_CYAN=$'\e[48;5;6m'        # Cyan
-	E_BG_GRAY=$'\e[48;5;7m'        # Gray
-	E_BG_DARK_GRAY=$'\e[48;5;8m'   # Dark gray
-	E_BG_BR_RED=$'\e[48;5;9m'      # Bright Red
-	E_BG_BR_GREEN=$'\e[48;5;10m'   # Bright Green
-	E_BG_BR_YELLOW=$'\e[48;5;11m'  # Bright Yellow
-	E_BG_BR_BLUE=$'\e[48;5;12m'    # Bright Blue
-	E_BG_BR_MAGENTA=$'\e[48;5;13m' # Bright Magenta
-	E_BG_BR_CYAN=$'\e[48;5;14m'    # Bright Cyan
-	E_BG_WHITE=$'\e[48;5;15m'      # White
+  E_BLACK=$'\e[38:5:0m'       # Black
+  E_RED=$'\e[38:5:1m'         # Red
+  E_GREEN=$'\e[38:5:2m'       # Green
+  E_YELLOW=$'\e[38:5:3m'      # Yellow
+  E_BLUE=$'\e[38:5:4m'        # Blue
+  E_MAGENTA=$'\e[38:5:5m'     # Magenta
+  E_CYAN=$'\e[38:5:6m'        # Cyan
+  E_GRAY=$'\e[38:5:7m'        # Gray
+  E_DARKGRAY=$'\e[38:5:8m'    # Dark Gray
+  E_BR_RED=$'\e[38:5:9m'      # Bright Red
+  E_BR_GREEN=$'\e[38:5:10m'   # Bright Green
+  E_BR_YELLOW=$'\e[38:5:11m'  # Bright Yellow
+  E_BR_BLUE=$'\e[38:5:12m'    # Bright Blue
+  E_BR_MAGENTA=$'\e[38:5:13m' # Bright Magenta
+  E_BR_CYAN=$'\e[38:5:14m'    # Bright Cyan
+  E_WHITE=$'\e[38:5:15m'      # White
+
+  # ANSI background color codes
+  #
+  E_BG_BLACK=$'\e[48;5;0m'       # Black
+  E_BG_RED=$'\e[48;5;1m'         # Red
+  E_BG_GREEN=$'\e[48;5;2m'       # Green
+  E_BG_YELLOW=$'\e[48;5;3m'      # Yellow
+  E_BG_BLUE=$'\e[48;5;4m'        # Blue
+  E_BG_MAGENTA=$'\e[48;5;5m'     # Magenta
+  E_BG_CYAN=$'\e[48;5;6m'        # Cyan
+  E_BG_GRAY=$'\e[48;5;7m'        # Gray
+  E_BG_DARK_GRAY=$'\e[48;5;8m'   # Dark gray
+  E_BG_BR_RED=$'\e[48;5;9m'      # Bright Red
+  E_BG_BR_GREEN=$'\e[48;5;10m'   # Bright Green
+  E_BG_BR_YELLOW=$'\e[48;5;11m'  # Bright Yellow
+  E_BG_BR_BLUE=$'\e[48;5;12m'    # Bright Blue
+  E_BG_BR_MAGENTA=$'\e[48;5;13m' # Bright Magenta
+  E_BG_BR_CYAN=$'\e[48;5;14m'    # Bright Cyan
+  E_BG_WHITE=$'\e[48;5;15m'      # White
 fi
 
 # ANSI underline color codes
@@ -1272,6 +1222,11 @@ BP_C_URL_SCHEME="${E_DARKGRAY}"
 # BP_C_URL_HOST=""
 BP_C_TIME="${E_BR_MAGENTA}"
 BP_C_DATE="${E_MAGENTA}"
+
+BP_C_USER=""
+BP_C_ROOT=""
+BP_C_HOSTNAME=""
+BP_C_SSH=""
 
 BP_C_QUERY=$'\e[38;5;194m'
 BP_C_QUERY_DEF=$'\e[38;5;240m'
@@ -1947,8 +1902,8 @@ loginInfo
 bpLoadPaths() { ##I Load k
   # Add bashplates PATH's
   if [ -e "$BP_CONFIG_PATHS" ]; then
-	
-		IFS=$'\n'
+
+    IFS=$'\n'
     for p in $(find ${BP_CONFIG_PATHS} -type l); do
       l=$(readlink "${p}")
       if [ -e "${l}" ]; then
@@ -1965,8 +1920,8 @@ bpLoadPaths() { ##I Load k
 bpLoadModules() { ##I Load moduls
   # Run bashplates module scripts
   if [ -e "$BP_CONFIG_MODULES" ]; then
-	
-		IFS=$'\n'
+
+    IFS=$'\n'
     for m in $(find ${BP_CONFIG_MODULES} -type l); do
       l=$(readlink "${m}")
       if [ -e "${l}" ]; then
@@ -1992,6 +1947,8 @@ if [ -e "$BP_CONFIG_DIR" ]; then
   echo
   bpLoadModules
 fi
+
+bpSetPrompt
 
 bpCallFunction host_"${HOSTNAME}"
 

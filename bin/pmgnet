@@ -45,26 +45,46 @@ bpUserSettings() {
 # User defined functions
 #---------------------------------------------------------------------
 
-interfaceToIp() {
-  ip addr show "${INTERFACE}" | grep "inet" | head -n 1 | awk '/inet/ {print $2}' | cut -d'/' -f1
+interfaceToIp_old() {
+  ip addr show "${2}" | grep "inet" | head -n 1 | awk '/inet/ {print $2}' | cut -d'/' -f1
+}
+interfaceToMAC_old() {
+  ip addr show "${2}" | grep "link/ether" | awk '{print $2}'
 }
 
-interfaceToMAC() {
-  ip addr show "${INTERFACE}" | grep "link/ether" | awk '{print $2}'
+interfaceToIp() { ##D interface to ip
+  IFS=$' '
+  read -r -a IP <<<"$(ip addr show "${2}" | grep "inet ")"
+  echo "${IP[1]::-3}"
+}
+
+interfaceToMAC() { ##D interface to mac
+  IFS=$' '
+  read -r -a MAC <<<"$(ip link show "${2}" | grep "link/ether")"
+  echo "${MAC[1]}"
 }
 
 interfaceToDefault() {
-  ip route | grep -E "default.*${1}.*" | awk '/default/ { print $3 }'
-} 
-
-lsInterfaces() { 
-	ip route | awk '/default/ { print $5 }'
+  ip route | grep -E "default.*${2}.*" | awk '/default/ { print $3 }'
 }
 
+lsInterfaces() { ##D lsi
+  IFS=$'\n'
+  read -r -d '\n' -a INTERFACES <<<"$(ip link show | grep -v lo)"
+  LEN=${#INTERFACES[@]}
+  i=0
+  while [ "$i" -lt "$LEN" ]; do
+    IFS=$' '
+    read -r A INTERFACE B <<<"${INTERFACES[$i]}"
+    ((i++))
+    ((i++))
+    echo "${INTERFACE::-1}"
+  done
+}
 
 ##- Information
 
-con() { ##D Show network connections 
+con() { ##D Show network connections
   bpRun nmcli connection show
 }
 
@@ -77,20 +97,20 @@ wd() { ##D Show WLAN device information
 }
 
 info() { ##D Show network info
-#	read -d "\n" -r -a INTERFACES <<<$(lsInterfaces)
-#	IFS=$'\n'		
-#	bpPrintLine "Interfaces"
+  #	read -d "\n" -r -a INTERFACES <<<$(lsInterfaces)
+  #	IFS=$'\n'
+  #	bpPrintLine "Interfaces"
 
-#  LEN=${#INTERFACES[@]}
-#	i=0
-#	while [ "$i" -lt "$LEN" ]; do
-#	  INTERFACE=${INTERFACES[$i]}
-#	  ((i++))
-#   bpPrintDesc $INTERFACE 	"$(interfaceToIp $INTERFACE)"$'\n'"$(interfaceToDefault $INTERFACE) "$'\n'"$(interfaceToMAC $INTERFACE)"
-#	done							 
-	
-#	bpPrintLine
-	bpRun nmcli
+  #  LEN=${#INTERFACES[@]}
+  #	i=0
+  #	while [ "$i" -lt "$LEN" ]; do
+  #	  INTERFACE=${INTERFACES[$i]}
+  #	  ((i++))
+  #   bpPrintDesc $INTERFACE 	"$(interfaceToIp $INTERFACE)"$'\n'"$(interfaceToDefault $INTERFACE) "$'\n'"$(interfaceToMAC $INTERFACE)"
+  #	done
+
+  #	bpPrintLine
+  bpRun nmcli
 }
 
 ##- DHCP
@@ -112,8 +132,6 @@ dr() { ##D Release DHCP lease
 dc() { ##D Discover DHCP lease
   sudo dhclient -v $2
 }
-
-
 
 #---------------------------------------------------------------------
 # Bashplate settings
@@ -260,12 +278,12 @@ bpErrorExit() { ##I Safely exit script with a error
 
 # Check if terminal is 16 color only
 if [[ "linux rxvt-16color" = *${TERM}* ]]; then
-  
-	# ANSI foreground colors codes
-	#
+
+  # ANSI foreground colors codes
+  #
   E_BLACK=$'\e[30m'        # Black
   E_RED=$'\e[31m'          # Red
-  E_GREEN=$'\e[32m'        # Green 
+  E_GREEN=$'\e[32m'        # Green
   E_YELLOW=$'\e[33m'       # Yellow
   E_BLUE=$'\e[34m'         # Blue
   E_MAGENTA=$'\e[35m'      # Magenta
@@ -280,7 +298,7 @@ if [[ "linux rxvt-16color" = *${TERM}* ]]; then
   E_BR_CYAN=$'\e[1;36m'    # Bright Cyan
   E_WHITE=$'\e[1;37m'      # White
 
-  # ANSI background color codes 
+  # ANSI background color codes
   #
   E_BG_BLACK=$'\e[40m'      # Black
   E_BG_RED=$'\e[41m'        # Red
@@ -390,7 +408,6 @@ E_FORWARD=$'\e[C' # Move cursor forward
 E_BACK=$'\e[D'    # Move cursor backward
 E_HIDE=$'\e[?25l' # Hide cursor
 E_SHOW=$'\e[?25h' # Show cursor
-
 
 # Default Bashplate colortheme
 BP_C_OK="${E_BR_GREEN}"
