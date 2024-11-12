@@ -667,7 +667,9 @@ bpIpInfo() { ##I List all default IP adresses
   for INTERFACE in "${INTERFACES[@]}"; do
     IP=$(interfaceToIp "$INTERFACE")
     MAC=$(interfaceToMAC "$INTERFACE")
-    echo "$IP $INTERFACE $MAC"
+    if [ -n "$IP" ]; then
+		  echo "$IP $INTERFACE $MAC"
+		fi
   done
 }
 
