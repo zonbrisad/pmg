@@ -141,6 +141,7 @@ host_all() {
   alias dig='dig @192.168.1.1'
   alias pgrep='pgrep --list-full'
   alias date='date +"%A %B %e %T %Y"'
+  alias ip='ip -brief -color'
 
   # Install aliases
   alias sui='sudo apt install'
@@ -267,7 +268,7 @@ HISTTIMEFORMAT="%T "
 
 PROMPT_COMMAND=bpSetPrompt
 
-# Adds some text in the terminal frame (if applicable).
+# Function for interactivly
 function bpSetPrompt() {
   # Test connection type:
   if [ -n "${SSH_CONNECTION}" ]; then
