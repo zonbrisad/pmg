@@ -635,33 +635,42 @@ mps() { ##D List all processes belonging to \"me\"
 
 interfaceToIp() {
   IFS=$' '
-  read -r -a IP <<<"$(ip addr show "${1}" | grep "inet ")"
+  read -r -a IP <<<"$(\ip addr show "${1}" | \grep "inet ")"
   echo "${IP[1]::-3}"
 }
 
 interfaceToMAC() {
   IFS=$' '
-  read -r -a MAC <<<"$(ip link show "${1}" | grep "link/ether")"
+  read -r -a MAC <<<"$(\ip link show "${1}" | \grep "link/ether")"
   echo "${MAC[1]}"
 }
 
 interfaceToDefault() {
-  ip route | grep -E "default.*${1}.*" | awk '/default/ { print $3 }'
+  ip route | grep -E "default.*${1}.*" | \awk '/default/ { print $3 }'
 }
 
 lsInterfaces() {
   IFS=$'\n'
-  read -r -d '\n' -a INTERFACES <<<"$(ip link show | grep -v lo)"
-  LEN=${#INTERFACES[@]}
-  i=0
-  while [ "$i" -lt "$LEN" ]; do
+  read -r -d '\n' -a INTERFACES <<<"$(\ip -oneline -brief link show | grep -v lo)"
+  for INTERFACE in "${INTERFACES[@]}"; do
     IFS=$' '
-    read -r A INTERFACE B <<<"${INTERFACES[$i]}"
-    ((i++))
-    ((i++))
-    echo "${INTERFACE::-1}"
+    read -r IFNAME REST <<<"$INTERFACE"
+    echo "$IFNAME"
   done
 }
+# lsInterfaces() {
+#   IFS=$'\n'
+#   read -r -d '\n' -a INTERFACES <<<"$(ip link show | grep -v lo)"
+#   LEN=${#INTERFACES[@]}
+#   i=0
+#   while [ "$i" -lt "$LEN" ]; do
+#     IFS=$' '
+#     read -r A INTERFACE B <<<"${INTERFACES[$i]}"
+#     ((i++))
+#     ((i++))
+#     echo "${INTERFACE::-1}"
+#   done
+# }
 
 bpIpInfo() { ##I List all default IP adresses
   read -d "\n" -r -a INTERFACES <<<"$(lsInterfaces)"
@@ -669,8 +678,8 @@ bpIpInfo() { ##I List all default IP adresses
     IP=$(interfaceToIp "$INTERFACE")
     MAC=$(interfaceToMAC "$INTERFACE")
     if [ -n "$IP" ]; then
-		  echo "$IP $INTERFACE $MAC"
-		fi
+      echo "$IP $INTERFACE $MAC"
+    fi
   done
 }
 
