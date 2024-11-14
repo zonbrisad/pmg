@@ -86,6 +86,10 @@ init_starship() {
   fi
 }
 
+host_ubuntu() {
+  start_ssh_agent
+}
+
 host_rpexp() {
   SYSTEMP=/sys/class/thermal/thermal_zone0/temp
 }
@@ -142,6 +146,8 @@ host_all() {
   alias pgrep='pgrep --list-full'
   alias date='date +"%A %B %e %T %Y"'
   alias ip='ip -brief -color'
+	alias mount='mount | column --table --table-hide 2,4'
+	alias mnt='mount'
 
   # Install aliases
   alias sui='sudo apt install'
