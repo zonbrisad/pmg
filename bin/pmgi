@@ -250,7 +250,7 @@ bpUserSettings() {
     "pip" "black" ":"
     "pip" "rich" ":"
     "pip" "textual" ":"
-    "pip" "pyqgtgraph" ":"
+    "apt" "python3-pyqtgraph" ":"
   )
 
   devMicroPython=(
