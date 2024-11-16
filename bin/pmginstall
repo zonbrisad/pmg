@@ -118,7 +118,8 @@ bpUserSettings() {
     "apt" "zoxide" ":"
     "apt" "shellcheck" ":"
     "apt" "tree" ":"
-		"apt" "gpiod" ":"
+    "apt" "gpiod" ":"
+    "apt" "python3-pip" ":"
   )
   #    "git" "https://github.com/ogham/exa" ":"
   #    "git" "powertop" ":"
@@ -243,7 +244,7 @@ bpUserSettings() {
     "apt" "pyqt5-dev-tools" ":"
     "apt" "pyqt5-examples" ":"
     "apt" "bpython" ":"
-		"apt" "gir1.2-gtk-3.0" ":"
+    "apt" "gir1.2-gtk-3.0" ":"
     "pip" "GitPython" ":"
     "pip" "black" ":"
     "pip" "rich" ":"

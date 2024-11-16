@@ -1900,6 +1900,10 @@ bpInitSettings
 
 bpCompletion
 
+bpSetAliases
+
+bpSetPrompt
+
 bpInitDisplay
 
 loginInfo
@@ -1952,10 +1956,6 @@ if [ -e "$BP_CONFIG_DIR" ]; then
   echo
   bpLoadModules
 fi
-
-bpSetAliases
-
-bpSetPrompt
 
 bpCallFunction host_"${HOSTNAME}"
 
