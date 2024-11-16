@@ -134,6 +134,7 @@ bpUserSettings() {
   }
 
   desktopUtilPkgs=(
+    "lst" "utilsPkgs" ":"
     "apt" "brasero" ":"
     "apt" "gnome-tweaks" ":"
     "apt" "gnome-shell-extension-impatience" ":"
@@ -510,47 +511,25 @@ installPkgs() { ##I Install array of packages
   done
 }
 
-##- New
+##- New system
 
-newterminal() { ##D Install new terminal computer
-  terminalutils
-}
-
-newdesktop() { ##D Install new desktop computer
-  terminalutils
-  desktoputils
-}
-
-newserver() { ##D Install new server
-  terminalutils
-  serverutils
-}
-
-newDev() { ##D Installs c and python development tools
-  devutils
-  cdevelop
-  python
-}
-
-##- Utils
-
-terminalutils() { ##D Install terminal utility programs
+tutils() { ##D Install terminal utility packages
   installPkgs "${utilsPkgs[@]}"
 }
 
-desktoputils() { ##D Install desktop utility programs
+dutils() { ##D Install desktop + terminal utility packages
   installPkgs "${desktopUtilPkgs[@]}"
 }
 
-perf() { ##D System and performance testprograms
-  installPkgs "${testing[@]}"
-}
-
-##- Server systems
-
-serverutils() { ##D Install server packages
+sutils() { ##D Install server + terminal utility packages
   installPkgs "${serverPkgs[@]}"
 }
+
+devutils() { ##D Install development utls like git, svn, flex, doxygen
+  installPkgs "${devUtils[@]}"
+}
+
+##- Server packages
 
 kvm() { ##D Install KVM virtual machine manager
   installPkgs "${kvmPkgs[@]}"
@@ -566,11 +545,7 @@ samba() { ##D Install samba server and tools
   installPkgs "${sambaPkgs[@]}"
 }
 
-##- Development tools
-
-devutils() { ##D Install development utls like git, svn, flex, doxygen
-  installPkgs "${devUtils[@]}"
-}
+##- C/C++
 
 cdev() { ##D Install packages for native C/C++ development
   gtk3=1
@@ -603,23 +578,35 @@ avrdev() { ##D Install AVR C development packages
   installPkgs "${devAVR[@]}"
 }
 
-java() { ##D Install Java development packages
-  sudo apt-get -y install python-software-properties
-  sudo add-apt-repository ppa:webupd8team/java
-  sudo apt-get -y update
-  sudo apt-get -y install oracle-java8-installer
+AVRSIMDIR=~/Downloads/simavr
+
+avrsim() { ##D Download compile and install avrsim
+  #git clone https://github.com/buserror/simavr  ${AVRSIMDIR}
+  bpCd "${AVRSIMDIR}"
+  ls
+  make
+  bpCd "-"
 }
 
+libqt() { ##D Install Qt5 development libraries
+  installPkgs "${devQt5[@]}"
+}
+
+libgtk() { ##D Install GTK+/glib development libraries
+  installPkgs "${devGTK[@]}"
+}
+
+libmisc() { ##D Install various C development libraries (ncurses/lua/
+  installPkgs "${devCLibs[@]}"
+}
+
+##- Python
 python() { ##D Install python development packages
   installPkgs "${devPython[@]}"
 }
 
 mpython() { ##D Install python development packages
   installPkgs "${devMicroPython[@]}"
-}
-
-rust() { ##D Install Rust development packages
-  installPkgs "${devRust[@]}"
 }
 
 WORK=~/Downloads
@@ -631,6 +618,19 @@ gitClonePull() {
     cd "$2" || bpExit
     git pull
   fi
+}
+
+##- Other dev
+
+rust() { ##D Install Rust development packages
+  installPkgs "${devRust[@]}"
+}
+
+java() { ##D Install Java development packages
+  sudo apt-get -y install python-software-properties
+  sudo add-apt-repository ppa:webupd8team/java
+  sudo apt-get -y update
+  sudo apt-get -y install oracle-java8-installer
 }
 
 shellcheck() { ##D download compile and install latest version shellcheck
@@ -666,50 +666,26 @@ shellcheck() { ##D download compile and install latest version shellcheck
   fi
 }
 
-AVRSIMDIR=~/Downloads/simavr
-
-avrsim() { ##D Download compile and install avrsim
-  #git clone https://github.com/buserror/simavr  ${AVRSIMDIR}
-  bpCd "${AVRSIMDIR}"
-  ls
-  make
-  bpCd "-"
-}
-
 rp() { ##D Install Raspberry Pi development tools
   installPkgs "${devRasperryPi[@]}"
 }
 
-##- C/C++ libraries
-
-libqt() { ##D Install Qt5 development libraries
-  installPkgs "${devQt5[@]}"
-}
-
-libgtk() { ##D Install GTK+/glib development libraries
-  installPkgs "${devGTK[@]}"
-}
-
-libmisc() { ##D Install various C development libraries (ncurses/lua/
-  installPkgs "${devCLibs[@]}"
-}
-
-##- Science and technology
+##- Other
 
 sci() { ##D Install science and technology packages
   installPkgs "${science[@]}"
 }
 
-##- Media
-
 inkscape() { ##D Install Inkscape resources(fonts/clipart)
   installPkgs "${inkscapePkgs[@]}"
 }
 
-##- Single programs
-
 starship() { ##D Starship prompt manager
   curl -sS https://starship.rs/install.sh | sh
+}
+
+perf() { ##D System test and performance packages
+  installPkgs "${testing[@]}"
 }
 
 ##- Projects

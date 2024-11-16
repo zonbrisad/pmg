@@ -59,17 +59,17 @@ bpUserSettings() {
 
 newt() { ##D Setup tools/users/config on new install without desktop
   all_setups
-  "${BP_SELF_DIR}"/pmginstall newterminal
+  "${BP_SELF_DIR}"/pmgi tutils
 }
 
 newd() { ##D Setup tools/users/config on new install with desktop
   newt
-  "${BP_SELF_DIR}"/pmginstall newdesktop
+  "${BP_SELF_DIR}"/pmgi dutils
 }
 
 news() { ##D Setup tools/users/config on new server install
   newt
-  "${BP_SELF_DIR}"/pmginstall newserver
+  "${BP_SELF_DIR}"/pmgi sutils
 }
 
 devel() {
@@ -282,8 +282,8 @@ backup() { ##D Backup user data
 
 update() { ##D  Update operating system
   if [ -f ~/.tmux/plugins/tpm/bin/update_plugins ]; then
-	  ~/.tmux/plugins/tpm/bin/update_plugins all
-	fi
+    ~/.tmux/plugins/tpm/bin/update_plugins all
+  fi
 
   sudo apt update && sudo apt upgrade --assume-yes && sudo apt autoremove && sudo apt autoclean
 }
@@ -384,13 +384,13 @@ info() { ##D General information
 }
 
 hwinfo() { ##D Print general hardware information
-	bpAssertProgs "inxi"
+  bpAssertProgs "inxi"
   inxi --full --usb --filter
 }
 
 hwinfoe() { ##D Print general hardware information
-	bpAssertProgs "inxi"
-	sudo inxi --full --extra 3 --usb --filter --memory-modules	
+  bpAssertProgs "inxi"
+  sudo inxi --full --extra 3 --usb --filter --memory-modules
 }
 
 batinfo() { ##D Print battery information
