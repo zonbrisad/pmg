@@ -118,7 +118,8 @@ bpUserSettings() {
     "apt" "zoxide" ":"
     "apt" "shellcheck" ":"
     "apt" "tree" ":"
-		"apt" "gpiod" ":"
+    "apt" "gpiod" ":"
+    "apt" "python3-pip" ":"
   )
   #    "git" "https://github.com/ogham/exa" ":"
   #    "git" "powertop" ":"
@@ -133,6 +134,7 @@ bpUserSettings() {
   }
 
   desktopUtilPkgs=(
+    "lst" "utilsPkgs" ":"
     "apt" "brasero" ":"
     "apt" "gnome-tweaks" ":"
     "apt" "gnome-shell-extension-impatience" ":"
@@ -236,6 +238,9 @@ pythonLibs=(
     "pip" "GitPython" ":"
     "pip" "rich" ":"
     "pip" "textual" ":"
+)
+
+pythonLibGTK=(
 		"apt" "gir1.2-gtk-3.0" ":"
 )
 
@@ -247,7 +252,7 @@ pythonLibQt=(
     "apt" "python3-guidata" ":"
     "apt" "pyqt5-dev-tools" ":"
     "apt" "pyqt5-examples" ":"
-    "pip" "pyqgtgraph" ":"
+    "apt" "python3-pyqtgraph" ":"
 )
 
 devPython=(
@@ -256,12 +261,12 @@ devPython=(
     "apt" "bpython" ":"
     "pip" "black" ":"
     "pip" "rich" ":"
-)
+  )
 
   devMicroPython=(
-    "code" "paulober.pico-w-go" ":"
     "apt" "thonny" ":"
     "pip" "pyboard-rshell" ":"
+    "code" "paulober.pico-w-go" ":"
   )
 
   devRasperryPi=(
@@ -408,7 +413,7 @@ installPip() { ##I Install pip package
     return
   fi
 
-  if pip install "$1"; then
+  if pip3 install "$1"; then
     bpOk "Installed: ${E_BR_GREEN}${1}${E_RESET}"
   else
     bpError "Failed installing ${E_BR_GREEN}${1}${E_RESET}"
@@ -516,47 +521,25 @@ installPkgs() { ##I Install array of packages
   done
 }
 
-##- New
+##- New system
 
-newterminal() { ##D Install new terminal computer
-  terminalutils
-}
-
-newdesktop() { ##D Install new desktop computer
-  terminalutils
-  desktoputils
-}
-
-newserver() { ##D Install new server
-  terminalutils
-  serverutils
-}
-
-newDev() { ##D Installs c and python development tools
-  devutils
-  cdevelop
-  python
-}
-
-##- Utils
-
-terminalutils() { ##D Install terminal utility programs
+tutils() { ##D Install terminal utility packages
   installPkgs "${utilsPkgs[@]}"
 }
 
-desktoputils() { ##D Install desktop utility programs
+dutils() { ##D Install desktop + terminal utility packages
   installPkgs "${desktopUtilPkgs[@]}"
 }
 
-perf() { ##D System and performance testprograms
-  installPkgs "${testing[@]}"
-}
-
-##- Server systems
-
-serverutils() { ##D Install server packages
+sutils() { ##D Install server + terminal utility packages
   installPkgs "${serverPkgs[@]}"
 }
+
+devutils() { ##D Install development utls like git, svn, flex, doxygen
+  installPkgs "${devUtils[@]}"
+}
+
+##- Server packages
 
 kvm() { ##D Install KVM virtual machine manager
   installPkgs "${kvmPkgs[@]}"
@@ -572,11 +555,7 @@ samba() { ##D Install samba server and tools
   installPkgs "${sambaPkgs[@]}"
 }
 
-##- Development tools
-
-devutils() { ##D Install development utls like git, svn, flex, doxygen
-  installPkgs "${devUtils[@]}"
-}
+##- C/C++
 
 cdev() { ##D Install packages for native C/C++ development
   gtk3=1
@@ -609,23 +588,47 @@ avrdev() { ##D Install AVR C development packages
   installPkgs "${devAVR[@]}"
 }
 
-java() { ##D Install Java development packages
-  sudo apt-get -y install python-software-properties
-  sudo add-apt-repository ppa:webupd8team/java
-  sudo apt-get -y update
-  sudo apt-get -y install oracle-java8-installer
+AVRSIMDIR=~/Downloads/simavr
+
+avrsim() { ##D Download compile and install avrsim
+  #git clone https://github.com/buserror/simavr  ${AVRSIMDIR}
+  bpCd "${AVRSIMDIR}"
+  ls
+  make
+  bpCd "-"
 }
 
-python() { ##D Install python development packages
+libqt() { ##D Install Qt5 development libraries
+  installPkgs "${devQt5[@]}"
+}
+
+libgtk() { ##D Install GTK+/glib development libraries
+  installPkgs "${devGTK[@]}"
+}
+
+libmisc() { ##D Install various C development libraries (ncurses/lua/
+  installPkgs "${devCLibs[@]}"
+}
+
+##- Python
+python() { ##D Install python development ptools
   installPkgs "${devPython[@]}"
 }
 
-mpython() { ##D Install python development packages
-  installPkgs "${devMicroPython[@]}"
+pylibs() { ##D Install python libraries
+  installPkgs "${pythonLibs[@]}"
 }
 
-rust() { ##D Install Rust development packages
-  installPkgs "${devRust[@]}"
+pyqt() { ##D Install python Qt libraries
+  installPkgs "${pythonLibQt[@]}"
+}
+
+pygtk() { ##D Install python GTK libraries
+  installPkgs "${pythonLibGTK[@]}"
+}
+
+mpython() { ##D Install micropython development packages
+  installPkgs "${devMicroPython[@]}"
 }
 
 WORK=~/Downloads
@@ -637,6 +640,41 @@ gitClonePull() {
     cd "$2" || bpExit
     git pull
   fi
+}
+
+##- Other dev
+
+code() { ##D Install Visual Studio Code
+  VSCODE="code"
+  if aptIsInstalled "${VSCODE}"; then
+    bpInfo "APT package ${VSCODE} is already installed"
+    return
+  fi
+
+  sudo apt-get install wget gpg
+  wget -qO- https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor >packages.microsoft.gpg
+  sudo install -D -o root -g root -m 644 packages.microsoft.gpg /etc/apt/keyrings/packages.microsoft.gpg
+  echo "deb [arch=amd64,arm64,armhf signed-by=/etc/apt/keyrings/packages.microsoft.gpg] https://packages.microsoft.com/repos/code stable main" | sudo tee /etc/apt/sources.list.d/vscode.list >/dev/null
+  rm -f packages.microsoft.gpg
+
+  # sudo apt install apt-transport-https
+  sudo apt update
+  #sudo apt install code # or code-insiders
+
+  installApt apt-transport-https
+  installApt "${VSCODE}"
+
+}
+
+rust() { ##D Install Rust development packages
+  installPkgs "${devRust[@]}"
+}
+
+java() { ##D Install Java development packages
+  sudo apt-get -y install python-software-properties
+  sudo add-apt-repository ppa:webupd8team/java
+  sudo apt-get -y update
+  sudo apt-get -y install oracle-java8-installer
 }
 
 shellcheck() { ##D download compile and install latest version shellcheck
@@ -672,50 +710,26 @@ shellcheck() { ##D download compile and install latest version shellcheck
   fi
 }
 
-AVRSIMDIR=~/Downloads/simavr
-
-avrsim() { ##D Download compile and install avrsim
-  #git clone https://github.com/buserror/simavr  ${AVRSIMDIR}
-  bpCd "${AVRSIMDIR}"
-  ls
-  make
-  bpCd "-"
-}
-
 rp() { ##D Install Raspberry Pi development tools
   installPkgs "${devRasperryPi[@]}"
 }
 
-##- C/C++ libraries
-
-libqt() { ##D Install Qt5 development libraries
-  installPkgs "${devQt5[@]}"
-}
-
-libgtk() { ##D Install GTK+/glib development libraries
-  installPkgs "${devGTK[@]}"
-}
-
-libmisc() { ##D Install various C development libraries (ncurses/lua/
-  installPkgs "${devCLibs[@]}"
-}
-
-##- Science and technology
+##- Other
 
 sci() { ##D Install science and technology packages
   installPkgs "${science[@]}"
 }
 
-##- Media
-
 inkscape() { ##D Install Inkscape resources(fonts/clipart)
   installPkgs "${inkscapePkgs[@]}"
 }
 
-##- Single programs
-
 starship() { ##D Starship prompt manager
   curl -sS https://starship.rs/install.sh | sh
+}
+
+perf() { ##D System test and performance packages
+  installPkgs "${testing[@]}"
 }
 
 ##- Projects

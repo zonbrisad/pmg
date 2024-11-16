@@ -52,13 +52,13 @@ interfaceToMAC_old() {
   ip addr show "${2}" | grep "link/ether" | awk '{print $2}'
 }
 
-interfaceToIp() { ##D interface to ip
+interfaceToIp() {
   IFS=$' '
   read -r -a IP <<<"$(ip addr show "${2}" | grep "inet ")"
   echo "${IP[1]::-3}"
 }
 
-interfaceToMAC() { ##D interface to mac
+interfaceToMAC() {
   IFS=$' '
   read -r -a MAC <<<"$(ip link show "${2}" | grep "link/ether")"
   echo "${MAC[1]}"
@@ -68,7 +68,7 @@ interfaceToDefault() {
   ip route | grep -E "default.*${2}.*" | awk '/default/ { print $3 }'
 }
 
-lsInterfaces() { ##D lsi
+lsInterfaces() {
   IFS=$'\n'
   read -r -d '\n' -a INTERFACES <<<"$(ip link show | grep -v lo)"
   LEN=${#INTERFACES[@]}
@@ -145,7 +145,7 @@ bpInitSettings() {
   BP_USAGE="Usage: ${BP_SELF} command [option]"
 
   ##V Description text
-  BP_DESC="Peter Malmberg's management script"
+  BP_DESC="Peter Malmberg's network management script"
 
   ##V logfile (uncomment to use logfile)
   BP_LOGFILE=${BP_SELF_DIR}/${BP_SELF}.log
