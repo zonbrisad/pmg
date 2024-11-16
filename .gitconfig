@@ -1,10 +1,10 @@
 
 [core]
-  editor = jed
+	editor = jed
 
 [user]
-  name = Peter Malmberg
-  email = peter.malmberg@gmail.com
+	name = Peter Malmberg
+	email = peter.malmberg@gmail.com
 
 #[diff]
 #  external = ~/pmg/bin/git_diff hook_default
@@ -23,7 +23,9 @@
   deleted = log --diff-filter=D --summary
 
 [init]
-  defaultBranch = master
+	defaultBranch = master
 
 [pull]
   rebase = false
+[diff]
+	external = /home/lpmg/pmg/bin/git_diff_meld.py

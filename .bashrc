@@ -86,6 +86,10 @@ init_starship() {
   fi
 }
 
+host_ubuntu() {
+  start_ssh_agent
+}
+
 host_rpexp() {
   SYSTEMP=/sys/class/thermal/thermal_zone0/temp
 }
@@ -142,6 +146,8 @@ host_all() {
   alias pgrep='pgrep --list-full'
   alias date='date +"%A %B %e %T %Y"'
   alias ip='ip -brief -color'
+	alias mount='mount | column --table --table-hide 2,4'
+	alias mnt='mount'
 
   # Install aliases
   alias sui='sudo apt install'
@@ -161,6 +167,15 @@ host_all() {
   if bpHasCmd zoxide; then
     eval "$(zoxide init bash)"
   fi
+	
+	# TTY login color
+	PROMPT_C_LOGIN_TTY="${E_BR_CYAN}"
+
+  # SSH login color
+	PROMPT_C_LOGIN_SSH="${E_BR_CYAN}${E_REVERSE}"
+
+  # PWD color
+  PROMPT_C_PWD="${E_BR_BLUE}${E_BOLD}"
 }
 
 #---------------------------------------------------------------------
@@ -275,13 +290,11 @@ PROMPT_COMMAND=bpSetPrompt
 function bpSetPrompt() {
   # Test connection type:
   if [ -n "${SSH_CONNECTION}" ]; then
-    CONNECTION_COLOR=${E_GREEN} # Connected on remote machine, via ssh (good).
-  elif [[ "${DISPLAY%%:0*}" != "" ]]; then
-    CONNECTION_COLOR=${ALERT} # Connected on remote machine, not via ssh (bad).
+		CONNECTION_COLOR=${PROMPT_C_LOGIN_SSH} # Connected on ssh
   else
-    CONNECTION_COLOR=${E_BR_CYAN} # Connected on local machine.
+		CONNECTION_COLOR=${PROMPT_C_LOGIN_TTY} # Connected on local machine.
   fi
-
+ 
   # Test user type:
   if [[ ${USER} == "root" ]]; then
     USER_COLOR="${E_RED}" # User is root.
@@ -294,8 +307,7 @@ function bpSetPrompt() {
   if [ "$(jobs | wc -l)" -gt "0" ]; then
     JOB_COLOR="${E_BR_RED}"
   else
-    #JOB_COLOR="${E_BR_CYAN}"
-    JOB_COLOR=""
+    JOB_COLOR="${E_RESET}"
   fi
 
   # Now we construct the prompt.
@@ -303,11 +315,12 @@ function bpSetPrompt() {
   *term | rxvt | linux | xterm-256color)
 
     # User@Host (with connection type info):
-    PS1="[\[${USER_COLOR}\]\u\[${E_RESET}\]\[${E_DARKGRAY}\]@\[${CONNECTION_COLOR}\]\h\[${E_RESET}\]"
-    # PWD (with 'disk space' info):
-    PS1=${PS1}" \W] "
-    # Prompt (with 'job' info):
-    # PS1=${PS1}"\[$(job_color)\]>\[${E_RESET}\] "
+    PS1="[\[${USER_COLOR}\]\u\[${E_RESET}\]\[${E_DARKGRAY}\]@\[${E_RESET}\]\[${CONNECTION_COLOR}\]\h\[${E_RESET}\]"
+    
+		# PWD color
+    PS1=${PS1}"\[${PROMPT_C_PWD}\] \W\[${E_RESET}\]] "
+    
+		# Prompt (with 'job' info):
     PS1=${PS1}"\[${JOB_COLOR}\]>\[${E_RESET}\] "
 
     # Set title of current xterm:
@@ -315,7 +328,6 @@ function bpSetPrompt() {
     ;;
   *)
     PS1="(\A \u@\h \W) > " # --> PS1="(\A \u@\h \w) > "
-    # --> Shows full pathname of current dir.
     ;;
   esac
 }
