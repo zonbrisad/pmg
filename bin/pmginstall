@@ -229,27 +229,34 @@ bpUserSettings() {
     "apt" "qemu-system-avr" ":"
   )
 
-  devPython=(
-    "apt" "python3" ":"
+pythonLibs=(
     "apt" "python3-serial" ":"
-    "apt" "python3-pip" ":"
+    "apt" "python3-numpy" ":"
+    "apt" "python3-scipy" ":"
+    "pip" "GitPython" ":"
+    "pip" "rich" ":"
+    "pip" "textual" ":"
+		"apt" "gir1.2-gtk-3.0" ":"
+)
+
+pythonLibQt=(
     "apt" "python3-pyqt5" ":"
     "apt" "python3-pyqt5.qtserialport" ":"
     "apt" "python3-pyqt5.qtopengl" ":"
     "apt" "python3-guiqwt" ":"
     "apt" "python3-guidata" ":"
-    "apt" "python3-numpy" ":"
-    "apt" "python3-scipy" ":"
     "apt" "pyqt5-dev-tools" ":"
     "apt" "pyqt5-examples" ":"
+    "pip" "pyqgtgraph" ":"
+)
+
+devPython=(
+    "apt" "python3" ":"
+    "apt" "python3-pip" ":"
     "apt" "bpython" ":"
-		"apt" "gir1.2-gtk-3.0" ":"
-    "pip" "GitPython" ":"
     "pip" "black" ":"
     "pip" "rich" ":"
-    "pip" "textual" ":"
-    "pip" "pyqgtgraph" ":"
-  )
+)
 
   devMicroPython=(
     "code" "paulober.pico-w-go" ":"
