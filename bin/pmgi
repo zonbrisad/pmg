@@ -54,7 +54,7 @@ bpUserSettings() {
     "luaconf" ":"
     "gittest" ":"
     "OmTerm" ":"
-    "mpterm" "mptemp_init -q"
+    "mpterm" "mpterm_init -q"
     "def" "def install"
     "fplot" "fplot_init -q"
     "pins" "pins_init -q"
@@ -63,14 +63,15 @@ bpUserSettings() {
   #
   # Package list fields:
   #
-  # Fields
-  # =================================================
-  # Package type: [apt|npm|pip|snap|ppa|git|lst]
-  # Name:         Package type
-  # Param:        Extra parameter
+  # Fields:
   #
-  # Examples:
+  #  "type"  "name"  "param"
+  #    |        |       +------ Extra parameter, default ":"
+  #    |        +-------------- Name of package
+  #    +----------------------- Package type: [apt|npm|pip|snap|ppa|git|lst|code]
   #
+
+
   serverPkgs=(
     "apt" "rdiff-backup" ":"
     "apt" "nfs-common" ":"
@@ -505,11 +506,12 @@ installGeneric() {
 }
 
 #
-# arg 1  array of packages
+# arg 1  array of packages 
 #
 installPkgs() { ##I Install array of packages
   local arr=("${@}")
   local i=0
+
   while [ "$i" -lt "${#arr[@]}" ]; do
     pkgt=${arr[$i]}
     ((i++))
