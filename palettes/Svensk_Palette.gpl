@@ -1,6 +1,15 @@
 GIMP Palette
 Name: Svenska färger
 #
+# Klassiska svenska färger
+#
+# Sammanställt av: Peter Malmberg
+#
+  0   0   0 Black
+ 51  51  51 
+128 128 128
+255 255 255
+ 64  64  64	 
 254 204   0 Svensk flagga gul
   0 106 167 Svensk flagga blå
   0  51 102 Svensk flagga blå gammal
