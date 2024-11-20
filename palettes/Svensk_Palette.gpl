@@ -5,6 +5,9 @@ Name: Svenska färger
 #
 # Sammanställt av: Peter Malmberg
 #
+# Ref:
+# https://color.adobe.com/sv/Swedish-M90-Camouflage-color-theme-380888/
+# 
   0   0   0 Black
  51  51  51 
 128 128 128
@@ -19,5 +22,13 @@ Name: Svenska färger
 159 149 120 M90 khaki
 128  24  24 Falu röd
 248 122  26 Televerksorange
+ 66 174  41 Apoteket grön
+ 22  73  61 Apoteket mörk grön
+
+ 89  85  30 Adobe M90 olive
+ 30  20  29 Adobe M90 svart
+ 87  89  28 Adobe M90 grön 
+ 55  54  23 Adobe M90 grön mörk
+142 133  92 Adobe M90 khaki
 
 
