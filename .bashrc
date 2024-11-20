@@ -312,7 +312,7 @@ function bpSetPrompt() {
 
   # Now we construct the prompt.
   case ${TERM} in
-  *term | rxvt | linux | xterm-256color)
+  *term | rxvt | linux | xterm-256color | tmux-256color)
 
     # User@Host (with connection type info):
     PS1="[\[${USER_COLOR}\]\u\[${E_RESET}\]\[${E_DARKGRAY}\]@\[${E_RESET}\]\[${CONNECTION_COLOR}\]\h\[${E_RESET}\]"
