@@ -236,7 +236,7 @@ pythonLibs=(
     "apt" "python3-serial" ":"
     "apt" "python3-numpy" ":"
     "apt" "python3-scipy" ":"
-    "pip" "GitPython" ":"
+    "apt" "python3-git" ":"
     "pip" "rich" ":"
     "pip" "textual" ":"
 )
