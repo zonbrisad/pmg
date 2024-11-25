@@ -120,6 +120,7 @@ bpUserSettings() {
     "apt" "tree" ":"
     "apt" "gpiod" ":"
     "apt" "python3-pip" ":"
+    "apt" "npm" ":"
   )
   #    "git" "https://github.com/ogham/exa" ":"
   #    "git" "powertop" ":"
