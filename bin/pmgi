@@ -235,7 +235,7 @@ bpUserSettings() {
     "apt" "python3-serial" ":"
     "apt" "python3-numpy" ":"
     "apt" "python3-scipy" ":"
-    "pip" "GitPython" ":"
+    "apt" "python3-git" ":"
     "pip" "rich" ":"
     "pip" "textual" ":"
   )
@@ -964,7 +964,7 @@ if [[ "linux rxvt-16color" = *${TERM}* ]]; then
   E_BG_BR_RED=$'\e[41m'     # Bright Red
   E_BG_BR_GREEN=$'\e[42m'   # Bright Green
   E_BG_BR_YELLOW=$'\e[43m'  # Bright Yellow
-  E_BG_BR_BLUE=$'\e[43m'    # Bright Blue
+  E_BG_BR_BLUE=$'\e[44m'    # Bright Blue
   E_BG_BR_MAGENTA=$'\e[45m' # Bright Magenta
   E_BG_BR_CYAN=$'\e[46m'    # Bright Cyan
   E_BG_WHITE=$'\e[47m'      # White
@@ -1081,6 +1081,13 @@ BP_C_PATH="${E_CYAN}"
 BP_C_URL_SCHEME="${E_DARKGRAY}"
 # BP_C_URL_USER=""
 # BP_C_URL_HOST=""
+BP_C_TIME="${E_BR_MAGENTA}"
+BP_C_DATE="${E_MAGENTA}"
+
+BP_C_QUERY=$'\e[38;5;194m'
+BP_C_QUERY_DEF=$'\e[38;5;240m'
+BP_C_EMPHASIS=$'\e[38;5;255m'
+BP_C_DEEMPHASIS=$'\e[38;5;250m'
 
 # Shellscript colorize colors
 BP_C_RESERVED="${E_RED}"
@@ -1088,13 +1095,23 @@ BP_C_COMMENT="${E_CYAN}"
 BP_C_STRING="${E_GREEN}"
 BP_C_VAR="${E_BR_YELLOW}"
 
+# Separator line character
+BP_LINE_CHAR="-"
+
 # Exit codes
 #
 BP_OK=0 # successful termination
 
+# Formating
+#
+BP_KEY_LENGTH=24
+BP_LEFT_MARGIN=3
+BP_RIGHT_MARGIN=3
+
 #---------------------------------------------------------------------
 # Bashplate internal functions
 #---------------------------------------------------------------------
+# shellcheck disable=2155
 
 ##C- IHELP Printing functions
 
@@ -1216,7 +1233,9 @@ bpColorizeUrl() { ##I Colorize string containing URL
 # $1 string to be filtered
 #
 bpFilterEscape() { ##I Filter escape characters from string
-  echo "$1" | sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[m|K]//g"
+  # https://superuser.com/questions/380772/removing-ansi-color-codes-from-text-stream
+
+  sed -e 's/\x1b\[[0-9;:]*[mGKHF]//g' <<<"$1"
 }
 
 ##C- IHELP File operations
@@ -1246,7 +1265,7 @@ bpCd() { ##I Safe cd function (exits on fail)
 #
 bpMkDir() { ##I Create a directory if it does not exist
   if [ ! -d "$1" ]; then
-    if mkdir --parents "$1"; then
+    if mkdir -p "$1"; then
       bpOk "Creating directory $(bpColorizeFile "${1}")."
       return 0
     else
@@ -1257,7 +1276,7 @@ bpMkDir() { ##I Create a directory if it does not exist
 }
 
 #
-# $1 target file
+# $1 target file/dir
 # $2 link
 #
 bpLn() { ##I Create symbolic link
@@ -1328,12 +1347,14 @@ bpBackup() { ##I Make backup of file
   fi
 }
 
+##C- IHELP File editing
+
 #
 # $1 file
 # $2 text to replace
 # $3 new text
 #
-bpReplace() { ##I Replace text in file
+bpReplace() { ##I Replace all ocurances of text in file
   sed -i -e "s/${2}/${3}/g" "$1"
 }
 
@@ -1715,6 +1736,10 @@ bpLogInfo() { ##I Log Info message to file
   bpLog "[Info] $1"
 }
 
+bpLogDebug() { ##I Log Info message to file
+  bpLog "[Debg] $1"
+}
+
 bpLogWarning() { ##I Log Warning message to file
   bpLog "[Warn] $1"
 }
@@ -1734,10 +1759,9 @@ log() { ##C BP_LOGFILE View logfile
         -e "s|\[Warn\]|\[\\${BP_C_WARNING}Warn\\${E_RESET}\]|" \
         -e "s|\[Erro\]|\[\\${BP_C_ERROR}Erro\\${E_RESET}\]|" \
         -e "s|\[ Ok \]|\[\\${BP_C_OK} Ok \\${E_RESET}\]|" \
-        -e "s/[-0-9]+/\\${E_MAGENTA}&\\${E_RESET}/1" \
-        -e "s/[:0-9]+/\\${E_BR_MAGENTA}&\\${E_RESET}/6" \
+        -e "s/[-0-9]+/\\${BP_C_DATE}&\\${E_RESET}/1" \
+        -e "s/[:0-9]+/\\${BP_C_TIME}&\\${E_RESET}/6" \
         -e "s|\[Crit\]|\[\\${E_BG_RED}\\${E_WHITE}Crit\\${E_RESET}\]|" <"${BP_LOGFILE}")
-
       echo -e "$D"
     fi
   else
@@ -1756,7 +1780,6 @@ mlog() { ##C BP_LOGFILE Monitor logfile
         -e "s/[-0-9]+/\\${E_GREEN}&\\${E_RESET}/1" \
         -e "s/[:0-9]+/\\${E_BR_GREEN}&\\${E_RESET}/6" \
         -e "s|\[Crit\]|\[\\${E_BG_RED}\\${E_WHITE}Crit\\${E_RESET}\]|"
-
     fi
   else
     bpInfo "Logging is not activated"

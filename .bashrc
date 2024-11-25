@@ -119,6 +119,7 @@ host_lliten() {
   SYSVOLT=/sys/class/power_supply/C1B6/voltage_now
   SYSCUR=/sys/class/power_supply/C1B6/current_now
   SYSTEMP=/sys/class/thermal/thermal_zone1/temp
+  start_ssh_agent
   init_starship
 }
 
@@ -312,7 +313,7 @@ function bpSetPrompt() {
 
   # Now we construct the prompt.
   case ${TERM} in
-  *term | rxvt | linux | xterm-256color)
+  *term | rxvt | linux | xterm-256color | tmux-256color)
 
     # User@Host (with connection type info):
     PS1="[\[${USER_COLOR}\]\u\[${E_RESET}\]\[${E_DARKGRAY}\]@\[${E_RESET}\]\[${CONNECTION_COLOR}\]\h\[${E_RESET}\]"

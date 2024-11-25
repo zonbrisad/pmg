@@ -951,7 +951,9 @@ bpColorizeUrl() { ##I Colorize string containing URL
 # $1 string to be filtered
 #
 bpFilterEscape() { ##I Filter escape characters from string
-  echo "$1" | sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[m|K]//g"
+  # https://superuser.com/questions/380772/removing-ansi-color-codes-from-text-stream
+
+  sed -e 's/\x1b\[[0-9;:]*[mGKHF]//g' <<<"$1"
 }
 
 ##C- IHELP File operations
@@ -1192,12 +1194,12 @@ bpReadStr() { ##I Read string from commandline
 # return integer read from cmdline/default if enter pressed
 #
 bpReadInt() { ##I Read integer from commandline
-  QUERY="$1"
-  DEFAULT="$2"
-  MIN="$3"
-  MAX="$4"
+  local QUERY="$1"
+  local DEFAULT="$2"
+  local MIN="$3"
+  local MAX="$4"
 
-  RANGE=""
+  local RANGE=""
   if [ -n "$MIN" ] || [ -n "$MAX" ]; then
     RANGE=" ${BP_C_QUERY_DEF}[${E_RESET}$3-$4${BP_C_QUERY_DEF}]${E_RESET}"
   fi
@@ -1227,8 +1229,8 @@ bpReadInt() { ##I Read integer from commandline
 # return 0 = Yes, 1=No
 #
 bpReadBool() { ##I Ask yes/no question generic
-  QUERY="$1"
-  DEFAULT="$2"
+  local QUERY="$1"
+  local DEFAULT="$2"
   while true; do
 
     if [ "$2" -eq 1 ]; then
@@ -1282,9 +1284,9 @@ bpReadBoolDN() { ##I Ask yes/no question default no
 
 bpPrintChoiceList() { # Print items in selection list
   echo
-  arr=("${@:2}")
-  len=${#arr[@]}
-  i=1
+  local arr=("${@:2}")
+  local len=${#arr[@]}
+  local i=1
   while [ "$i" -lt "$len" ]; do
     key=${arr[$i]}
     ((i++))
@@ -1323,15 +1325,15 @@ bpPrintChoiceList() { # Print items in selection list
 #  "c" ":" "Choice C"
 # )
 bpSelectFromList() { ##I Select from list
-  QUERY="$2"
+  local QUERY="$2"
   while true; do
     bpPrintChoiceList "$1" "${@:2}"
     echo
-    x=$(bpReadGeneric "$2" "$1")
+    local x=$(bpReadGeneric "$2" "$1")
 
-    arr=("${@}")
-    len=${#arr[@]}
-    i=2
+    local arr=("${@}")
+    local len=${#arr[@]}
+    local i=2
     while [ "$i" -lt "$len" ]; do
       key=${arr[$i]}
       ((i++))
