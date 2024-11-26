@@ -64,14 +64,12 @@ bpUserSettings() {
 # User defined functions
 #---------------------------------------------------------------------
 
-##- System
+##- Network
 
 hostname() { ##D Set hostname
   nhn=$(bpReadStr "New hostname" "$HOSTNAME")
-  sudo hostnamectl set-hostname  $nhn
+  sudo hostnamectl set-hostname $nhn
 }
-
-
 
 #
 # $1 file
@@ -83,8 +81,28 @@ sudoReplaceLine() { ##I Replace entire line matching pattern
 }
 
 sshxforward() { ##D Enable X forwarding via SSH
-  
+
   sudoReplaceLine
+}
+
+##- System
+
+sysinfo() { ##D
+  # du -sh ~/.cache
+  bpPrintLine "Cache"
+  bpPrintDesc "Thumbnails" "$(du -sh ~/.cache/thumbnails/)"
+  bpPrintDesc "Apt cache" "$(du -sh /var/cache/apt 2>/dev/null)"
+  bpPrintDesc "Journals" "$(journalctl --disk-usage)"
+}
+
+sysclean() { ##D System cleanup
+  # remove apt cache
+  sudo apt clean
+  bpOk "APT cache removed"
+  sudo apt autoremove --yes
+  bpOk "Unused packages removed"
+  sudo journalctl --vacuum-time=7d
+  bpOk "Journals pruned"
 }
 
 ##- Filesystems

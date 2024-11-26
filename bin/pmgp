@@ -157,13 +157,17 @@ newc() { ##D New C/C++ project
   new_proj "c"
 }
 
-##- Gitignore
+##- Files
 
-newcgig() { ##D Create new C gitignore file
+newrme() { ##D Create new README.md file
+  cp_file "README.md" "${TEMPLATES}/default" "."
+}
+
+newcgi() { ##D Create new C gitignore file
   cp_file ".gitignore" "${TEMPLATES}/C" "."
 }
 
-newpgig() { ##D Create new Python gitignore file
+newpgi() { ##D Create new Python gitignore file
   cp_file ".gitignore" "${TEMPLATES}/Python" "."
 }
 
