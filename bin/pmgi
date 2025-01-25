@@ -262,6 +262,7 @@ bpUserSettings() {
     "apt" "bpython" ":"
     "pip" "black" ":"
     "pip" "rich" ":"
+		"pip" "tqdm" ":"
   )
 
   devMicroPython=(

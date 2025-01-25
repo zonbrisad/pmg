@@ -547,6 +547,77 @@ aug() { ##D Add users to groups
   done
 }
 
+##- Backup
+
+BACKUP_DIR="${HOME}/backup/${HOSTNAME}"
+BACKUPS=10
+
+ball() { ##D Backup all
+  bpMkDir "${BACKUP_DIR}"
+  # remove oldest backup
+  rm -rf "${BACKUP_DIR}/backup_${BACKUPS}"
+  # rotate backups
+  for ((x = BACKUPS; x > 0; x--)); do
+    bdir="${BACKUP_DIR}/backup_$((x - 1))"
+    # check if directory exist before renameing  it
+    if [ -d "${bdir}" ]; then
+      mv -f "${bdir}" "${BACKUP_DIR}/backup_${x}"
+    fi
+  done
+  rsync --archive \
+    --delete \
+    --relative \
+    --progress \
+    --exclude="${BACKUP_DIR}" \
+    --exclude="${ARCHIVE_DIR}" \
+    --exclude="${OUTDIR}" \
+    --exclude="${HOME}/Downloads" \
+    --link-dest="${BACKUP_DIR}/backup_1" \
+    "${HOME}"/pmg \
+    "${HOME}"/.ssh \
+    "${HOME}"/.config \
+    "${HOME}"/Documents \
+    "${BACKUP_DIR}/backup_0"
+
+  if (($? == 0)); then
+    echo
+    bpOk "Created backup."
+  fi
+
+  type ball
+}
+
+bubuntu() { ##D Backup to Ubuntu
+  # bpMkDir "${BACKUP_DIR}"
+  # # remove oldest backup
+  # rm -rf "${BACKUP_DIR}/backup_${BACKUPS}"
+  # # rotate backups
+  # for ((x = BACKUPS; x > 0; x--)); do
+  #   bdir="${BACKUP_DIR}/backup_$((x - 1))"
+  #   # check if directory exist before renameing  it
+  #   if [ -d "${bdir}" ]; then
+  #     mv -f "${bdir}" "${BACKUP_DIR}/backup_${x}"
+  #   fi
+  # done
+  rsync --archive \
+    --delete \
+    --relative \
+    --progress \
+    --exclude="${BACKUP_DIR}" \
+    --exclude="${ARCHIVE_DIR}" \
+    --exclude="${OUTDIR}" \
+    --exclude="${HOME}/Downloads" \
+    --link-dest="${BACKUP_DIR}/backup_1" \
+    "${HOME}"/pmg \
+    lpmg@ubuntu:backup/.
+
+  # if (($? == 0)); then
+  #   echo
+  #   bpOk "Created backup."
+  # fi
+
+}
+
 ##-
 
 addpath() { ##D Add path to PATH

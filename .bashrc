@@ -147,8 +147,8 @@ host_all() {
   alias pgrep='pgrep --list-full'
   alias date='date +"%A %B %e %T %Y"'
   alias ip='ip -brief -color'
-	alias mount='mount | column --table --table-hide 2,4'
-	alias mnt='mount'
+  alias mount='mount | column --table --table-hide 2,4'
+  alias mnt='mount'
 
   # Install aliases
   alias sui='sudo apt install'
@@ -168,12 +168,12 @@ host_all() {
   if bpHasCmd zoxide; then
     eval "$(zoxide init bash)"
   fi
-	
-	# TTY login color
-	PROMPT_C_LOGIN_TTY="${E_BR_CYAN}"
+
+  # TTY login color
+  PROMPT_C_LOGIN_TTY="${E_BR_CYAN}"
 
   # SSH login color
-	PROMPT_C_LOGIN_SSH="${E_BR_CYAN}${E_REVERSE}"
+  PROMPT_C_LOGIN_SSH="${E_BR_CYAN}${E_REVERSE}"
 
   # PWD color
   PROMPT_C_PWD="${E_BR_BLUE}${E_BOLD}"
@@ -291,11 +291,11 @@ PROMPT_COMMAND=bpSetPrompt
 function bpSetPrompt() {
   # Test connection type:
   if [ -n "${SSH_CONNECTION}" ]; then
-		CONNECTION_COLOR=${PROMPT_C_LOGIN_SSH} # Connected on ssh
+    CONNECTION_COLOR=${PROMPT_C_LOGIN_SSH} # Connected on ssh
   else
-		CONNECTION_COLOR=${PROMPT_C_LOGIN_TTY} # Connected on local machine.
+    CONNECTION_COLOR=${PROMPT_C_LOGIN_TTY} # Connected on local machine.
   fi
- 
+
   # Test user type:
   if [[ ${USER} == "root" ]]; then
     USER_COLOR="${E_RED}" # User is root.
@@ -317,11 +317,11 @@ function bpSetPrompt() {
 
     # User@Host (with connection type info):
     PS1="[\[${USER_COLOR}\]\u\[${E_RESET}\]\[${E_DARKGRAY}\]@\[${E_RESET}\]\[${CONNECTION_COLOR}\]\h\[${E_RESET}\]"
-    
-		# PWD color
+
+    # PWD color
     PS1=${PS1}"\[${PROMPT_C_PWD}\] \W\[${E_RESET}\]] "
-    
-		# Prompt (with 'job' info):
+
+    # Prompt (with 'job' info):
     PS1=${PS1}"\[${JOB_COLOR}\]>\[${E_RESET}\] "
 
     # Set title of current xterm:
