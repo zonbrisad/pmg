@@ -239,6 +239,7 @@ bpUserSettings() {
     "apt" "python3-git" ":"
     "pip" "rich" ":"
     "pip" "textual" ":"
+		"pip" "tqdm" ":"
   )
 
   pythonLibGTK=(
@@ -261,8 +262,6 @@ bpUserSettings() {
     "apt" "python3-pip" ":"
     "apt" "bpython" ":"
     "pip" "black" ":"
-    "pip" "rich" ":"
-		"pip" "tqdm" ":"
   )
 
   devMicroPython=(
