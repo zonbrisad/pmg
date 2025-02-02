@@ -92,8 +92,12 @@ dev() { ##D Show network devices
   bpRun nmcli
 }
 
-wd() { ##D Show WLAN device information
+wd() { ##D Show Wifi device information
   watch -n 1 cat /proc/net/wireless
+}
+
+wa() { ##D List Wifi networks
+  bpRun nmcli device wifi
 }
 
 info() { ##D Show network info
