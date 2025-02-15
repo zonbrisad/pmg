@@ -400,7 +400,7 @@ bpSetAliases() { ##D Initialize aliases
   alias go='git checkout '
   alias gk='gitk --all&'
   alias gx='gitx --all'
-  alias gi='git-info'
+  alias gi='git-info --color'
   alias gp='git push'
   alias gpt='git push origin --tags'
   alias gnt='pmgp gnt'

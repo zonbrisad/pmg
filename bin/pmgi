@@ -148,7 +148,6 @@ bpUserSettings() {
     "apt" "ubuntu-restricted-extras" ":"
     "apt" "guvcview" ":"
     "ppa" "inkscape" "ppa:inkscape.dev/stable"
-    "ppa" "krita" "ppa:kritalime/ppa"
     "snap" "g-assist" ":"
   )
 
@@ -157,7 +156,7 @@ bpUserSettings() {
     "apt" "flex" ":"
     "apt" "texinfo" ":"
     "apt" "git" ":"
-    "apt" "gitk" ":"
+		"apt" "git-info" ":"
     "apt" "subversion" ":"
     "apt" "meld" ":"
     "apt" "doxygen" ":"
