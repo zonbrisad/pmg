@@ -400,7 +400,8 @@ bpSetAliases() { ##D Initialize aliases
   alias go='git checkout '
   alias gk='gitk --all&'
   alias gx='gitx --all'
-  alias gi='git-info --color'
+  #alias gi='git-info --color'
+	alias gi='pmgp gi'
   alias gp='git push'
   alias gpt='git push origin --tags'
   alias gnt='pmgp gnt'
@@ -592,9 +593,9 @@ extract() { ##D Handy Extract Program
 
 ##- git
 
-gi() { ##D Show information about project
-  pmgp gi
-}
+#gi() { ##D Show information about project
+#  
+#}
 
 ##- tmux
 
