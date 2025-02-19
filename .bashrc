@@ -353,8 +353,10 @@ bpSetAliases() { ##D Initialize aliases
 
   alias which='type -a'
   alias grep='grep --color=auto'
+	alias egrep='egrep --color=auto'
+	alias fgrep='fgrep --color=auto'
   alias du='du -k --human-readable --max-depth 1' # Makes a more readable output.
-  alias df='df -k --print-type --human-readable'
+  alias df='df -k --human-readable --print-type'
 
   # If available use batcat instead of cat
   if type batcat &>/dev/null; then
@@ -379,16 +381,16 @@ bpSetAliases() { ##D Initialize aliases
   # The 'ls' family -----------------------------------------------------------
 
   # Add colors for filetype and  human-readable sizes by default on 'ls':
-  alias ls='ls -h --color'
-  alias lx='ls -lXB'  #  Sort by extension.
-  alias lk='ls -lSr'  #  Sort by size, biggest last.
-  alias lt='ls -ltr'  #  Sort by date, most recent last.
-  alias lc='ls -ltcr' #  Sort by/show change time,most recent last.
-  alias lu='ls -ltur' #  Sort by/show access time,most recent last.
+  alias ls='ls -h --color --group-directories-first'
+  alias lx='ls -lXB --group-directories-first'  #  Sort by extension.
+  alias lk='ls -lSr --group-directories-first'  #  Sort by size, biggest last.
+  alias lt='ls -ltr --group-directories-first'  #  Sort by date, most recent last.
+  alias lc='ls -ltcr --group-directories-first' #  Sort by/show change time,most recent last.
+  alias lu='ls -ltur --group-directories-first' #  Sort by/show access time,most recent last.
 
   # The ubiquitous 'll': directories first, with alphanumeric sorting:
-  alias ll="ls -lv --group-directories-first"
-  alias lm='ll |more'     #  Pipe through 'more'
+  alias ll="ls -lv"
+  alias lm='ll |more '     #  Pipe through 'more'
   alias lr='ll -R'        #  Recursive ls.
   alias la='ll -A'        #  Show hidden files.
   alias tree='tree -Csuh' #  Nice alternative to 'recursive ls' ...
@@ -589,6 +591,7 @@ extract() { ##D Handy Extract Program
     *.zip) unzip "$1" ;;
     *.Z) uncompress "$1" ;;
     *.7z) 7z x "$1" ;;
+		*.deb) ar x "$2" ;;
     *) bpError "File '$1' cannot be extracted via >extract<" ;;
     esac
   else
