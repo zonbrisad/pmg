@@ -349,7 +349,7 @@ bpSetAliases() { ##D Initialize aliases
   alias cp='cp -i'
   alias mv='mv -i'
   # -> Prevents accidentally clobbering files.
-  alias mkdir='mkdir -p'
+  alias mkdir='mkdir -pv'
 
   alias which='type -a'
   alias grep='grep --color=auto'
@@ -368,6 +368,11 @@ bpSetAliases() { ##D Initialize aliases
   alias libpath='echo -e ${LD_LIBRARY_PATH//:/\\n}'
 
   alias ..='cd ..'
+	alias .2='cd ../..'
+	alias .3='cd ../../..'
+	alias .4='cd ../../../..'
+	alias .5='cd ../../../../..'
+
   alias j='jobs -l'
   alias h='history'
 
