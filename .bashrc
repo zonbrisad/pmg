@@ -111,8 +111,7 @@ host_rpserver() {
 
 host_main() {
   #SYSTEMP=/sys/class/thermal/thermal_zone2/temp
-  #init_starship
-  :
+  init_starship
 }
 
 host_lliten() {
@@ -139,9 +138,9 @@ host_all() {
   alias rpdesk='ssh lpmg@rpdesk'
   alias rpserver='ssh lpmg@rpserver'
 
-  alias lsmnt='mount | column --table --table-hide 2,4,6'
-  alias lsusr='cat /etc/passwd |  column --table --separator :'
-  alias lsgrp='cat /etc/group |  column --table --separator :'
+  alias lsmnt='mount | column --table --table-hide 2,4'
+  alias lsusr='cat /etc/passwd | column --table --separator :'
+  alias lsgrp='cat /etc/group | column --table --separator :'
   alias lsblk='lsblk --output NAME,SIZE,TYPE,FSTYPE,MOUNTPOINT,UUID,MODEL'
   alias dig='dig @192.168.1.1'
   alias pgrep='pgrep --list-full'
@@ -149,6 +148,7 @@ host_all() {
   alias ip='ip -brief -color'
   alias mount='mount | column --table --table-hide 2,4'
   alias mnt='mount'
+	alias free='free --human'
 
   # Install aliases
   alias sui='sudo apt install'
@@ -223,7 +223,7 @@ get_xserver() {
   esac
 }
 
-bpInitDisplay() { ##I Init DISPLAY variable
+bpDisplay() { ##I Init DISPLAY variable
 
   if [ -z "${DISPLAY:=""}" ]; then
     get_xserver
@@ -285,10 +285,10 @@ HISTTIMEFORMAT="%T "
 #       http://tldp.org/HOWTO/Bash-Prompt-HOWTO
 #       https://github.com/nojhan/liquidprompt
 
-PROMPT_COMMAND=bpSetPrompt
+PROMPT_COMMAND=bpPrompt
 
 # Function for interactivly
-function bpSetPrompt() {
+function bpPrompt() {
   # Test connection type:
   if [ -n "${SSH_CONNECTION}" ]; then
     CONNECTION_COLOR=${PROMPT_C_LOGIN_SSH} # Connected on ssh
@@ -344,7 +344,7 @@ function bpSetPrompt() {
 #============================================================
 
 # Personal Aliases ----------------------------------------------------------
-bpSetAliases() { ##D Initialize aliases
+bpAliases() { ##D Initialize aliases
   alias rm='rm -i'
   alias cp='cp -i'
   alias mv='mv -i'
@@ -390,7 +390,7 @@ bpSetAliases() { ##D Initialize aliases
 
   # The ubiquitous 'll': directories first, with alphanumeric sorting:
   alias ll="ls -lv"
-  alias lm='ll |more '     #  Pipe through 'more'
+  alias lm='ll | more'    #  Pipe through 'more'
   alias lr='ll -R'        #  Recursive ls.
   alias la='ll -A'        #  Show hidden files.
   alias tree='tree -Csuh' #  Nice alternative to 'recursive ls' ...
@@ -414,9 +414,6 @@ bpSetAliases() { ##D Initialize aliases
   alias gnt='pmgp gnt'
   alias gnb='pmgp gnb'
   alias gls='git ls-tree HEAD'
-
-  alias got='git '
-  alias get='git '
 
   # Tailoring 'less' ----------------------------------------------------------
 
@@ -446,10 +443,15 @@ bpSetAliases() { ##D Initialize aliases
   alias moer='more'
   alias moew='more'
   alias kk='ll'
+	alias got='git '
+  alias get='git '
+
   # Aliases that use xtitle
   alias top='xtitle Processes on $HOST && top'
   alias make='xtitle Making $(basename $PWD) ; make'
   alias sall='service --status-all'
+	
+	alias env='env | sed -e "s/\x1b/\\\e/g"'
 
 }
 #-------------------------------------------------------------
@@ -1099,7 +1101,7 @@ _tar() {
 
 # Check if terminal is 16 color only
 if [[ "linux rxvt-16color" = *${TERM}* ]]; then
-  echo "Term is $TERM"��
+  echo "Term is $TERM"
   # ANSI foreground colors codes
   #
   E_BLACK=$'\e[30m'        # Black
@@ -1878,10 +1880,10 @@ BP_SELF_NAME=.bashrc
 BP_ARGUMENTS=$#
 
 ##V Current date
-BP_DATE=$(date +"%Y-%m-%d")
+#BP_DATE=$(date +"%Y-%m-%d")
 
 ##V Current time
-BP_TIME=$(date +"%H:%M:%S")
+#BP_TIME=$(date +"%H:%M:%S")
 
 ##V Number of columns in terminal
 BP_COLUMNS=$(tput cols)
@@ -1922,11 +1924,11 @@ bpInitSettings
 
 bpCompletion
 
-bpSetAliases
+bpAliases
 
-bpSetPrompt
+bpPrompt
 
-bpInitDisplay
+bpDisplay
 
 loginInfo
 
