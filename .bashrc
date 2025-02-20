@@ -152,6 +152,7 @@ host_all() {
 
   # Install aliases
   alias sui='sudo apt install'
+	alias sued='sudo $BP_EDITOR'
 
   # Dev aliases
   alias py='python3'
@@ -350,6 +351,7 @@ bpAliases() { ##D Initialize aliases
   alias mv='mv -i'
   # -> Prevents accidentally clobbering files.
   alias mkdir='mkdir -pv'
+	alias cpv='rsync -avh --info=progress2'
 
   alias which='type -a'
   alias grep='grep --color=auto'
@@ -370,10 +372,14 @@ bpAliases() { ##D Initialize aliases
   alias libpath='echo -e ${LD_LIBRARY_PATH//:/\\n}'
 
   alias ..='cd ..'
+	alias ...='cd ../..'
+	alias ....='cd ../../..'
+	alias .....='cd ../../../..'
 	alias .2='cd ../..'
 	alias .3='cd ../../..'
 	alias .4='cd ../../../..'
 	alias .5='cd ../../../../..'
+	
 
   alias j='jobs -l'
   alias h='history'
@@ -531,6 +537,15 @@ fii() { ##D Print file information
 	  *.png | *.svg | *.jpg) bpRun identify "${file}" ;;
 	  *);;
 	esac	
+}
+
+slc() { ##D Sudo last command
+  if [[ "$#" == 0 ]]; then
+	  sudo $(history -p '!!')â
+	else
+	  sudo "$@"
+	fi
+
 }
 
 ##- Create
