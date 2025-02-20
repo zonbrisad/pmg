@@ -513,12 +513,24 @@ fstr() { ##D Find a pattern in a set of files and highlight them:
 }
 
 fii() { ##D Print file information
+  file="${1}"
+	
+	if [ ! -f "${file}" ]; then
+	  bpError "File ${file} does not exist" 
+		return
+	fi
+	
+	echo
+  bpPrintDesc "Name" "$(basename "$(realpath "$file")")"
+  bpPrintDesc "Directory" "$(dirname "$(realpath "$file")")"
+  bpPrintDesc "Owner" "$(stat --format '%U' "$file")"
+  bpPrintDesc "Size" "$(stat --format '%s' "$file")"
   echo
-  bpPrintDesc "Name" "$(basename "$(realpath "$1")")"
-  bpPrintDesc "Directory" "$(dirname "$(realpath "$1")")"
-  bpPrintDesc "Owner" "$(stat -c '%U' "$1")"
-  bpPrintDesc "Size" "$(stat -c '%' "$1")"
-  echo
+	
+	case "${file}" in
+	  *.png | *.svg | *.jpg) bpRun identify "${file}" ;;
+	  *);;
+	esac	
 }
 
 ##- Create
