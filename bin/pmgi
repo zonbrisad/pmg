@@ -89,7 +89,8 @@ bpUserSettings() {
   )
 
   kvmPkgs=(
-    "apt" "qemu-kvm" ":"
+		"apt" "qemu-system-x86" ":"
+		"apt" "qemu-system-arm" ":"
     "apt" "virt-manager" ":"
     "apt" "virt-top" ":"
     "apt" "libvirt-daemon-system" ":"

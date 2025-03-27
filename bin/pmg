@@ -383,35 +383,6 @@ info() { ##D General information
   bpPrintLine
 }
 
-hwinfo() { ##D Print general hardware information
-  bpAssertProgs "inxi"
-  inxi --full --usb --filter
-}
-
-hwinfoe() { ##D Print general hardware information
-  bpAssertProgs "inxi"
-  sudo inxi --full --extra 3 --usb --filter --memory-modules
-}
-
-batinfo() { ##D Print battery information
-  for bat in "/sys/class/power_supply"/*; do
-    echo "X: $bat"
-    if [ $(cat ${bat}/type) == "Battery" ]; then
-      bpPrintLine "Battery $bat"
-      bpPrintDesc "Manufacturer:" "$(cat ${bat}/manufacturer)"
-      bpPrintDesc "Serial:" "$(cat ${bat}/serial_number)"
-      bpPrintDesc "Battery type:" "$(cat ${bat}/technology)"
-      bpPrintDesc "Status:" "$(cat ${bat}/status)"
-      bpPrintDesc "Charge state:" "$(cat ${bat}/capacity) %"
-      V=$(bc <<<"scale=1; $(cat ${bat}/voltage_now) / 1000000")
-      bpPrintDesc "Battery voltage:" "$V V"
-      C=$(bc <<<"scale=1; $(cat ${bat}/current_now) / 1000000")
-      bpPrintDesc "Battery current:" "$C A"
-    fi
-  done
-  bpPrintLine
-}
-
 ##- Project management (git)
 
 status() { ##D Show git status
