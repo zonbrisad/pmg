@@ -152,6 +152,10 @@ cool() { ##D Print information about cooling devices
   bpPrintLine
 }
 
+plb() { ##D Plot battery and power data in LSTOR
+  fplot --plot /sys/class/power_supply/BAT0/charge_now:1000 --plot /sys/class/power_supply/BAT0/voltage_now:1000000 --plot /sys/class/power_supply/AC/online --plotcpu --datapoints 3600
+}
+
 #---------------------------------------------------------------------
 # Bashplate settings
 #---------------------------------------------------------------------
