@@ -86,6 +86,11 @@ init_starship() {
   fi
 }
 
+host_rpdev() {
+ SYSTEMP=/sys/class/hwmon/hwmon0/temp1_input
+ start_ssh_agent
+}
+
 host_ubuntu() {
   start_ssh_agent
 }

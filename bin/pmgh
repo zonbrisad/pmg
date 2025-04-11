@@ -129,27 +129,32 @@ bat() { ##D Print battery information
 
 cool() { ##D Print information about cooling devices
   bpPrintLine "Thermal/cooling devices /sys/class/thermal"
-  echo -e "${E_UNDERLINE} ${E_BOLD}Device             Type            State        Max  ${E_RESET}"
+  echo -e "${E_UNDERLINE} ${E_BOLD}Device             Type                State        Max    ${E_RESET}"
   for cool in "/sys/class/thermal"/cooling_device*; do
-    printf " %-18s %-10s %10s %10s\n" "$(basename $cool)" "$(get_file ${cool}/type)" "$(get_file ${cool}/cur_state)" "$(get_file ${cool}/max_state)"
+    printf " %-18s %-18s %6s %10s\n" "$(basename $cool)" "$(get_file ${cool}/type)" "$(get_file ${cool}/cur_state)" "$(get_file ${cool}/max_state)"
   done
-  echo -e "${E_UNDERLINE} ${E_BOLD}Device             Type             Mode             ${E_RESET}"
+  echo
+  echo -e "${E_UNDERLINE} ${E_BOLD}Device             Type                   Mode             ${E_RESET}"
   for cool in "/sys/class/thermal"/thermal_zone*; do
-    printf " %-18s %-10s %10s %10s\n" "$(basename $cool)" "$(get_file ${cool}/type)" "$(get_file ${cool}/mode)"
+    printf " %-18s %-18s %8s %10s\n" "$(basename $cool)" "$(get_file ${cool}/type)" "$(get_file ${cool}/mode)"
   done
 
   echo
   bpPrintLine "Hardware monitoring devices /sys/class/hwmon"
-  echo -e "${E_UNDERLINE} ${E_BOLD}Device             Name       Label                 ${E_RESET}"
+  echo -e "${E_UNDERLINE} ${E_BOLD}Device             Name         Label                       ${E_RESET}"
   for dev in "/sys/class/hwmon"/*; do
     printf " %-18s %-10s\n" "$(basename $dev)" "$(get_file ${dev}/name)"
 
     for xx in "${dev}"/temp*_label; do
-      printf "                               %-10s  %10s\n" "$(get_file ${xx})" "$(get_file ${xx/_label/}_input)"
+      printf "                                 %-16s  %10s\n" "$(get_file ${xx})" "$(get_file ${xx/_label/}_input)"
       # printf " %-18s %-10s %10s %10s\n" "$(basename $x)" "$(get_file ${x}/name)" "$(get_file ${x}/temp1_input)" "$(get_file ${x}/mode)"
     done
   done
   bpPrintLine
+}
+
+plb() { ##D Plot battery and power data in LSTOR
+  fplot --plot /sys/class/power_supply/BAT0/charge_now:1000 --plot /sys/class/power_supply/BAT0/voltage_now:1000000 --plot /sys/class/power_supply/AC/online --plotcpu --datapoints 3600
 }
 
 #---------------------------------------------------------------------
