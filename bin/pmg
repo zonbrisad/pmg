@@ -328,7 +328,9 @@ bpIpInfo() { # List all default IP adresses
 
 ##- Fixes
 fix_dns() { ##D Fix DNS lookup on systems on Linux Mint
-  bpAppendIfNoSuchLine /etc/systemd/resolved.conf "DNSStubListener=no"
+  BP_SUDO=true
+	bpAppendIfNoSuchLine /etc/systemd/resolved.conf "DNSStubListener=no"
+	BP_SUDO=false
   sudo systemctl restart systemd-resolved
 }
 
