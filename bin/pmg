@@ -326,6 +326,12 @@ bpIpInfo() { # List all default IP adresses
   done
 }
 
+##- Fixes
+fix_dns() { ##D Fix DNS lookup on systems on Linux Mint
+  bpAppendIfNoSuchLine /etc/systemd/resolved.conf "DNSStubListener=no"
+  sudo systemctl restart systemd-resolved
+}
+
 ##- Information
 
 bpCheckVersion() {
@@ -1048,7 +1054,13 @@ bpReplaceLine() { ##I Replace entire line matching pattern
 # $2 line to append
 #
 bpAppendIfNoSuchLine() { ##I Append a line if it does not exist in file
-  grep -q -F "$2" "$1" || echo "$2" >>"$1"
+  #grep -q -F "$2" "$1" || echo "$2" >>"$1"
+  if [ "$BP_SUDO" == true ]; then
+    sudo grep -q -F "$2" "$1" || echo -e "$2" | sudo tee -a "$1" >/dev/null
+  else
+    grep -q -F "$2" "$1" || echo -e "$2" >>"$1"
+  fi
+
 }
 
 #
