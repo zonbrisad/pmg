@@ -415,7 +415,7 @@ bpAliases() { ##D Initialize aliases
   alias gd='git diff'
   alias gl='git log --all --graph --format=oneline'
   alias gh='git hist'
-  alias go='git checkout '
+  alias gco='git checkout '
   alias gk='gitk --all&'
   alias gx='gitx --all'
   #alias gi='git-info --color'
