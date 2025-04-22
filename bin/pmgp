@@ -44,7 +44,7 @@ bpUserSettings() {
 
   GIT="git@${GITSERVER}:${GITUSER}"
 
-  TEMPLATES=${BP_SELF_DIR}/templates
+  TEMPLATES=${BP_SELF_DIR}/../templates
 
   GIG=${TEMPLATES}/default/.gitignore
   GRM=${TEMPLATES}/default/README.md

@@ -39,7 +39,8 @@ set -o pipefail
 # User defined Settings
 #---------------------------------------------------------------------
 bpUserSettings() {
-  :
+  TEMPLATES=${BP_SELF_DIR}/../templates
+  GO_TEMPLATES=${TEMPLATES}/go
 }
 #---------------------------------------------------------------------
 # User defined functions
@@ -49,6 +50,7 @@ bpUserSettings() {
 pge() { ##D PyQtGraph example program
   python3 -m pyqtgraph.examples
 }
+
 qwd() { ##D Qt widget demo
   if [ "$2" == "ied" ]; then
     code ~/Projects/Tester/python/qt5/qtwidgetdemo
@@ -118,6 +120,29 @@ ard() { ##D Read arduino ATMega328P
   bpPrintLine
   PORT=$(bpReadStr "Enter serial port" "/dev/ttyUSB0")
   avrdude -v -c arduino -P "$PORT" -p m328p -U flash:r:flash.hex:i
+}
+
+##- Go
+
+newgp() { ##D Create go project
+  # if [ -z "$1" ]; then
+  #   echo "Usage: go <projectname>"
+  #   return 1
+  # fi
+  PROJ=$(bpReadStr "Enter project name")
+  if [ -d "$PROJ" ]; then
+    echo "Project $PROJ already exists"
+    return 1
+  fi
+  bpMkDir "$PROJ"
+  bpCd "$PROJ"
+  go mod init "$PROJ"
+  go mod tidy
+  go mod vendor
+  bpCd ..
+  #go mod tidy
+  #go mod vendor
+  #go build -o "$1" .
 }
 
 #---------------------------------------------------------------------
