@@ -142,6 +142,7 @@ host_all() {
   alias rpexp3='ssh lpmg@rpexp3'
   alias rpdesk='ssh lpmg@rpdesk'
   alias rpserver='ssh lpmg@rpserver'
+	alias rpdev='ssh lpmg@rpdev'
 
   alias lsmnt='mount | column --table --table-hide 2,4'
   alias lsusr='cat /etc/passwd | column --table --separator :'
@@ -356,8 +357,10 @@ bpAliases() { ##D Initialize aliases
   alias mv='mv -i'
   # -> Prevents accidentally clobbering files.
   alias mkdir='mkdir -pv'
-	alias cpv='rsync -avh --info=progress2'
-
+	alias cpv='rsync --archive --verbose --human-readable --info=progress2'
+	
+	alias rsync='rsync --archive --human-readable --info=progress2'
+	
   alias which='type -a'
   alias grep='grep --color=auto'
 	alias egrep='egrep --color=auto'
