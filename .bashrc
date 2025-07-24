@@ -120,9 +120,9 @@ host_main() {
 }
 
 host_lliten() {
-  SYSVOLT=/sys/class/power_supply/C1B6/voltage_now
-  SYSCUR=/sys/class/power_supply/C1B6/current_now
-  SYSTEMP=/sys/class/thermal/thermal_zone1/temp
+  SYSVOLT=/sys/class/power_supply/BAT0/voltage_now
+	#SYSCUR=/sys/class/power_supply/C1B6/current_now
+  SYSTEMP=/sys/class/hwmon/hwmon7/temp1_input
   start_ssh_agent
   init_starship
 }
