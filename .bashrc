@@ -87,8 +87,8 @@ init_starship() {
 }
 
 host_rpdev() {
- SYSTEMP=/sys/class/hwmon/hwmon0/temp1_input
- start_ssh_agent
+  SYSTEMP=/sys/class/hwmon/hwmon0/temp1_input
+  start_ssh_agent
 }
 
 host_ubuntu() {
@@ -142,7 +142,7 @@ host_all() {
   alias rpexp3='ssh lpmg@rpexp3'
   alias rpdesk='ssh lpmg@rpdesk'
   alias rpserver='ssh lpmg@rpserver'
-	alias rpdev='ssh lpmg@rpdev'
+  alias rpdev='ssh lpmg@rpdev'
 
   alias lsmnt='mount | column --table --table-hide 2,4'
   alias lsusr='cat /etc/passwd | column --table --separator :'
@@ -154,11 +154,11 @@ host_all() {
   alias ip='ip -brief -color'
   alias mount='mount | column --table --table-hide 2,4'
   alias mnt='mount'
-	alias free='free --human'
+  alias free='free --human'
 
   # Install aliases
   alias sui='sudo apt install'
-	alias sued='sudo $BP_EDITOR'
+  alias sued='sudo $BP_EDITOR'
 
   # Dev aliases
   alias py='python3'
@@ -357,14 +357,14 @@ bpAliases() { ##D Initialize aliases
   alias mv='mv -i'
   # -> Prevents accidentally clobbering files.
   alias mkdir='mkdir -pv'
-	alias cpv='rsync --archive --verbose --human-readable --info=progress2'
-	
-	alias rsync='rsync --archive --human-readable --info=progress2'
-	
+  alias cpv='rsync --archive --verbose --human-readable --info=progress2'
+
+  alias rsync='rsync --archive --human-readable --info=progress2'
+
   alias which='type -a'
   alias grep='grep --color=auto'
-	alias egrep='egrep --color=auto'
-	alias fgrep='fgrep --color=auto'
+  alias egrep='egrep --color=auto'
+  alias fgrep='fgrep --color=auto'
   alias du='du -k --human-readable --max-depth 1' # Makes a more readable output.
   alias df='df -k --human-readable --print-type'
 
@@ -380,14 +380,13 @@ bpAliases() { ##D Initialize aliases
   alias libpath='echo -e ${LD_LIBRARY_PATH//:/\\n}'
 
   alias ..='cd ..'
-	alias ...='cd ../..'
-	alias ....='cd ../../..'
-	alias .....='cd ../../../..'
-	alias .2='cd ../..'
-	alias .3='cd ../../..'
-	alias .4='cd ../../../..'
-	alias .5='cd ../../../../..'
-	
+  alias ...='cd ../..'
+  alias ....='cd ../../..'
+  alias .....='cd ../../../..'
+  alias .2='cd ../..'
+  alias .3='cd ../../..'
+  alias .4='cd ../../../..'
+  alias .5='cd ../../../../..'
 
   alias j='jobs -l'
   alias h='history'
@@ -422,7 +421,7 @@ bpAliases() { ##D Initialize aliases
   alias gk='gitk --all&'
   alias gx='gitx --all'
   #alias gi='git-info --color'
-	alias gi='pmgp gi'
+  alias gi='pmgp gi'
   alias gp='git push'
   alias gpt='git push origin --tags'
   alias gnt='pmgp gnt'
@@ -457,17 +456,24 @@ bpAliases() { ##D Initialize aliases
   alias moer='more'
   alias moew='more'
   alias kk='ll'
-	alias got='git '
+  alias got='git '
   alias get='git '
 
   # Aliases that use xtitle
   alias top='xtitle Processes on $HOST && top'
   alias make='xtitle Making $(basename $PWD) ; make'
   alias sall='service --status-all'
-	
-	alias env='env | sed -e "s/\x1b/\\\e/g"'
+
+  alias alias='alias | sed -e "s/=\(.*\)/=\\${E_BR_YELLOW}\1\\${E_RESET}/" \
+    -e "s/ [^=]*/\\${E_BR_CYAN}&\\${E_RESET}/1" \
+    -e "s/alias/\\${E_DARKGRAY}&\\${E_RESET}/1"'
+
+  alias env='env | sed -e "s/\x1b/\\\e/g" -e "s/\x1b/\\\e/g" \
+    -e "s/=\(.*\)/=\\${E_BR_YELLOW}\1\\${E_RESET}/" \
+    -e "s/[^=]*/\\${E_BR_CYAN}&\\${E_RESET}/1"'
 
 }
+
 #-------------------------------------------------------------
 # A few fun ones
 #-------------------------------------------------------------
@@ -528,31 +534,31 @@ fstr() { ##D Find a pattern in a set of files and highlight them:
 
 fii() { ##D Print file information
   file="${1}"
-	
-	if [ ! -f "${file}" ]; then
-	  bpError "File ${file} does not exist" 
-		return
-	fi
-	
-	echo
+
+  if [ ! -f "${file}" ]; then
+    bpError "File ${file} does not exist"
+    return
+  fi
+
+  echo
   bpPrintDesc "Name" "$(basename "$(realpath "$file")")"
   bpPrintDesc "Directory" "$(dirname "$(realpath "$file")")"
   bpPrintDesc "Owner" "$(stat --format '%U' "$file")"
   bpPrintDesc "Size" "$(stat --format '%s' "$file")"
   echo
-	
-	case "${file}" in
-	  *.png | *.svg | *.jpg) bpRun identify "${file}" ;;
-	  *);;
-	esac	
+
+  case "${file}" in
+  *.png | *.svg | *.jpg) bpRun identify "${file}" ;;
+  *) ;;
+  esac
 }
 
 slc() { ##D Sudo last command
   if [[ "$#" == 0 ]]; then
-	  sudo $(history -p '!!')â
-	else
-	  sudo "$@"
-	fi
+    sudo $(history -p '!!')ï¿½
+  else
+    sudo "$@"
+  fi
 
 }
 
@@ -628,7 +634,7 @@ extract() { ##D Handy Extract Program
     *.zip) unzip "$1" ;;
     *.Z) uncompress "$1" ;;
     *.7z) 7z x "$1" ;;
-		*.deb) ar x "$2" ;;
+    *.deb) ar x "$2" ;;
     *) bpError "File '$1' cannot be extracted via >extract<" ;;
     esac
   else
@@ -639,7 +645,7 @@ extract() { ##D Handy Extract Program
 ##- git
 
 #gi() { ##D Show information about project
-#  
+#
 #}
 
 ##- tmux
@@ -730,7 +736,7 @@ bpIpInfo() { ##I List all default IP adresses
     IP=$(interfaceToIp "$INTERFACE")
     MAC=$(interfaceToMAC "$INTERFACE")
     if [ -n "$IP" ]; then
-			printf "%-16s %-10s %s\n" $IP $INTERFACE $MAC
+      printf "%-16s %-10s %s\n" $IP $INTERFACE $MAC
     fi
   done
 }
