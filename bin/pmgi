@@ -89,8 +89,8 @@ bpUserSettings() {
   )
 
   kvmPkgs=(
-		"apt" "qemu-system-x86" ":"
-		"apt" "qemu-system-arm" ":"
+    "apt" "qemu-system-x86" ":"
+    "apt" "qemu-system-arm" ":"
     "apt" "virt-manager" ":"
     "apt" "virt-top" ":"
     "apt" "libvirt-daemon-system" ":"
@@ -128,6 +128,7 @@ bpUserSettings() {
 
   testing=(
     "apt" "stress-ng" ":"
+    "apt" "s-tui"
   )
 
   snap_unrestrict() {
@@ -157,7 +158,7 @@ bpUserSettings() {
     "apt" "flex" ":"
     "apt" "texinfo" ":"
     "apt" "git" ":"
-		"apt" "git-info" ":"
+    "apt" "git-info" ":"
     "apt" "subversion" ":"
     "apt" "meld" ":"
     "apt" "doxygen" ":"
@@ -239,7 +240,7 @@ bpUserSettings() {
     "apt" "python3-git" ":"
     "pip" "rich" ":"
     "pip" "textual" ":"
-		"pip" "tqdm" ":"
+    "pip" "tqdm" ":"
   )
 
   pythonLibGTK=(
@@ -541,6 +542,14 @@ devutils() { ##D Install development utls like git, svn, flex, doxygen
   installPkgs "${devUtils[@]}"
 }
 
+##- System
+starship() { ##D Starship prompt manager
+  curl -sS https://starship.rs/install.sh | sh
+}
+
+perf() { ##D System test and performance packages
+  installPkgs "${testing[@]}"
+}
 ##- Server packages
 
 kvm() { ##D Install KVM virtual machine manager
@@ -716,7 +725,7 @@ rp() { ##D Install Raspberry Pi development tools
   installPkgs "${devRasperryPi[@]}"
 }
 
-##- Other
+##- Misc
 
 sci() { ##D Install science and technology packages
   installPkgs "${science[@]}"
@@ -724,14 +733,6 @@ sci() { ##D Install science and technology packages
 
 inkscape() { ##D Install Inkscape resources(fonts/clipart)
   installPkgs "${inkscapePkgs[@]}"
-}
-
-starship() { ##D Starship prompt manager
-  curl -sS https://starship.rs/install.sh | sh
-}
-
-perf() { ##D System test and performance packages
-  installPkgs "${testing[@]}"
 }
 
 ##- Projects

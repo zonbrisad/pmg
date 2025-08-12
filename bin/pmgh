@@ -105,23 +105,76 @@ get_file() { ##I Print file content, if exist
   fi
 }
 
+get_param() { ##I Get content from file, if existing
+  if [ -f "$1" ]; then
+    if data=$(cat "$1" 2>/dev/null); then
+      echo "$data"
+			return 0
+    else
+      echo "N/A"
+			return 1
+    fi
+  else
+    echo "N/A"
+		return 1
+  fi
+}
+
 bat() { ##D Print battery information
-  for bat in /sys/class/power_supply*/; do
+  for bat in /sys/class/power_supply/*; do
     if [ "$bat" == "/sys/class/power_supply/" ]; then
       continue
     fi
 
     if [ $(cat ${bat}/type) == "Battery" ]; then
       bpPrintLine "Battery $bat"
-      bpPrintDesc "Manufacturer:" "$(cat ${bat}/manufacturer)"
-      bpPrintDesc "Serial:" "$(cat ${bat}/serial_number)"
-      bpPrintDesc "Battery type:" "$(cat ${bat}/technology)"
-      bpPrintDesc "Status:" "$(cat ${bat}/status)"
-      bpPrintDesc "Charge state:" "$(cat ${bat}/capacity) %"
-      V=$(bc <<<"scale=1; $(cat ${bat}/voltage_now) / 1000000")
-      bpPrintDesc "Battery voltage:" "$V V"
-      C=$(bc <<<"scale=1; $(cat ${bat}/current_now) / 1000000")
-      bpPrintDesc "Battery current:" "$C A"
+			bpPrintDesc "Manufacturer:" "$(get_param ${bat}/manufacturer)"
+      bpPrintDesc "Serial:" "$(get_param ${bat}/serial_number)"
+      bpPrintDesc "Battery type:" "$(get_param ${bat}/technology)"
+			bpPrintDesc "Cycle count:" "$(get_param ${bat}/cycle_count)"
+			data=$(get_param ${bat}/energy_full)
+			if [ $? -eq 0 ]; then
+				E=$(bc <<<"scale=1; $data / 1000000")
+				bpPrintDesc "Energy capacity:" "$E Wh"
+ 			else
+			  bpPrintDesc "Energy capacity:" "$data"
+			fi
+
+      bpPrintDesc "Status:" "$(get_param ${bat}/status)"
+			bpPrintDesc "Charge state:" "$(get_param ${bat}/capacity) %"
+      
+			
+			data=$(get_param ${bat}/energy_now)
+			if [ $? -eq 0 ]; then
+				E=$(bc <<<"scale=1; $data / 1000000")
+				bpPrintDesc "Energy level:" "$E Wh"
+ 			else
+			  bpPrintDesc "Energy level:" "$data"
+			fi
+      
+			
+			data=$(get_param ${bat}/voltage_now)
+			if [ $? -eq 0 ]; then
+				V=$(bc <<<"scale=1; $data / 1000000")
+				bpPrintDesc "Voltage:" "$V V"
+ 			else
+			  bpPrintDesc "Voltage:" "$data"
+			fi
+		  data=$(get_param ${bat}/current_now)
+			if [ $? -eq 0 ]; then
+        C=$(bc <<<"scale=1; $data / 1000000")
+				bpPrintDesc "Current:" "$C A"
+ 			else
+			  bpPrintDesc "Current:" "$data"
+			fi
+			data=$(get_param ${bat}/power_now)
+			if [ $? -eq 0 ]; then
+        P=$(bc <<<"scale=1; $data / 1000000")
+				bpPrintDesc "Power:" "$P W"
+ 			else
+			  bpPrintDesc "Power:" "$data"
+			fi
+      
     fi
   done
   bpPrintLine
