@@ -157,6 +157,25 @@ plb() { ##D Plot battery and power data in LSTOR
   fplot --plot /sys/class/power_supply/BAT0/charge_now:1000 --plot /sys/class/power_supply/BAT0/voltage_now:1000000 --plot /sys/class/power_supply/AC/online --plotcpu --datapoints 3600
 }
 
+
+##- DS18B20
+dsi() { ##D DS18B20 information
+  echo
+  echo "Add to bottom of /boot/firmware/config.txt:"
+	echo "dtoverlay=w1-gpio"
+	echo
+	echo "https://www.circuitbasics.com/raspberry-pi-ds18b20-temperature-sensor-tutorial/"
+	echo 
+	
+	bpAppendIfNoSuchLine "/boot/firmware/config.txt" "dtoverlay=w1-gpio"
+}
+
+dsl() { ##D Load w1-therm kernel module
+
+  sudo modprobe w1-therm 
+}
+
+
 #---------------------------------------------------------------------
 # Bashplate settings
 #---------------------------------------------------------------------
@@ -763,9 +782,14 @@ bpReplaceLine() { ##I Replace entire line matching pattern
 # $1 file
 # $2 line to append
 #
-bpAppendIfNoSuchLine() { ##I Append a line if it does not exist in file
-  grep -q -F "$2" "$1" || echo "$2" >>"$1"
+bpAppendIfNoSuchLine() { ##I Append a line if it does not exist in file	
+  if [ "$BP_SUDO" == true ]; then
+  	sudo grep -q -F "$2" "$1" || echo "$2"  | sudo tee -a "$1" > /dev/null
+	else
+    grep -q -F "$2" "$1" || echo "$2" >>"$1"
+	fi
 }
+
 
 #
 # $1 file
