@@ -785,7 +785,7 @@ projects() { ##D Checkout all git projects
 }
 
 rmprojects() { ##D Remove all projects
-  :
+  bpRm  "${PROJDIR}"â
 }
 
 #---------------------------------------------------------------------
