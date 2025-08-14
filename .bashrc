@@ -121,7 +121,7 @@ host_main() {
 
 host_lliten() {
   SYSVOLT=/sys/class/power_supply/BAT0/voltage_now
-	#SYSCUR=/sys/class/power_supply/C1B6/current_now
+  #SYSCUR=/sys/class/power_supply/C1B6/current_now
   SYSTEMP=/sys/class/hwmon/hwmon7/temp1_input
   start_ssh_agent
   init_starship
@@ -464,13 +464,14 @@ bpAliases() { ##D Initialize aliases
   alias make='xtitle Making $(basename $PWD) ; make'
   alias sall='service --status-all'
 
-  alias alias='alias | sed -e "s/=\(.*\)/=\\${E_BR_YELLOW}\1\\${E_RESET}/" \
+  alias al='alias | sed -e "s/=\(.*\)/=\\${E_BR_YELLOW}\1\\${E_RESET}/" \
     -e "s/ [^=]*/\\${E_BR_CYAN}&\\${E_RESET}/1" \
     -e "s/alias/\\${E_DARKGRAY}&\\${E_RESET}/1"'
 
   alias env='env | sed -e "s/\x1b/\\\e/g" -e "s/\x1b/\\\e/g" \
     -e "s/=\(.*\)/=\\${E_BR_YELLOW}\1\\${E_RESET}/" \
     -e "s/[^=]*/\\${E_BR_CYAN}&\\${E_RESET}/1"'
+  #-e "s/=/\\${E_DARKGRAY}=\\${E_RESET}/"'
 
 }
 
@@ -786,11 +787,13 @@ start_agent() {
 
 start_ssh_agent() { ##D Start ssh-agent
   if [ -f "${SSH_ENV}" ]; then
-    . "${SSH_ENV}" >/dev/null
-
-    if ps -p "${SSH_AGENT_PID}" >/dev/null; then
+	  . "${SSH_ENV}" >/dev/null
+		
+    if ! ps -p "${SSH_AGENT_PID}" >/dev/null; then
       start_agent
-    fi
+    else
+		  bpInfo "ssh-agent already running(${SSH_AGENT_PID})"
+		fi
 
   else
     start_agent
