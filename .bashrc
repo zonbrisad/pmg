@@ -792,11 +792,13 @@ start_agent() {
 
 start_ssh_agent() { ##D Start ssh-agent
   if [ -f "${SSH_ENV}" ]; then
-    . "${SSH_ENV}" >/dev/null
-
-    if ps -p "${SSH_AGENT_PID}" >/dev/null; then
+	  . "${SSH_ENV}" >/dev/null
+		
+    if ! ps -p "${SSH_AGENT_PID}" >/dev/null; then
       start_agent
-    fi
+    else
+		  bpInfo "ssh-agent already running(${SSH_AGENT_PID})"
+		fi
 
   else
     start_agent
