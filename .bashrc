@@ -59,9 +59,9 @@ ii() { ##D Print general system information
   bpPrintDesc "Memory:" "$(bpMem)"
   bpPrintDesc "Distibution" "$(lsb_release -d | cut -b 14-)"
 
-  if [ -n "${SYSTEMP}" ]; then
-    #    T=$(bc <<<"scale=1; $(cat "${SYSTEMP}") / 1000")
-    T=$(($(cat "${SYSTEMP}") / 1000))
+  if [ -n "${CPUTEMP}" ]; then
+    #    T=$(bc <<<"scale=1; $(cat "${CPUTEMP}") / 1000")
+    T=$(($(cat "${CPUTEMP}") / 1000))
     bpPrintDesc "Temperature:" "$T °C"
   fi
 
@@ -87,7 +87,7 @@ init_starship() {
 }
 
 host_rpdev() {
-  SYSTEMP=/sys/class/hwmon/hwmon0/temp1_input
+  CPUTEMP=/sys/class/hwmon/hwmon0/temp1_input
   start_ssh_agent
 }
 
@@ -96,33 +96,34 @@ host_ubuntu() {
 }
 
 host_rpexp() {
-  SYSTEMP=/sys/class/thermal/thermal_zone0/temp
+  CPUTEMP=/sys/class/thermal/thermal_zone0/temp
 }
 
 host_rpexp2() {
-  SYSTEMP=/sys/class/thermal/thermal_zone0/temp
+  CPUTEMP=/sys/class/thermal/thermal_zone0/temp
   start_ssh_agent
 }
 
 host_rpdesk() {
-  SYSTEMP=/sys/class/thermal/thermal_zone0/temp
+  CPUTEMP=/sys/class/thermal/thermal_zone0/temp
   start_ssh_agent
   init_starship
 }
 
 host_rpserver() {
-  SYSTEMP=/sys/class/thermal/thermal_zone0/temp
+  CPUTEMP=/sys/class/thermal/thermal_zone0/temp
 }
 
 host_main() {
-  #SYSTEMP=/sys/class/thermal/thermal_zone2/temp
+  #CPUTEMP=/sys/class/thermal/thermal_zone2/temp
+	CPUTEMP=/sys/class/hwmon/hwmon1/temp1_input
   init_starship
 }
 
 host_lliten() {
   SYSVOLT=/sys/class/power_supply/BAT0/voltage_now
   #SYSCUR=/sys/class/power_supply/C1B6/current_now
-  SYSTEMP=/sys/class/hwmon/hwmon7/temp1_input
+  CPUTEMP=/sys/class/hwmon/hwmon7/temp1_input
   start_ssh_agent
   init_starship
 }
@@ -133,6 +134,10 @@ host_extra() {
 
 host_fileserver() {
   :
+}
+
+cputemp() { ##D Plot cputemperature with fplot
+  fplot --interval 1000 --plot "${CPUTEMP}":1000::m5@CPU-temperature --plot "${CPUTEMP}":1000::a5@CPU-temperature --plot "${CPUTEMP}":1000@CPU-temperature
 }
 
 host_all() {

@@ -35,5 +35,10 @@
 			"path": ".."
 		}
 	],
-	"settings": {}
+	"settings": {
+		"files.associations": {
+			"bpexample": "shellscript",
+			"mmmotor_settings.h": "c"
+		}
+	}
 }
