@@ -299,6 +299,10 @@ bpUserSettings() {
   inkscapePkgs=(
     "git" "https://github.com/upb-lea/Inkscape_electric_Symbols.git" "${HOME}/pmg/media/inkscape/symbols"
   )
+	
+	kicadPkgs=(
+	  "ppa" "kicad" "ppa:kicad/kicad-9.0-releases"
+	)
 
 }
 
@@ -380,7 +384,7 @@ ppaIsInstalled() { ##I Check if a PPA is added to source list
 
 installPPA() { ##I Install package from ppa
 
-  bpError "PPA install not available"
+  #bpError "PPA install not available"
 
   if ! ppaIsInstalled "$1"; then
     sudo add-apt-repository --yes "$2"
@@ -734,6 +738,11 @@ sci() { ##D Install science and technology packages
 inkscape() { ##D Install Inkscape resources(fonts/clipart)
   installPkgs "${inkscapePkgs[@]}"
 }
+
+kicad() { ##D Install Kicad electronics desigen software
+  installPkgs "${kicadPkgs[@]}"
+}
+
 
 ##- Projects
 
