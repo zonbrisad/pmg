@@ -739,7 +739,7 @@ inkscape() { ##D Install Inkscape resources(fonts/clipart)
   installPkgs "${inkscapePkgs[@]}"
 }
 
-kicad() { ##D Install Kicad electronics desigen software
+kicad() { ##D Install Kicad electronics design software
   installPkgs "${kicadPkgs[@]}"
 }
 
