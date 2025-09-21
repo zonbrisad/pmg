@@ -91,6 +91,11 @@ host_rpdev() {
   start_ssh_agent
 }
 
+host_rpdev2() {
+  CPUTEMP=/sys/class/hwmon/hwmon0/temp1_input
+  start_ssh_agent
+}
+
 host_ubuntu() {
   start_ssh_agent
 }
