@@ -122,6 +122,7 @@ bpUserSettings() {
     "apt" "gpiod" ":"
     "apt" "python3-pip" ":"
     "apt" "npm" ":"
+		"apt" "nfs-client" ":"
   )
   #    "git" "https://github.com/ogham/exa" ":"
   #    "git" "powertop" ":"
