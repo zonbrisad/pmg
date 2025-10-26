@@ -256,6 +256,10 @@ bpUserSettings() {
     "apt" "python3-guidata" ":"
     "apt" "pyqt5-dev-tools" ":"
     "apt" "pyqt5-examples" ":"
+		"apt" "python3-pyqt6" ":"
+    "apt" "python3-pyqt6.qtserialport" ":"
+		"apt" "pyqt6-dev-tools" ":"
+		"apt" "pyqt6-examples" ":"
     "apt" "python3-pyqtgraph" ":"
   )
 
