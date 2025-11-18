@@ -58,6 +58,7 @@ bpUserSettings() {
     "def" "def install"
     "fplot" "fplot_init -q"
     "pins" "pins_init -q"
+		"pitools" "pitools_init -q"
   )
 
   #
