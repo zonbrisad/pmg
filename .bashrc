@@ -153,6 +153,7 @@ host_all() {
   alias rpdesk='ssh lpmg@rpdesk'
   alias rpserver='ssh lpmg@rpserver'
   alias rpdev='ssh lpmg@rpdev'
+	alias rpdev2='ssh pmg@rpdev2'
 
   alias lsmnt='mount | column --table --table-hide 2,4'
   alias lsusr='cat /etc/passwd | column --table --separator :'
