@@ -36,6 +36,9 @@
 		},
 		{
 			"path": "../../Projects/pae"
+		},
+		{
+			"path": "../../Projects/pitools"
 		}
 	],
 	"settings": {
