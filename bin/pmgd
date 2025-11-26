@@ -145,6 +145,12 @@ newgp() { ##D Create go project
   #go build -o "$1" .
 }
 
+##- VSCode
+
+chm() { ##D Check Node.js heap size limit
+  node -e 'console.log(v8.getHeapStatistics().heap_size_limit / 1024 / 1024, "MB")' 
+}
+
 #---------------------------------------------------------------------
 # Bashplate settings
 #---------------------------------------------------------------------
