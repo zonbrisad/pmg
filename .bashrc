@@ -22,6 +22,7 @@ export LD_LIBRARY_PATH=/usr/local/lib
 
 # Application settings ------------------------------------------------------
 export SVN_EDITOR=jed
+export NODE_OPTIONS="--max-old-space-size=4096"
 
 # Needed for gdb
 export SHELL=/bin/bash

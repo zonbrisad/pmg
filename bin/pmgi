@@ -269,7 +269,7 @@ bpUserSettings() {
     "apt" "python3" ":"
     "apt" "python3-pip" ":"
     "apt" "bpython" ":"
-    "pip" "black" ":"
+    "apt" "black" ":"
   )
 
   devMicroPython=(
