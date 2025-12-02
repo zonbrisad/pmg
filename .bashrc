@@ -59,9 +59,9 @@ ii() { ##D Print general system information
   bpPrintDesc "Memory:" "$(bpMem)"
   bpPrintDesc "Distibution" "$(lsb_release -d | cut -b 14-)"
 
-  if [ -n "${SYSTEMP}" ]; then
-    #    T=$(bc <<<"scale=1; $(cat "${SYSTEMP}") / 1000")
-    T=$(($(cat "${SYSTEMP}") / 1000))
+  if [ -n "${CPUTEMP}" ]; then
+    #    T=$(bc <<<"scale=1; $(cat "${CPUTEMP}") / 1000")
+    T=$(($(cat "${CPUTEMP}") / 1000))
     bpPrintDesc "Temperature:" "$T Â°C"
   fi
 
@@ -86,38 +86,49 @@ init_starship() {
   fi
 }
 
+host_rpdev() {
+  CPUTEMP=/sys/class/hwmon/hwmon0/temp1_input
+  start_ssh_agent
+}
+
+host_rpdev2() {
+  CPUTEMP=/sys/class/hwmon/hwmon0/temp1_input
+  start_ssh_agent
+}
+
 host_ubuntu() {
   start_ssh_agent
 }
 
 host_rpexp() {
-  SYSTEMP=/sys/class/thermal/thermal_zone0/temp
+  CPUTEMP=/sys/class/thermal/thermal_zone0/temp
 }
 
 host_rpexp2() {
-  SYSTEMP=/sys/class/thermal/thermal_zone0/temp
+  CPUTEMP=/sys/class/thermal/thermal_zone0/temp
   start_ssh_agent
 }
 
 host_rpdesk() {
-  SYSTEMP=/sys/class/thermal/thermal_zone0/temp
+  CPUTEMP=/sys/class/thermal/thermal_zone0/temp
   start_ssh_agent
   init_starship
 }
 
 host_rpserver() {
-  SYSTEMP=/sys/class/thermal/thermal_zone0/temp
+  CPUTEMP=/sys/class/thermal/thermal_zone0/temp
 }
 
 host_main() {
-  #SYSTEMP=/sys/class/thermal/thermal_zone2/temp
+  #CPUTEMP=/sys/class/thermal/thermal_zone2/temp
+	CPUTEMP=/sys/class/hwmon/hwmon1/temp1_input
   init_starship
 }
 
 host_lliten() {
-  SYSVOLT=/sys/class/power_supply/C1B6/voltage_now
-  SYSCUR=/sys/class/power_supply/C1B6/current_now
-  SYSTEMP=/sys/class/thermal/thermal_zone1/temp
+  SYSVOLT=/sys/class/power_supply/BAT0/voltage_now
+  #SYSCUR=/sys/class/power_supply/C1B6/current_now
+  CPUTEMP=/sys/class/hwmon/hwmon7/temp1_input
   start_ssh_agent
   init_starship
 }
@@ -130,6 +141,10 @@ host_fileserver() {
   :
 }
 
+cputemp() { ##D Plot cputemperature with fplot
+  fplot --interval 1000 --plot "${CPUTEMP}":1000::m5@CPU-temperature --plot "${CPUTEMP}":1000::a5@CPU-temperature --plot "${CPUTEMP}":1000@CPU-temperature
+}
+
 host_all() {
   # ssh login aliases
   alias rpexp='ssh pmg@rpexp'
@@ -137,6 +152,8 @@ host_all() {
   alias rpexp3='ssh lpmg@rpexp3'
   alias rpdesk='ssh lpmg@rpdesk'
   alias rpserver='ssh lpmg@rpserver'
+  alias rpdev='ssh lpmg@rpdev'
+	alias rpdev2='ssh pmg@rpdev2'
 
   alias lsmnt='mount | column --table --table-hide 2,4'
   alias lsusr='cat /etc/passwd | column --table --separator :'
@@ -148,11 +165,11 @@ host_all() {
   alias ip='ip -brief -color'
   alias mount='mount | column --table --table-hide 2,4'
   alias mnt='mount'
-	alias free='free --human'
+  alias free='free --human'
 
   # Install aliases
   alias sui='sudo apt install'
-	alias sued='sudo $BP_EDITOR'
+  alias sued='sudo $BP_EDITOR'
 
   # Dev aliases
   alias py='python3'
@@ -351,12 +368,14 @@ bpAliases() { ##D Initialize aliases
   alias mv='mv -i'
   # -> Prevents accidentally clobbering files.
   alias mkdir='mkdir -pv'
-	alias cpv='rsync -avh --info=progress2'
+  alias cpv='rsync --archive --verbose --human-readable --info=progress2'
+
+  alias rsync='rsync --archive --human-readable --info=progress2'
 
   alias which='type -a'
   alias grep='grep --color=auto'
-	alias egrep='egrep --color=auto'
-	alias fgrep='fgrep --color=auto'
+  alias egrep='egrep --color=auto'
+  alias fgrep='fgrep --color=auto'
   alias du='du -k --human-readable --max-depth 1' # Makes a more readable output.
   alias df='df -k --human-readable --print-type'
 
@@ -372,14 +391,13 @@ bpAliases() { ##D Initialize aliases
   alias libpath='echo -e ${LD_LIBRARY_PATH//:/\\n}'
 
   alias ..='cd ..'
-	alias ...='cd ../..'
-	alias ....='cd ../../..'
-	alias .....='cd ../../../..'
-	alias .2='cd ../..'
-	alias .3='cd ../../..'
-	alias .4='cd ../../../..'
-	alias .5='cd ../../../../..'
-	
+  alias ...='cd ../..'
+  alias ....='cd ../../..'
+  alias .....='cd ../../../..'
+  alias .2='cd ../..'
+  alias .3='cd ../../..'
+  alias .4='cd ../../../..'
+  alias .5='cd ../../../../..'
 
   alias j='jobs -l'
   alias h='history'
@@ -410,11 +428,11 @@ bpAliases() { ##D Initialize aliases
   alias gd='git diff'
   alias gl='git log --all --graph --format=oneline'
   alias gh='git hist'
-  alias go='git checkout '
+  alias gco='git checkout '
   alias gk='gitk --all&'
   alias gx='gitx --all'
   #alias gi='git-info --color'
-	alias gi='pmgp gi'
+  alias gi='pmgp gi'
   alias gp='git push'
   alias gpt='git push origin --tags'
   alias gnt='pmgp gnt'
@@ -449,17 +467,25 @@ bpAliases() { ##D Initialize aliases
   alias moer='more'
   alias moew='more'
   alias kk='ll'
-	alias got='git '
+  alias got='git '
   alias get='git '
 
   # Aliases that use xtitle
   alias top='xtitle Processes on $HOST && top'
   alias make='xtitle Making $(basename $PWD) ; make'
   alias sall='service --status-all'
-	
-	alias env='env | sed -e "s/\x1b/\\\e/g"'
+
+  alias al='alias | sed -e "s/=\(.*\)/=\\${E_BR_YELLOW}\1\\${E_RESET}/" \
+    -e "s/ [^=]*/\\${E_BR_CYAN}&\\${E_RESET}/1" \
+    -e "s/alias/\\${E_DARKGRAY}&\\${E_RESET}/1"'
+
+  alias env='env | sed -e "s/\x1b/\\\e/g" -e "s/\x1b/\\\e/g" \
+    -e "s/=\(.*\)/=\\${E_BR_YELLOW}\1\\${E_RESET}/" \
+    -e "s/[^=]*/\\${E_BR_CYAN}&\\${E_RESET}/1"'
+  #-e "s/=/\\${E_DARKGRAY}=\\${E_RESET}/"'
 
 }
+
 #-------------------------------------------------------------
 # A few fun ones
 #-------------------------------------------------------------
@@ -520,31 +546,31 @@ fstr() { ##D Find a pattern in a set of files and highlight them:
 
 fii() { ##D Print file information
   file="${1}"
-	
-	if [ ! -f "${file}" ]; then
-	  bpError "File ${file} does not exist" 
-		return
-	fi
-	
-	echo
+
+  if [ ! -f "${file}" ]; then
+    bpError "File ${file} does not exist"
+    return
+  fi
+
+  echo
   bpPrintDesc "Name" "$(basename "$(realpath "$file")")"
   bpPrintDesc "Directory" "$(dirname "$(realpath "$file")")"
   bpPrintDesc "Owner" "$(stat --format '%U' "$file")"
   bpPrintDesc "Size" "$(stat --format '%s' "$file")"
   echo
-	
-	case "${file}" in
-	  *.png | *.svg | *.jpg) bpRun identify "${file}" ;;
-	  *);;
-	esac	
+
+  case "${file}" in
+  *.png | *.svg | *.jpg) bpRun identify "${file}" ;;
+  *) ;;
+  esac
 }
 
 slc() { ##D Sudo last command
   if [[ "$#" == 0 ]]; then
-	  sudo $(history -p '!!')â
-	else
-	  sudo "$@"
-	fi
+    sudo $(history -p '!!')ï¿½
+  else
+    sudo "$@"
+  fi
 
 }
 
@@ -620,7 +646,7 @@ extract() { ##D Handy Extract Program
     *.zip) unzip "$1" ;;
     *.Z) uncompress "$1" ;;
     *.7z) 7z x "$1" ;;
-		*.deb) ar x "$2" ;;
+    *.deb) ar x "$2" ;;
     *) bpError "File '$1' cannot be extracted via >extract<" ;;
     esac
   else
@@ -631,7 +657,7 @@ extract() { ##D Handy Extract Program
 ##- git
 
 #gi() { ##D Show information about project
-#  
+#
 #}
 
 ##- tmux
@@ -722,8 +748,12 @@ bpIpInfo() { ##I List all default IP adresses
     IP=$(interfaceToIp "$INTERFACE")
     MAC=$(interfaceToMAC "$INTERFACE")
     if [ -n "$IP" ]; then
+<<<<<<< HEAD
       #echo "$IP $INTERFACE $MAC"
 			printf "%-14s %-6s %s\n" $IP $INTERFACE $MAC
+=======
+      printf "%-16s %-10s %s\n" $IP $INTERFACE $MAC
+>>>>>>> d24b65a1a1b501e63e1449853baa4db465676630
     fi
   done
 }
@@ -773,11 +803,13 @@ start_agent() {
 
 start_ssh_agent() { ##D Start ssh-agent
   if [ -f "${SSH_ENV}" ]; then
-    . "${SSH_ENV}" >/dev/null
-
-    if ps -p "${SSH_AGENT_PID}" >/dev/null; then
+	  . "${SSH_ENV}" >/dev/null
+		
+    if ! ps -p "${SSH_AGENT_PID}" >/dev/null; then
       start_agent
-    fi
+    else
+		  bpInfo "ssh-agent already running(${SSH_AGENT_PID})"
+		fi
 
   else
     start_agent

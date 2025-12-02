@@ -251,7 +251,7 @@ bpAvail() { ## Amount of available diskpace in directory in MB
   df --output=avail --block-size=M .
 }
 
-bpBackupDir() { ##D Backup directory
+bpBackupDir() { ## Backup directory
   if [ ! -e "$1" ]; then
     bpError "Source file \"${1}\" does not exist!"
     return 1
@@ -273,9 +273,63 @@ bpBackupDir() { ##D Backup directory
 
 }
 
-backup() { ##D Backup user data
+backup_dir=(
+  "3D"
+  "Documents"
+  "pmg"
+  "Projects"
+  ".ssh"
+  ".config"
+)
+
+exclude_dir=(
+  ".local/share/Trash"
+  ".config/google-chrome"
+  ".config/Code"
+  ".cache"
+  ".vscode"
+  "Downloads"
+  "backup"
+  "Backup"
+  "snap"
+)
+
+backup() { ##D Incremental backup of user data
   #  bpBackupDir ~/Project "$2"
-  bpBackupDir ~/ "$2"
+  for DIR in "${exclude_dir[@]}"; do
+    EXCLUDE="${EXCLUDE} --exclude=${DIR}"
+  done
+
+  SRC=""
+  for DIR in "${backup_dir[@]}"; do
+    if [ -d "${HOME}/${DIR}" ]; then
+      echo "Backing up ${DIR}"
+      SRC="${SRC} ${HOME}/${DIR}"
+    fi
+  done
+
+  DST="${HOME}/Backup"
+
+  bpMkDir "${DST}"
+
+  BFILE="backup_$(hostname)_${USER}_$(date +"%Y_%m_%d")-$(date +"%H_%M_%S")"
+
+  # Find latest backup
+  LINK=$(ls --time=creation --directory ${HOME}/Backup/* 2>/dev/null | sort -r | head -n 1)
+  if [ -n "$LINK" ]; then
+    echo "Linking to $LINK"
+    LINKDEST="--link-dest=${LINK}"
+  fi
+
+  #  set -x
+  if ! rsync --info=progress2 --archive --human-readable ${LINKDEST} ${EXCLUDE} ${SRC} "${DST}/${BFILE}"; then
+    bpError "Backup failed!"
+    bpExit 1
+  fi
+
+  bpOk "Backup complete to ${DST}/${BFILE}"
+
+  #  set +x
 }
 
 ##- System Management
@@ -324,6 +378,14 @@ bpIpInfo() { # List all default IP adresses
     ((i++))
     echo "$(interfaceToIp $INTERFACE) $INTERFACE $LINK $(interfaceToMAC $INTERFACE)"
   done
+}
+
+##- Fixes
+fix_dns() { ##D Fix DNS lookup on systems on Linux Mint
+  BP_SUDO=true
+  bpAppendIfNoSuchLine /etc/systemd/resolved.conf "DNSStubListener=no"
+  BP_SUDO=false
+  sudo systemctl restart systemd-resolved
 }
 
 ##- Information
@@ -1048,7 +1110,13 @@ bpReplaceLine() { ##I Replace entire line matching pattern
 # $2 line to append
 #
 bpAppendIfNoSuchLine() { ##I Append a line if it does not exist in file
-  grep -q -F "$2" "$1" || echo "$2" >>"$1"
+  #grep -q -F "$2" "$1" || echo "$2" >>"$1"
+  if [ "$BP_SUDO" == true ]; then
+    sudo grep -q -F "$2" "$1" || echo -e "$2" | sudo tee -a "$1" >/dev/null
+  else
+    grep -q -F "$2" "$1" || echo -e "$2" >>"$1"
+  fi
+
 }
 
 #

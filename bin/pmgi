@@ -58,6 +58,11 @@ bpUserSettings() {
     "def" "def install"
     "fplot" "fplot_init -q"
     "pins" "pins_init -q"
+<<<<<<< HEAD
+		"pae" ":"
+=======
+		"pitools" "pitools_init -q"
+>>>>>>> 0431c3835bd1b7684f152b200a891ec4502597c2
   )
 
   #
@@ -89,8 +94,8 @@ bpUserSettings() {
   )
 
   kvmPkgs=(
-		"apt" "qemu-system-x86" ":"
-		"apt" "qemu-system-arm" ":"
+    "apt" "qemu-system-x86" ":"
+    "apt" "qemu-system-arm" ":"
     "apt" "virt-manager" ":"
     "apt" "virt-top" ":"
     "apt" "libvirt-daemon-system" ":"
@@ -122,12 +127,14 @@ bpUserSettings() {
     "apt" "gpiod" ":"
     "apt" "python3-pip" ":"
     "apt" "npm" ":"
+		"apt" "nfs-client" ":"
   )
   #    "git" "https://github.com/ogham/exa" ":"
   #    "git" "powertop" ":"
 
   testing=(
     "apt" "stress-ng" ":"
+    "apt" "s-tui"
   )
 
   snap_unrestrict() {
@@ -157,7 +164,7 @@ bpUserSettings() {
     "apt" "flex" ":"
     "apt" "texinfo" ":"
     "apt" "git" ":"
-		"apt" "git-info" ":"
+    "apt" "git-info" ":"
     "apt" "subversion" ":"
     "apt" "meld" ":"
     "apt" "doxygen" ":"
@@ -239,7 +246,7 @@ bpUserSettings() {
     "apt" "python3-git" ":"
     "pip" "rich" ":"
     "pip" "textual" ":"
-		"pip" "tqdm" ":"
+    "pip" "tqdm" ":"
   )
 
   pythonLibGTK=(
@@ -254,6 +261,10 @@ bpUserSettings() {
     "apt" "python3-guidata" ":"
     "apt" "pyqt5-dev-tools" ":"
     "apt" "pyqt5-examples" ":"
+		"apt" "python3-pyqt6" ":"
+    "apt" "python3-pyqt6.qtserialport" ":"
+		"apt" "pyqt6-dev-tools" ":"
+		"apt" "pyqt6-examples" ":"
     "apt" "python3-pyqtgraph" ":"
   )
 
@@ -298,6 +309,10 @@ bpUserSettings() {
   inkscapePkgs=(
     "git" "https://github.com/upb-lea/Inkscape_electric_Symbols.git" "${HOME}/pmg/media/inkscape/symbols"
   )
+	
+	kicadPkgs=(
+	  "ppa" "kicad" "ppa:kicad/kicad-9.0-releases"
+	)
 
 }
 
@@ -379,7 +394,7 @@ ppaIsInstalled() { ##I Check if a PPA is added to source list
 
 installPPA() { ##I Install package from ppa
 
-  bpError "PPA install not available"
+  #bpError "PPA install not available"
 
   if ! ppaIsInstalled "$1"; then
     sudo add-apt-repository --yes "$2"
@@ -541,6 +556,14 @@ devutils() { ##D Install development utls like git, svn, flex, doxygen
   installPkgs "${devUtils[@]}"
 }
 
+##- System
+starship() { ##D Starship prompt manager
+  curl -sS https://starship.rs/install.sh | sh
+}
+
+perf() { ##D System test and performance packages
+  installPkgs "${testing[@]}"
+}
 ##- Server packages
 
 kvm() { ##D Install KVM virtual machine manager
@@ -716,7 +739,7 @@ rp() { ##D Install Raspberry Pi development tools
   installPkgs "${devRasperryPi[@]}"
 }
 
-##- Other
+##- Misc
 
 sci() { ##D Install science and technology packages
   installPkgs "${science[@]}"
@@ -726,13 +749,10 @@ inkscape() { ##D Install Inkscape resources(fonts/clipart)
   installPkgs "${inkscapePkgs[@]}"
 }
 
-starship() { ##D Starship prompt manager
-  curl -sS https://starship.rs/install.sh | sh
+kicad() { ##D Install Kicad electronics design software
+  installPkgs "${kicadPkgs[@]}"
 }
 
-perf() { ##D System test and performance packages
-  installPkgs "${testing[@]}"
-}
 
 ##- Projects
 
@@ -784,7 +804,7 @@ projects() { ##D Checkout all git projects
 }
 
 rmprojects() { ##D Remove all projects
-  :
+  bpRm "${PROJDIR}"
 }
 
 #---------------------------------------------------------------------

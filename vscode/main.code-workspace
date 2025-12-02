@@ -32,8 +32,16 @@
 			"path": "../../Projects/Tester"
 		},
 		{
-			"path": ".."
+			"path": "../../Projects/pitools"
+		},
+		{
+			"path": "../../Projects/pae"
 		}
 	],
-	"settings": {}
+	"settings": {
+		"files.associations": {
+			"bpexample": "shellscript",
+			"mmmotor_settings.h": "c"
+		}
+	}
 }
