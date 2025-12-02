@@ -76,17 +76,6 @@ devel() {
   echo ""
 }
 
-##- Tools
-
-#
-# $1 isofile
-# $2 device to write to
-#
-iso2usb() { ##D Write ISO file to USB drive
-  bpInfo "Writing ${3} to USB drive"
-  sudo dd if="$2" of="$3" bs=4MB status=progress oflag=sync
-}
-
 ##- Setup
 
 all_setups() { ##D All setups (except jed_setup)
@@ -243,7 +232,7 @@ initsamba() { ##D Initiate samba server
   sudo systemctl restart smbd
 }
 
-##- Backup
+##- System Management
 
 #
 #
@@ -332,7 +321,6 @@ backup() { ##D Incremental backup of user data
   #  set +x
 }
 
-##- System Management
 
 update() { ##D  Update operating system
   if [ -f ~/.tmux/plugins/tpm/bin/update_plugins ]; then
@@ -380,14 +368,6 @@ bpIpInfo() { # List all default IP adresses
   done
 }
 
-##- Fixes
-fix_dns() { ##D Fix DNS lookup on systems on Linux Mint
-  BP_SUDO=true
-  bpAppendIfNoSuchLine /etc/systemd/resolved.conf "DNSStubListener=no"
-  BP_SUDO=false
-  sudo systemctl restart systemd-resolved
-}
-
 ##- Information
 
 bpCheckVersion() {
@@ -402,8 +382,8 @@ bpCheckVersion() {
   # bpError "Could not execute $1, command does not exist!"
   #return 1
   #fi
-
 }
+
 
 bpCat() { ##
   if [ -f "$1" ]; then
@@ -443,6 +423,18 @@ info() { ##D General information
   bpPrintDesc "arm-gcc" "$(bpCheckVersion arm-none-eabi-gcc)"
 
   bpPrintLine
+}
+
+notes() { ##D Notes about different fixes
+  cat << EOF
+	
+Problem:  DNS does not resolve hostnames on local network
+
+Cause:    MulticastDNS is not acativated.
+Solution: Add MulticastDNS=yes to /etc/systemd/resolved.conf
+Control:  Output from resolvectl should contain +mDNS
+
+EOF
 }
 
 ##- Project management (git)
