@@ -748,7 +748,12 @@ bpIpInfo() { ##I List all default IP adresses
     IP=$(interfaceToIp "$INTERFACE")
     MAC=$(interfaceToMAC "$INTERFACE")
     if [ -n "$IP" ]; then
+<<<<<<< HEAD
+      #echo "$IP $INTERFACE $MAC"
+			printf "%-14s %-6s %s\n" $IP $INTERFACE $MAC
+=======
       printf "%-16s %-10s %s\n" $IP $INTERFACE $MAC
+>>>>>>> d24b65a1a1b501e63e1449853baa4db465676630
     fi
   done
 }
