@@ -83,6 +83,10 @@ info() { ##D General information
   bpPrintLine
 }
 
+mbinfo() { ##D Motherboard information
+  sudo dmidecode -t 2
+}
+
 hwinfo() { ##D Print general hardware information
   bpAssertProgs "inxi"
   inxi --full --usb --filter
