@@ -232,6 +232,8 @@ dsi() { ##D DS18B20 setup information for RPi
   echo
   echo "Add to bottom of /boot/firmware/config.txt:"
 	echo "dtoverlay=w1-gpio"
+	echo ""
+	echo "Datapin is on GPIO4 or connector pin 7"
 	echo
 	echo "https://www.circuitbasics.com/raspberry-pi-ds18b20-temperature-sensor-tutorial/"
 	echo 

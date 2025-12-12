@@ -3,14 +3,14 @@
 
 # language settings for different software
 
-LC_ALL=C
-export LC_ALL
+#LC_ALL=en_US.UTF-8
+#export LC_ALL
 
-LANGUAGE=sv_SE
-export LANGUAGE
+#LANGUAGE=en_US.UTF-8
+#export LANGUAGE
 
-LANG=sv_SE
-export LANG
+#LANG=en_US.UTF-8
+#export LANG
 
 LESSCHARSET=latin1
 export LESSCHARSET
@@ -31,9 +31,9 @@ export BASH_ENV=$HOME/.bashrc
 				
 				
 # Cygwin settings
-export LANG=sv
+#export LANG=sv
 				
 
 
-source ~/.xsh
+#source ~/.xsh
 
