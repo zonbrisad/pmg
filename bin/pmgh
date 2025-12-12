@@ -228,6 +228,24 @@ logtemp() { ##D Log temperature from outdoor DS18b20 sensor
 
 
 ##- DS18B20
+
+lsds() { ##D List DS18B20 sensors
+  bpPrintLine "List of DS18B20 sensors"
+  for dir in /sys/bus/w1/devices/* ;do
+	if [[ $dir == *"w1_bus_master"* ]]; then
+	  continue
+	fi
+	
+	name=$(cat $dir/name)
+	temperature=$(cat $dir/temperature)
+	
+	bpPrintDesc $name $temperature
+	
+	done
+	
+	echo
+}
+
 dsi() { ##D DS18B20 setup information for RPi
   echo
   echo "Add to bottom of /boot/firmware/config.txt:"
