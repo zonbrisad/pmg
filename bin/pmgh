@@ -85,7 +85,7 @@ info() { ##D General information
 	bpPrintDesc "Memory" "$(bpRAM) MB"
   bpPrintDesc "Graphics" "$(lspci 2>/dev/null | grep VGA | sed -r 's/.*controller: //')"
   bpPrintDesc "Drives" "$(lsblk --noheadings --nodeps --output NAME,SIZE,MODEL | grep --invert-match loop)"
-  bpPrintLine
+  #bpPrintLine
 }
 
 mbinfo() { ##D Motherboard information
