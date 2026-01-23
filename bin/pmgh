@@ -47,8 +47,13 @@ bpUserSettings() {
 
 ##- Hardware related functions
 
-bpCPU() { # Print CPU info
-  lscpu | grep "Model name" | awk '{ print $3" "$4" "$5" "$6" "$7" "$8" "$9 }'
+bpCPU() { # Print CPU type and manufacturer
+#  lscpu | grep "Model name" | awk '{ print $3" "$4" "$5" "$6" "$7" "$8" "$9 }'
+	lscpu | egrep -w '(Model|Modellnamn)' | awk '{ print $3" "$4" "$5" "$6" "$7" "$8" "$9 }'
+}
+
+bpRAM() { # Print amount of installed RAM in MB
+  free --mega | egrep -w '(Mem|Minne)' | awk '{ print $2 }'
 }
 
 bpCheckVersion() {
@@ -77,7 +82,7 @@ bpCat() { ##
 info() { ##D General information
   bpPrintLine "Hardware"
   bpPrintDesc "CPU" "$(bpCPU)"
-  bpPrintDesc "Memory" "$(free --mega | grep Mem | awk '{ print $2 }') Mb"
+	bpPrintDesc "Memory" "$(bpRAM) MB"
   bpPrintDesc "Graphics" "$(lspci 2>/dev/null | grep VGA | sed -r 's/.*controller: //')"
   bpPrintDesc "Drives" "$(lsblk --noheadings --nodeps --output NAME,SIZE,MODEL | grep --invert-match loop)"
   bpPrintLine
