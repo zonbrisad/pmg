@@ -224,13 +224,17 @@ plb() { ##D Plot battery and power data in LSTOR
 logtemp() { ##D Log temperature from outdoor DS18b20 sensor
   
 	while(true); do
-	  t=$(cat /sys/bus/w1/devices/10-000800fe2427/temperature)
-		echo $t
-		echo $t >> templog
+	  T=$(cat /sys/bus/w1/devices/10-000800fe2427/temperature)
+		D=$(date +"%F_%R:%S")
+		echo $D $T
+		echo "${D} ${T}" >> templog
 	  sleep 2
 	done
 }	
 
+templot() { ##D Plot outdor temperature with fplot 
+  fplot --plot /sys/bus/w1/devices/10-000800fe2427/temperature:d1000:p1800:a24:ymin-22:ymax4#"Utetemperatur 24h"   --plotd .:a7#"Utetemp (7d)" --plotd ..:a31#"Utetemp (31d)" --interval 2
+}
 
 ##- DS18B20
 

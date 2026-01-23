@@ -63,7 +63,7 @@ ii() { ##D Print general system information
   if [ -n "${CPUTEMP}" ]; then
     #    T=$(bc <<<"scale=1; $(cat "${CPUTEMP}") / 1000")
     T=$(($(cat "${CPUTEMP}") / 1000))
-    bpPrintDesc "Temperature:" "$T °C"
+    bpPrintDesc "CPU Temp:" "$T °C"
   fi
 
   if [ -n "${SYSVOLT}" ]; then
