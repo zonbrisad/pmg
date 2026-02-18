@@ -241,6 +241,8 @@ bpUserSettings() {
     "apt" "python3-numpy" ":"
     "apt" "python3-scipy" ":"
     "apt" "python3-git" ":"
+		"apt" "python3-pymodbus" ":"
+		"apt" "python3-aiohttp" ":"
     "pip" "rich" ":"
     "pip" "textual" ":"
     "pip" "tqdm" ":"
