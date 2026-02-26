@@ -161,7 +161,6 @@ bpUserSettings() {
     "apt" "flex" ":"
     "apt" "texinfo" ":"
     "apt" "git" ":"
-    "apt" "git-info" ":"
     "apt" "subversion" ":"
     "apt" "meld" ":"
     "apt" "doxygen" ":"
