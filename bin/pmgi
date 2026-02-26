@@ -185,8 +185,7 @@ bpUserSettings() {
 
   devCLibs=(
     "apt" "libexpat1-dev" ":"
-    "apt" "libncurses5" ":"
-    "apt" "libncurses5-dev" ":"
+    "apt" "libncurses-dev" ":"
     "apt" "lua5.1" ":"
     "apt" "liblua5.1-0" ":"
     "apt" "liblua5.1-0-dev" ":"
