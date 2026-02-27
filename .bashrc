@@ -517,6 +517,10 @@ ff() { ##D Find a file with a pattern in name:
   find . -type f -iname '*'"$*"'*' -ls
 }
 
+fif() { ##D Find pattern in file 
+  grep -rni --color=auto "$1" .
+}
+
 fe() { ##D Find a file with pattern $1 in name and Execute $2 on it:
   find . -type f -iname '*'"${1:-}"'*' \
     -exec "${2:-file}" {} \;
