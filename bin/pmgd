@@ -39,7 +39,7 @@ set -o pipefail
 # User defined Settings
 #---------------------------------------------------------------------
 bpUserSettings() {
-  TEMPLATES=${BP_SELF_DIR}/../templates
+  TEMPLATES="${BP_SELF_DIR}/../templates"
   GO_TEMPLATES=${TEMPLATES}/go
 }
 #---------------------------------------------------------------------
@@ -59,7 +59,7 @@ qwd() { ##D Qt widget demo
   ~/Projects/Tester/python/qt5/qtwidgetdemo
 }
 
-##- Arduino bootloader
+
 write_arduino_bootloader() {
   MCU="$1"
   BOOTLOADER="$2"
@@ -72,28 +72,31 @@ write_arduino_usb-serial_firmware() {
   avrdude -v -F -c jtag2isp -p "${MCU}" -U "flash:w:${BOOTLOADER}" -U lfuse:w:0xFF:m -U hfuse:w:0xD9:m -U efuse:w:0xF4:m -U lock:w:0x0F:m
 }
 
-wab328() { ## Write Arduino bootloader to ATMega168P
-  #write_arduino_bootloader "m328p" "${BP_SELF_DIR}/arduino/optiboot/optiboot_atmega328.hex"
-  write_arduino_bootloader "m328p" "/usr/share/arduino/hardware/arduino/avr/bootloaders/atmega/ATmegaBOOT_168_atmega328_notp.hex"
+waubp() { ## Write urboot(MiniCore) to Arduino ATMega328p
+  write_arduino_bootloader "m328p" "${BP_SELF_DIR}/arduino/MiniCore/avr/bootloaders/urboot/atmega328p/watchdog_1_s/autobaud/uart0_rxd0_txd1/led+b5/urboot_atmega328p.hex"
 }
 
-wardp() { ## Write Arduino optiboot_168_328.ex to ATMega328p
+##- Arduino optiboot bootloader
+
+wardp() { ##D Write Arduino optiboot_168_328.ex to ATMega328p
   write_arduino_bootloader "m328p" "${BP_SELF_DIR}/arduino/optiboot/optiboot_atmega328.hex"
 }
 
-ward() { ## Write Arduino optiboot_168_328.ex to ATMega328
+ward() { ##D Write Arduino optiboot_168_328.ex to ATMega328
   write_arduino_bootloader "m328" "${BP_SELF_DIR}/arduino/optiboot/optiboot_atmega328.hex"
 }
 
-watbp() { ## Write Arduino ATmegaBOOT_168_atmega328.hex bootloader to ATMega328P
-  write_arduino_bootloader "m328p" "${BP_SELF_DIR}/arduino/ATmegaBOOT_168_atmega328.hex"
-}
+##- Arduino legacy bootloader
 
-watb() { ##D Write Arduino ATmegaBOOT_168_atmega328.hex bootloader to ATMega328 (working)
+watb() { ##D Write Arduino ATmegaBOOT_168_atmega328.hex bootloader to ATMega328 (legacy)
   write_arduino_bootloader "m328" "${BP_SELF_DIR}/arduino/ATmegaBOOT_168_atmega328.hex"
 }
 
-wamtb() { ##D Write Arduino ATmegaBOOT_168_atmega1280.hex bootloader to ATMega1280 (working)
+watbp() { ##D Write Arduino ATmegaBOOT_168_atmega328.hex bootloader to ATMega328P (legacy)
+  write_arduino_bootloader "m328p" "${BP_SELF_DIR}/arduino/ATmegaBOOT_168_atmega328.hex"
+}
+
+wamtb() { ##D Write Arduino ATmegaBOOT_168_atmega1280.hex bootloader to ATMega1280 (legacy)
   write_arduino_bootloader "m1280" "${BP_SELF_DIR}/arduino/ATmegaBOOT_168_atmega1280.hex"
 }
 
@@ -1776,7 +1779,10 @@ bpRunCommand() {
 BP_TEMPLATE_VERSION="1.40beta2"
 
 ##V Directory where script is located
-BP_SELF_DIR="${0%/*}"
+#BP_SELF_DIR="${0%/*}"
+BP_SELF_DIR="$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
+BP_SELF_DIR=$(dirname "$(realpath "$0")")
+
 
 ##V Name of script
 BP_SELF_NAME=$(basename "$0")
