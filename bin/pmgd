@@ -89,15 +89,15 @@ ward() { ##D Write Arduino optiboot_168_328.ex to ATMega328
 ##- Arduino legacy bootloader
 
 watb() { ##D Write Arduino ATmegaBOOT_168_atmega328.hex bootloader to ATMega328 (legacy)
-  write_arduino_bootloader "m328" "${BP_SELF_DIR}/arduino/ATmegaBOOT_168_atmega328.hex"
+  write_arduino_bootloader "m328" "${BP_SELF_DIR}/arduino/legacy/ATmegaBOOT_168_atmega328.hex"
 }
 
 watbp() { ##D Write Arduino ATmegaBOOT_168_atmega328.hex bootloader to ATMega328P (legacy)
-  write_arduino_bootloader "m328p" "${BP_SELF_DIR}/arduino/ATmegaBOOT_168_atmega328.hex"
+  write_arduino_bootloader "m328p" "${BP_SELF_DIR}/arduino/legacy/ATmegaBOOT_168_atmega328.hex"
 }
 
 wamtb() { ##D Write Arduino ATmegaBOOT_168_atmega1280.hex bootloader to ATMega1280 (legacy)
-  write_arduino_bootloader "m1280" "${BP_SELF_DIR}/arduino/ATmegaBOOT_168_atmega1280.hex"
+  write_arduino_bootloader "m1280" "${BP_SELF_DIR}/arduino/legacy/ATmegaBOOT_168_atmega1280.hex"
 }
 
 ##- Arduino USB-serial firmware (ATmegaxxu2)
