@@ -59,7 +59,6 @@ qwd() { ##D Qt widget demo
   ~/Projects/Tester/python/qt5/qtwidgetdemo
 }
 
-
 write_arduino_bootloader() {
   MCU="$1"
   BOOTLOADER="$2"
@@ -72,11 +71,24 @@ write_arduino_usb-serial_firmware() {
   avrdude -v -F -c jtag2isp -p "${MCU}" -U "flash:w:${BOOTLOADER}" -U lfuse:w:0xFF:m -U hfuse:w:0xD9:m -U efuse:w:0xF4:m -U lock:w:0x0F:m
 }
 
-waubp() { ## Write urboot(MiniCore) to Arduino ATMega328p
-  write_arduino_bootloader "m328p" "${BP_SELF_DIR}/arduino/MiniCore/avr/bootloaders/urboot/atmega328p/watchdog_1_s/autobaud/uart0_rxd0_txd1/led+b5/urboot_atmega328p.hex"
+##- Arduino urboot bootloader (from MiniCore)
+
+#
+# urboot bootloaders retreived from MiniCore
+#
+# https://github.com/MCUdude/MiniCore/tree/master
+#
+
+waubp() { ##D Write urboot to Arduino ATMega328p 
+#  write_arduino_bootloader "m328p" "${BP_SELF_DIR}/arduino/MiniCore/avr/bootloaders/urboot/atmega328p/watchdog_1_s/autobaud/uart0_rxd0_txd1/led+b5/urboot_atmega328p_pr_ee_ce.hex"
+  write_arduino_bootloader "m328p" "${BP_SELF_DIR}/arduino/urboot/urboot_atmega328p_pr_ee_ce.hex"
 }
 
-##- Arduino optiboot bootloader
+waub() { ##D Write urboot to Arduino ATMega328
+  write_arduino_bootloader "m328" "${BP_SELF_DIR}/arduino/urboot/urboot_atmega328_pr_ee_ce.hex"
+}
+
+##- Arduino optiboot bootloader (use urboot if available)
 
 wardp() { ##D Write Arduino optiboot_168_328.ex to ATMega328p
   write_arduino_bootloader "m328p" "${BP_SELF_DIR}/arduino/optiboot/optiboot_atmega328.hex"
