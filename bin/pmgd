@@ -76,11 +76,16 @@ write_arduino_usb-serial_firmware() {
 #
 # urboot bootloaders retreived from MiniCore
 #
-# https://github.com/MCUdude/MiniCore/tree/master
+# https://github.com/MCUdude/MiniCore
+# https://github.com/MCUdude/MegaCore
 #
 
+waubm() { ##D Write urboot to Arduino Mega (ATMega1280)
+  write_arduino_bootloader "m1280" "${BP_SELF_DIR}/arduino/urboot_atmega1280_pr_ee_ce.hex"
+}
+
+
 waubp() { ##D Write urboot to Arduino ATMega328p 
-#  write_arduino_bootloader "m328p" "${BP_SELF_DIR}/arduino/MiniCore/avr/bootloaders/urboot/atmega328p/watchdog_1_s/autobaud/uart0_rxd0_txd1/led+b5/urboot_atmega328p_pr_ee_ce.hex"
   write_arduino_bootloader "m328p" "${BP_SELF_DIR}/arduino/urboot/urboot_atmega328p_pr_ee_ce.hex"
 }
 

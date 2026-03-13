@@ -1,7 +1,7 @@
 
 <div style="text-align: center">
 
-<h1>Title</h1>
+# Title
 
 </div>
 
