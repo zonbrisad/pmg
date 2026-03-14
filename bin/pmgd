@@ -46,6 +46,19 @@ bpUserSettings() {
 # User defined functions
 #---------------------------------------------------------------------
 
+##- C
+clm() { ##D List macros available in C on local gcc
+  gcc -dM -E - </dev/null | sort
+}
+
+carm() { ##D List macros available in C on arm gcc
+  arm-none-eabi-gcc -dM -E - </dev/null | sort
+}
+
+cavm() { ##D List macros available in C on avr gcc
+  avr-gcc -dM -E - </dev/null | sort
+}
+
 ##- Qt
 pge() { ##D PyQtGraph example program
   python3 -m pyqtgraph.examples
