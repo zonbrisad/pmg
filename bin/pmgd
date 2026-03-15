@@ -2,6 +2,7 @@
 # shellcheck disable=2034
 # shellcheck disable=2317
 # shellcheck disable=1090
+# shellcheck disable=2329
 #---------------------------------------------------------------------
 #
 #  pmgd
@@ -75,7 +76,7 @@ qwd() { ##D Qt widget demo
 write_arduino_bootloader() {
   MCU="$1"
   BOOTLOADER="$2"
-  avrdude -c jtag2isp -p "${MCU}" -v -e -U hfuse:w:0xDA:m -U lfuse:w:0xFF:m -U "flash:w:${BOOTLOADER}:i" -U lock:w:0x0F:m #-U efuse:w:0x05:m
+  avrdude -c jtag2isp -p "${MCU}" -v -e -U hfuse:w:0xDA:m -U lfuse:w:0xFF:m -U "flash:w:${BOOTLOADER}:i" -U lock:w:0x0F:m -U efuse:w:0x07:m
 }
 
 write_arduino_usb-serial_firmware() {
@@ -84,17 +85,32 @@ write_arduino_usb-serial_firmware() {
   avrdude -v -F -c jtag2isp -p "${MCU}" -U "flash:w:${BOOTLOADER}" -U lfuse:w:0xFF:m -U hfuse:w:0xD9:m -U efuse:w:0xF4:m -U lock:w:0x0F:m
 }
 
-##- Arduino urboot bootloader (from MiniCore)
-
 #
-# urboot bootloaders retreived from MiniCore
+# Compiled bootloaders found here
 #
 # https://github.com/MCUdude/MiniCore
 # https://github.com/MCUdude/MegaCore
 #
 
+##- Arduino optiboot bootloader (compatible with Arduino stk500 protocol)
+
+woptp() { ##D Write Arduino optiboot_168_328.ex to ATMega328p
+  write_arduino_bootloader "m328p" "${BP_SELF_DIR}/arduino/optiboot/optiboot_atmega328.hex"
+}
+
+wopt() { ##D Write Arduino optiboot_168_328.ex to ATMega328
+  write_arduino_bootloader "m328" "${BP_SELF_DIR}/arduino/optiboot/optiboot_atmega328.hex"
+}
+
+woptm() { ##D Write optiboot to Ardino Mega ATmega1280 (uart0 115200 16MHz) 
+  write_arduino_bootloader "m1280" "${BP_SELF_DIR}/arduino/optiboot/optiboot_flash_atmega1280_UART0_115200_16000000L_B7_BIGBOOT.hex"
+}
+
+##- Arduino urboot bootloader (use if special needs)
+
+
 waubm() { ##D Write urboot to Arduino Mega (ATMega1280)
-  write_arduino_bootloader "m1280" "${BP_SELF_DIR}/arduino/urboot_atmega1280_pr_ee_ce.hex"
+  write_arduino_bootloader "m1280" "${BP_SELF_DIR}/arduino/urboot/urboot_atmega1280_pr_ee_ce.hex"
 }
 
 
@@ -106,15 +122,6 @@ waub() { ##D Write urboot to Arduino ATMega328
   write_arduino_bootloader "m328" "${BP_SELF_DIR}/arduino/urboot/urboot_atmega328_pr_ee_ce.hex"
 }
 
-##- Arduino optiboot bootloader (use urboot if available)
-
-wardp() { ##D Write Arduino optiboot_168_328.ex to ATMega328p
-  write_arduino_bootloader "m328p" "${BP_SELF_DIR}/arduino/optiboot/optiboot_atmega328.hex"
-}
-
-ward() { ##D Write Arduino optiboot_168_328.ex to ATMega328
-  write_arduino_bootloader "m328" "${BP_SELF_DIR}/arduino/optiboot/optiboot_atmega328.hex"
-}
 
 ##- Arduino legacy bootloader
 
@@ -145,6 +152,10 @@ aus8() { ##D Write Arduino usb-serial firmware to ATmega8u2 JTAG2ICE mkii
 
 avr() { ##D Read avr ATmega328p device with avrdude and jtagice mkii programmer
   avrdude -v -c jtag2isp -p m328p -U flash:r:flash.hex:i
+
+}
+avr1280f() { ##D Read avr ATmega1280 device with avrdude and jtagice mkii programmer
+  avrdude -v -c jtag2isp -p m1280 -U lfuse:w:0xFF:m -U hfuse:w:0xD9:m -U efuse:w:0xF4:m -U lock:w:0x0F:m
 }
 
 ard() { ##D Read arduino ATMega328P
