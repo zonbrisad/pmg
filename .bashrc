@@ -579,7 +579,9 @@ slc() { ##D Sudo last command
 
 }
 
+
 ##- Create
+
 maketar() { ##D Creates an archive (*.tar.gz) from given directory.
   tar cvzf "${1%%/}.tar.gz" "${1%%/}/"
 }
@@ -658,6 +660,28 @@ extract() { ##D Handy Extract Program
     bpError "'$1' is not a valid file!"
   fi
 }
+
+
+
+op() { ##D Open file with suitable program
+  if [ "$1" == "" ]; then
+	  return
+	fi
+	
+	if [ ! -f "$1" ]; then
+    bpError "File: ${1} does not exist"
+		return
+  fi
+	
+	case "$1" in
+	  *.pdf) xreader "$1" ;;
+		*.kicad_pro) kicad "$1" ;;
+	  *) bpError "File: ${1} cannot be oppened with 'op'"
+	esac
+}
+
+complete -f -o default -X '!*.+(pdf|PDF|kicad_pro)'  op
+
 
 ##- git
 
