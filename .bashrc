@@ -674,8 +674,8 @@ op() { ##D Open file with suitable program
   fi
 	
 	case "$1" in
-	  *.pdf) xreader "$1" ;;
-		*.kicad_pro) kicad "$1" ;;
+	  *.pdf) xreader "$1" & ;;
+		*.kicad_pro) kicad "$1" & ;;
 	  *) bpError "File: ${1} cannot be oppened with 'op'"
 	esac
 }

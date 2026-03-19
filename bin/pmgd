@@ -94,12 +94,12 @@ write_arduino_usb-serial_firmware() {
 
 ##- Arduino optiboot bootloader (compatible with Arduino stk500 protocol)
 
-woptp() { ##D Write Arduino optiboot_168_328.ex to ATMega328p
-  write_arduino_bootloader "m328p" "${BP_SELF_DIR}/arduino/optiboot/optiboot_atmega328.hex"
+woptp() { ##D Write optboot to ATMega328p
+  write_arduino_bootloader "m328p" "${BP_SELF_DIR}/arduino/optiboot/optiboot_flash_atmega328p_UART0_115200_16000000L_B5.hex"
 }
 
-wopt() { ##D Write Arduino optiboot_168_328.ex to ATMega328
-  write_arduino_bootloader "m328" "${BP_SELF_DIR}/arduino/optiboot/optiboot_atmega328.hex"
+wopt() { ##D Write optboot to ATMega328
+  write_arduino_bootloader "m328" "${BP_SELF_DIR}/arduino/optiboot/optiboot_flash_atmega328_UART0_115200_16000000L_B5.hex"
 }
 
 woptm() { ##D Write optiboot to Ardino Mega ATmega1280 (uart0 115200 16MHz) 
