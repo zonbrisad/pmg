@@ -676,11 +676,12 @@ op() { ##D Open file with suitable program
 	case "$1" in
 	  *.pdf) xreader "$1" & ;;
 		*.kicad_pro) kicad "$1" & ;;
+		*.AppImage) "./${1}" & ;; 
 	  *) bpError "File: ${1} cannot be oppened with 'op'"
 	esac
 }
 
-complete -f -o default -X '!*.+(pdf|PDF|kicad_pro)'  op
+complete -f -o default -X '!*.+(pdf|PDF|kicad_pro|AppImage)'  op
 
 
 ##- git

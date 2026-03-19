@@ -145,7 +145,8 @@ dfu8() { ##D Write Arduino usb-serial firmware ATmega8u2 via dfu
 }
 
 aus8() { ##D Write Arduino usb-serial firmware to ATmega8u2 JTAG2ICE mkii
-  write_arduino_usb-serial_firmware at90usb82 "${BP_SELF_DIR}/arduino/ArduinoCore-avr/firmwares/atmegaxxu2/UNO-dfu_and_usbserial_combined.hex"
+  # write_arduino_usb-serial_firmware at90usb82 "${BP_SELF_DIR}/arduino/ArduinoCore-avr/firmwares/atmegaxxu2/UNO-dfu_and_usbserial_combined.hex"
+  write_arduino_usb-serial_firmware at90usb82 "${BP_SELF_DIR}/arduino/Arduino-usbserial-uno.hex"
 }
 
 ##- AVR
