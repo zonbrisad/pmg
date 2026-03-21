@@ -106,6 +106,15 @@ woptm() { ##D Write optiboot to Ardino Mega ATmega1280 (uart0 115200 16MHz)
   write_arduino_bootloader "m1280" "${BP_SELF_DIR}/arduino/optiboot/optiboot_flash_atmega1280_UART0_115200_16000000L_B7_BIGBOOT.hex"
 }
 
+
+wopt128U0() { ##D Write optiboot to ATmega128 (ET-AVR-STAMP) (UART0 115200 16MHz) 
+  write_arduino_bootloader "m128" "${BP_SELF_DIR}/arduino/optiboot/optiboot_flash_atmega128_UART0_115200_16000000L_B5_BIGBOOT.hex"
+}
+
+wopt128U1() { ##D Write optiboot to ATmega128 (ET-AVR-STAMP) (UART1 115200 16MHz) 
+  write_arduino_bootloader "m128" "${BP_SELF_DIR}/arduino/optiboot/optiboot_flash_atmega128_UART1_115200_16000000L_B5_BIGBOOT.hex"
+}
+
 ##- Arduino urboot bootloader (use if special needs)
 
 
